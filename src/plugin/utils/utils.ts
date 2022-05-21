@@ -1,8 +1,6 @@
-type mergeObject = {
-  [id: string]: mergeObject
-}
 
-export function deepMerge(target: mergeObject, ...objects: Array<mergeObject>): mergeObject {
+
+export function deepMerge(target: MergeObject, ...objects: Array<MergeObject>): MergeObject {
   objects
     .filter((o) => o)
     .forEach((obj) => {
@@ -18,21 +16,21 @@ export function deepMerge(target: mergeObject, ...objects: Array<mergeObject>): 
           // then take source type
           target[key] = target[key] ? (targetType !== sourceType ? initialValue : target[key]) : initialValue
 
-          deepMerge(target[key], value)
+          deepMerge(target[key] as MergeObject, value as MergeObject)
         } else {
           target[key] = value
         }
       }
     })
-
+		
   return target
 }
 
-export function getElement(el: string, context = document): HTMLElement | null {
+export function getElement(el: string, context = document.documentElement): HTMLElement | null {
   return context['querySelector'](el)
 }
 
-export function getElements(el: string, context = document): NodeList {
+export function getElements(el: string, context = document.documentElement): NodeList {
   return context['querySelectorAll'](el)
 }
 

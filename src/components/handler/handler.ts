@@ -2,14 +2,15 @@ import './handler.scss'
 import { addClass, createElement, hasClass, removeClass } from "../../plugin/utils/utils"
 
 const className = {
-	handlerContainer: 'handler__container',
-	handler: 'handler'
+	handler: 'handler',
+	activeHandler: 'handler_active',
+	disabledHandler: 'handler_disabled'
 }
 
-const createHandler = (): HTMLElement => {
-	const container = createElement({className: className.handlerContainer});
-	container.append(createElement({className: className.handler}));
-	return container;
+const createHandler = (bindElement: HTMLElement, sliderNumber: number): HTMLElement => {
+	const handler = createElement({className: className.handler, attrs: {'slider-number':`${sliderNumber}`}});
+	bindElement.append(handler);
+	return handler;
 }
 
 const moveHandlerTo = (handler: HTMLElement, percent: number):void => {
@@ -17,19 +18,19 @@ const moveHandlerTo = (handler: HTMLElement, percent: number):void => {
 }
 
 const switchHandlerToActive = (handler: HTMLElement): void => {
-	addClass(handler, 'handler_active');
+	addClass(handler, className.activeHandler);
 }
 
 const switchHandlerToDisabled = (handler: HTMLElement): void => {
-	if (hasClass(handler, 'handler_active')){
-		removeClass(handler, 'handler_active')
+	if (hasClass(handler, className.activeHandler)){
+		removeClass(handler, className.activeHandler)
 	}
-	addClass(handler, 'handler_disabled')
+	addClass(handler, className.disabledHandler)
 }
 
 
 const isHandlerDisabled = (handler: HTMLElement): boolean => {
-	if (hasClass(handler, 'handler_disabled')){
+	if (hasClass(handler, className.disabledHandler)){
 		return true;
 	}else {
 		return false;

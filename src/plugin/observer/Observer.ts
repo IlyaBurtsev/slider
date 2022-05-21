@@ -20,7 +20,7 @@ class Observer {
   public removeAllEvents(): void {
 		this.events.clear();
 	}
-  public trigger(eventName: string, ...args: Array<Object>) {
+  public trigger(eventName: string, ...args: Array<Object>): void {
 		if (this.events.size === 0) return;
 		if (!this.events.get(eventName)) return;
 

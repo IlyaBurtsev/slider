@@ -3,4 +3,9 @@
 	height: 100%;
 	display: flex;
 	border: 1px solid darkgreen;
+	&__handler-container {
+		height: 300%;
+		aspect-ratio: 1;
+		position: relative;
+	}
 }

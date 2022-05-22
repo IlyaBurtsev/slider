@@ -28,6 +28,7 @@ class Slider extends Observer {
     this.updateOptions(newOptions)
     this.viewConnector = viewConnector
 
+
     this.init()
   }
 
@@ -68,25 +69,25 @@ class Slider extends Observer {
   private createHandlers(): void {
     if (!this.options.isDraggableRange) {
       this.handlers.push(
-        new Handler(
-          this.viewConnector.getHandlerContainer(this.slider),
-          1,
-          this.actions,
-          this.viewConnector,
-          this.newOnMoveTrigger
-        )
+        new Handler(this.viewConnector.getHandlerContainer(this.slider), {
+          id: 1,
+          actions: this.actions,
+          viewConnector: this.viewConnector,
+          orientation: this.options.orientation,
+					trigger: this.newOnMoveTrigger,
+        })
       )
     } else {
       const number = this.options.numberOfDraggableRanges * 2
       for (let i = 1; i <= number; i++) {
         this.handlers.push(
-          new Handler(
-            this.viewConnector.getHandlerContainer(this.slider),
-            i,
-            this.actions,
-            this.viewConnector,
-            this.newOnMoveTrigger
-          )
+          new Handler(this.viewConnector.getHandlerContainer(this.slider), {
+            id: i,
+            actions: this.actions,
+            viewConnector: this.viewConnector,
+            orientation: this.options.orientation,
+						trigger: this.newOnMoveTrigger,
+          })
         )
       }
     }
@@ -103,18 +104,18 @@ class Slider extends Observer {
       ? {
           start: 'pointerdown',
           move: 'pointermove',
-          end: 'pointerup pointerout',
+          end: 'pointerup',
         }
       : (window.navigator as any).msPointerEnabled
       ? {
           start: 'MSPointerDown',
           move: 'MSPointerMove',
-          end: 'MSPointerUp MSPointerOut',
+          end: 'MSPointerUp',
         }
       : {
           start: 'mousedown touchstart',
           move: 'mousemove touchmove',
-          end: 'mouseup touchend mouseout',
+          end: 'mouseup touchend',
         }
   }
 }

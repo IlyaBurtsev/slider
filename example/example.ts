@@ -10,5 +10,5 @@ import { connector } from '../src/components/connector';
 
 const sliderContainer = getElement('.slider');
 new Slider(sliderContainer, connector, {
-	isDraggableRange: true
+
 })

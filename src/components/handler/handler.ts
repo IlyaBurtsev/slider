@@ -7,15 +7,23 @@ const className = {
 	disabledHandler: 'handler_disabled'
 }
 
-const createHandler = (bindElement: HTMLElement, sliderNumber: number): HTMLElement => {
-	const handler = createElement({className: className.handler, attrs: {'slider-number':`${sliderNumber}`}});
+const attribute: DataStringObject = {
+	handlerNumber: 'handler-number'
+}
+
+const createHandler = (bindElement: HTMLElement, handlerNumber: number): HTMLElement => {
+	const handler = createElement({className: className.handler, attrs: {'handler-number':`${handlerNumber}`}});
 	bindElement.append(handler);
 	return handler;
 }
 
-const moveHandlerTo = (handler: HTMLElement, percent: number):void => {
-	handler.style.transform = `translate ${percent}%`
+const getHandlerNumber = (handler: HTMLElement):number =>{
+	const number = handler.getAttribute(attribute.hadlerNumber);
+	if (typeof number === 'number'){
+		return number;
+	}else return 0
 }
+
 
 const switchHandlerToActive = (handler: HTMLElement): void => {
 	addClass(handler, className.activeHandler);
@@ -37,4 +45,4 @@ const isHandlerDisabled = (handler: HTMLElement): boolean => {
 	}
 }
 
-export {createHandler, moveHandlerTo, switchHandlerToActive, switchHandlerToDisabled, isHandlerDisabled}
+export {createHandler, switchHandlerToActive, switchHandlerToDisabled, isHandlerDisabled, getHandlerNumber}

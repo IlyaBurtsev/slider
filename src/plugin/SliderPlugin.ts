@@ -1,8 +1,6 @@
-import { createHandler, isHandlerDisabled, switchHandlerToActive } from '../components/handler/handler'
 import { bindEvent, deepMerge, removeEvent } from './utils/utils'
 import { Handler } from './Handler'
 import { Observer } from './observer/Observer'
-import { createSlider, getHandlerContainer } from '../components/slider/slider'
 import { Orientation } from '../models/Orientation'
 
 class Slider extends Observer {
@@ -11,21 +9,24 @@ class Slider extends Observer {
   private handlers: Array<Handler> = []
   private position: number
   private options: SliderOptions
+  private viewConnector: ViewConnector
   private defaultOptions: Options = {
     orientation: Orientation.Horizontal,
-		numberOfDraggableRanges:1
+    numberOfDraggableRanges: 1,
   }
 
   private customEvents = {
     onTouchHandler: 'onTouchHandler',
+    onMoveHandler: 'onMoveHandler',
   }
-  constructor(bindElement: HTMLElement | null, newOptions?: Options) {
+  constructor(bindElement: HTMLElement | null, viewConnector: ViewConnector, newOptions?: Options) {
     super()
     if (!bindElement) {
       return
     }
-    this.slider = createSlider(bindElement);
-		this.updateOptions(newOptions);
+    this.slider = viewConnector.createSlider(bindElement)
+    this.updateOptions(newOptions)
+    this.viewConnector = viewConnector
 
     this.init()
   }
@@ -34,9 +35,12 @@ class Slider extends Observer {
     this.actions = this.prepareEventNames()
     this.position = this.getPosition(this.options.orientation)
     this.createHandlers()
+    this.bindEvents()
   }
 
-  private bindEvents(): void {}
+  private bindEvents(): void {
+    this.on(this.customEvents.onMoveHandler, this.onMoveHandler)
+  }
 
   private getPosition(orientation: number): number {
     const rect = this.slider.getBoundingClientRect()
@@ -47,29 +51,51 @@ class Slider extends Observer {
     }
   }
 
-	private updateOptions (newOptions?: Options):void {
-		let sliderOptions: MergeObject
-		if (newOptions) {
+  private updateOptions(newOptions?: Options): void {
+    let sliderOptions: MergeObject
+    if (newOptions) {
       sliderOptions = deepMerge({}, this.defaultOptions, newOptions)
     } else {
-			sliderOptions = this.defaultOptions;
-		}
-		if (sliderOptions['orientation'] !== undefined) {
-			if (sliderOptions['numberOfDraggableRanges'] !== undefined) {
-				this.options = sliderOptions as SliderOptions
-			}     
-		}
-	}
+      sliderOptions = this.defaultOptions
+    }
+    if (sliderOptions['orientation'] !== undefined) {
+      if (sliderOptions['numberOfDraggableRanges'] !== undefined) {
+        this.options = sliderOptions as SliderOptions
+      }
+    }
+  }
 
   private createHandlers(): void {
     if (!this.options.isDraggableRange) {
-      this.handlers.push(new Handler(getHandlerContainer(this.slider), 1, this.actions))
+      this.handlers.push(
+        new Handler(
+          this.viewConnector.getHandlerContainer(this.slider),
+          1,
+          this.actions,
+          this.viewConnector,
+          this.newOnMoveTrigger
+        )
+      )
     } else {
-			const number = this.options.numberOfDraggableRanges*2
+      const number = this.options.numberOfDraggableRanges * 2
       for (let i = 1; i <= number; i++) {
-        this.handlers.push(new Handler(getHandlerContainer(this.slider), i, this.actions))
+        this.handlers.push(
+          new Handler(
+            this.viewConnector.getHandlerContainer(this.slider),
+            i,
+            this.actions,
+            this.viewConnector,
+            this.newOnMoveTrigger
+          )
+        )
       }
     }
+  }
+
+  private onMoveHandler(hadlerNumber: number, newPosition: number): void {}
+
+  private newOnMoveTrigger = (handlerNumber: number, newPosition: number): void => {
+    this.trigger(this.customEvents.onMoveHandler, handlerNumber, newPosition)
   }
 
   private prepareEventNames(): Actions {

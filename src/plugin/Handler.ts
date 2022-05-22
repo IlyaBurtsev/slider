@@ -1,17 +1,19 @@
-import { createHandler, isHandlerDisabled, switchHandlerToActive } from '../components/handler/handler'
+
 import { bindEvent, removeEvent } from './utils/utils'
 
 class Handler {
   private element: HTMLElement
 	private documentElement: HTMLElement
   private actions: Actions
-  private position: number = 0
-  private onTouchHandlerTrigger: Function
+  private position: number = 0;
+	private viewConnector: ViewConnector;
+  private trigger: Function
 
-  constructor(bindElement: HTMLElement, number: number, actions: Actions, onTouchHandlerTrigger?: Function) {
-		this.element = createHandler(bindElement, number);
+  constructor(bindElement: HTMLElement, number: number, actions: Actions, viewConnector: ViewConnector, trigger?: Function) {
+		this.element = viewConnector.createHandler(bindElement, number);
     this.actions = actions
 		this.documentElement = this.element.ownerDocument.documentElement;
+		this.viewConnector = viewConnector;
   }
 
 	private init():void {
@@ -35,12 +37,8 @@ class Handler {
 
   private onTouchHandler(event: BrowserEvent): void {
     const handler = event.target as HTMLElement
-    if (isHandlerDisabled(handler)) {
-      return
-    }
-    switchHandlerToActive(handler);
     event.stopPropagation();
-		this.onTouchHandlerTrigger(handler)
+		this.trigger(handler)
     bindEvent(this.actions.move.split(' '), this.onMoveHandler, this.documentElement);
     bindEvent(this.actions.end.split(' '), this.onStopHandler, this.documentElement);
   }
@@ -53,6 +51,9 @@ class Handler {
     removeEvent(this.actions.move.split(' '), this.onMoveHandler, this.documentElement)
     removeEvent(this.actions.end.split(' '), this.onStopHandler, this.documentElement)
   }
+	private moveHandlerTo = (handler: HTMLElement, translateX: number, translateY: number):void => {
+		handler.style.transform = `translate ${translateX}%`
+	}
 }
 
 export { Handler }

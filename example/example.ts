@@ -6,8 +6,9 @@ import { createSlider } from '../src/components/slider/slider';
 import { createHandler } from '../src/components/handler/handler'
 import { Slider } from '../src/plugin/SliderPlugin';
 import { Orientation } from '../src/models/Orientation';
+import { connector } from '../src/components/connector';
 
 const sliderContainer = getElement('.slider');
-new Slider(sliderContainer, {
+new Slider(sliderContainer, connector, {
 	isDraggableRange: true
 })

@@ -1,1 +1,1 @@
-type BrowserEvent = MouseEvent &  TouchEvent;
+type BrowserEvent = MouseEvent & TouchEvent;

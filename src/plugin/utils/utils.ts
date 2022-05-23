@@ -1,50 +1,32 @@
-
-
-export function deepMerge(target: MergeObject, ...objects: Array<MergeObject>): MergeObject {
-  objects
-    .filter((o) => o)
-    .forEach((obj) => {
+function deepMerge(target: SliderOptions, ...objects: Array<DataObject<UserOptionsType>>): SliderOptions {
+  objects.filter((o) => o).forEach((obj) => {
       for (let [key, value] of Object.entries(obj)) {
-        let arrayOrObject = value !== undefined ? value.toString() === ('[object Object]' || '[object Array]') : false
-
-        if (arrayOrObject) {
-          let targetType = target[key] !== undefined ? target[key].toString() : undefined,
-            sourceType = value.toString(),
-            initialValue = Array.isArray(value) ? [] : {}
-
-          // If target and source types are different, e.g. we try to merge number with object,
-          // then take source type
-          target[key] = target[key] ? (targetType !== sourceType ? initialValue : target[key]) : initialValue
-
-          deepMerge(target[key] as MergeObject, value as MergeObject)
-        } else {
-          target[key] = value
-        }
+				if(value !== undefined) {
+					target[key] = value
+				}       
       }
     })
-		
   return target
 }
 
-export function getElement(el: string, context = document.documentElement): HTMLElement | null {
+function getElement(el: string, context = document.documentElement): HTMLElement | null {
   return context['querySelector'](el)
 }
 
-export function getElements(el: string, context = document.documentElement): NodeList {
+function getElements(el: string, context = document.documentElement): NodeList {
   return context['querySelectorAll'](el)
 }
 
-type attributes = {
-  [id: string]: string
-}
 type createParametrs = {
   tagName?: string
   className?: string
   innerHtml?: string
   id?: string
-  attrs?: attributes
+  attrs?: DataObject<string>
 }
-export function createElement(options: createParametrs): HTMLElement {
+
+
+function createElement(options: createParametrs): HTMLElement {
   const { tagName = 'div', className, innerHtml, id, attrs } = options
   let element = document.createElement(tagName)
   if (className) element.classList.add(...className.split(' '))
@@ -63,7 +45,7 @@ export function createElement(options: createParametrs): HTMLElement {
   return element
 }
 
-export function toggleClass(el: HTMLElement, ...classes: Array<string>): void {
+function toggleClass(el: HTMLElement, ...classes: Array<string>): void {
   for (let className in classes) {
     if (!el.classList.contains(className)) {
       el.classList.add(className)
@@ -73,7 +55,7 @@ export function toggleClass(el: HTMLElement, ...classes: Array<string>): void {
   }
 }
 
-export function hasClass(el: HTMLElement, ...classes: Array<string>): boolean {
+function hasClass(el: HTMLElement, ...classes: Array<string>): boolean {
   let result: boolean = false
   for (let className in classes) {
     if (el.classList.contains(className)) {
@@ -85,7 +67,7 @@ export function hasClass(el: HTMLElement, ...classes: Array<string>): boolean {
   return result
 }
 
-export function addClass(el: Array<HTMLElement> | HTMLElement, ...classNames: Array<string>): void {
+function addClass(el: Array<HTMLElement> | HTMLElement, ...classNames: Array<string>): void {
   if (el instanceof Array) {
     el.forEach((node) => {
       node.classList.add(...classNames)
@@ -95,7 +77,7 @@ export function addClass(el: Array<HTMLElement> | HTMLElement, ...classNames: Ar
   }
 }
 
-export function removeClass(el: Array<HTMLElement> | HTMLElement, ...classNames: Array<string>): void {
+function removeClass(el: Array<HTMLElement> | HTMLElement, ...classNames: Array<string>): void {
   if (el instanceof Array) {
     el.forEach((node) => {
       node.classList.remove(...classNames)
@@ -104,8 +86,6 @@ export function removeClass(el: Array<HTMLElement> | HTMLElement, ...classNames:
     el.classList.remove(...classNames)
   }
 }
-
-type EventListener = (event: BrowserEvent) => false | undefined | void
 
 function bindEvent(
   events: Array<string>,
@@ -118,14 +98,8 @@ function bindEvent(
   )
 }
 
-function removeEvent(
-  events: Array<string>,
-  listener: EventListener,
-  element: HTMLElement,
-): void {
-  events.forEach((eventName) =>
-    element.removeEventListener(eventName, listener)
-  )
+function removeEvent(events: Array<string>, listener: EventListener, element: HTMLElement): void {
+  events.forEach((eventName) => element.removeEventListener(eventName, listener))
 }
 
-export { bindEvent, removeEvent}
+export {deepMerge, getElement, getElements, createElement, toggleClass, addClass, hasClass, removeClass, bindEvent, removeEvent }

@@ -8,18 +8,22 @@ class Slider extends Observer {
   private actions: Actions
   private handlers: Array<Handler> = []
   private position: number
+	private startPosition: number
+	private endPosition: number
   private options: SliderOptions
   private viewConnector: ViewConnector
-  private defaultOptions: Options = {
+  private defaultOptions: SliderOptions = {
     orientation: Orientation.Horizontal,
     numberOfDraggableRanges: 1,
+		minValue: 0,
+		maxValue: 100,
+		step: 1
   }
-
   private customEvents = {
     onTouchHandler: 'onTouchHandler',
     onMoveHandler: 'onMoveHandler',
   }
-  constructor(bindElement: HTMLElement | null, viewConnector: ViewConnector, newOptions?: Options) {
+  constructor(bindElement: HTMLElement | null, viewConnector: ViewConnector, newOptions?: UserOptions) {
     super()
     if (!bindElement) {
       return
@@ -28,7 +32,6 @@ class Slider extends Observer {
     this.updateOptions(newOptions)
     this.viewConnector = viewConnector
 
-
     this.init()
   }
 
@@ -36,6 +39,7 @@ class Slider extends Observer {
     this.actions = this.prepareEventNames()
     this.position = this.getPosition(this.options.orientation)
     this.createHandlers()
+		this.startPosition = this.handlers[0].getStartPosition();
     this.bindEvents()
   }
 
@@ -52,17 +56,11 @@ class Slider extends Observer {
     }
   }
 
-  private updateOptions(newOptions?: Options): void {
-    let sliderOptions: MergeObject
+  private updateOptions(newOptions?: UserOptions): void {
     if (newOptions) {
-      sliderOptions = deepMerge({}, this.defaultOptions, newOptions)
+      this.options = deepMerge(this.defaultOptions, newOptions)
     } else {
-      sliderOptions = this.defaultOptions
-    }
-    if (sliderOptions['orientation'] !== undefined) {
-      if (sliderOptions['numberOfDraggableRanges'] !== undefined) {
-        this.options = sliderOptions as SliderOptions
-      }
+      this.options = this.defaultOptions
     }
   }
 
@@ -74,7 +72,8 @@ class Slider extends Observer {
           actions: this.actions,
           viewConnector: this.viewConnector,
           orientation: this.options.orientation,
-					trigger: this.newOnMoveTrigger,
+          trigger: this.newTrigger,
+          eventsForTrigger: this.customEvents,
         })
       )
     } else {
@@ -86,17 +85,30 @@ class Slider extends Observer {
             actions: this.actions,
             viewConnector: this.viewConnector,
             orientation: this.options.orientation,
-						trigger: this.newOnMoveTrigger,
+            trigger: this.newTrigger,
+            eventsForTrigger: this.customEvents,
           })
         )
       }
     }
   }
 
-  private onMoveHandler(hadlerNumber: number, newPosition: number): void {}
+  private onMoveHandler(handlerNumber: number, newPosition: number): void {
+		if(handlerNumber === 0) {
+			return;
+		}
+		
+	}
 
-  private newOnMoveTrigger = (handlerNumber: number, newPosition: number): void => {
-    this.trigger(this.customEvents.onMoveHandler, handlerNumber, newPosition)
+	private getEndPosition(): number {
+		if (this.options.orientation === Orientation.Horizontal) {
+			return this.startPosition + this.slider.getBoundingClientRect().width
+		}else {
+			return this.startPosition + this.slider.getBoundingClientRect().height
+		}
+	}
+  private newTrigger = (event: string, ...args: Array<Object>): void => {
+    this.trigger(event, ...args)
   }
 
   private prepareEventNames(): Actions {

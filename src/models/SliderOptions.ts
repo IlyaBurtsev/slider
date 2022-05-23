@@ -10,4 +10,7 @@ interface UserOptions extends DataObject<UserOptionsType> {
 interface SliderOptions extends DataObject<OptionsType> {
   orientation: number
   numberOfDraggableRanges: number
+	minValue: number
+	maxValue: number
+	step: number
 }

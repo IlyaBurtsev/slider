@@ -1,9 +1,11 @@
 function deepMerge(target: SliderOptions, ...objects: Array<DataObject<UserOptionsType>>): SliderOptions {
-  objects.filter((o) => o).forEach((obj) => {
+  objects
+    .filter((o) => o)
+    .forEach((obj) => {
       for (let [key, value] of Object.entries(obj)) {
-				if(value !== undefined) {
-					target[key] = value
-				}       
+        if (value !== undefined) {
+          target[key] = value
+        }
       }
     })
   return target
@@ -24,7 +26,6 @@ type createParametrs = {
   id?: string
   attrs?: DataObject<string>
 }
-
 
 function createElement(options: createParametrs): HTMLElement {
   const { tagName = 'div', className, innerHtml, id, attrs } = options
@@ -89,17 +90,35 @@ function removeClass(el: Array<HTMLElement> | HTMLElement, ...classNames: Array<
 
 function bindEvent(
   events: Array<string>,
-  listener: EventListener,
+  listener: Function,
   element: HTMLElement,
+  handler?: HTMLElement,
   supportPassive?: boolean
 ): void {
+  const eListener = (e: BrowserEvent): void => {
+    listener(e, handler)
+  }
   events.forEach((eventName) =>
-    element.addEventListener(eventName, listener, supportPassive ? { passive: true } : false)
+    element.addEventListener(eventName, eListener, supportPassive ? { passive: true } : false)
   )
 }
 
-function removeEvent(events: Array<string>, listener: EventListener, element: HTMLElement): void {
-  events.forEach((eventName) => element.removeEventListener(eventName, listener))
+function removeEvent(events: Array<string>, listener: Function, element: HTMLElement, handler?: HTMLElement): void {
+	const eListener = (e: BrowserEvent): void => {
+    listener(e, handler)
+  }
+  events.forEach((eventName) => element.removeEventListener(eventName, eListener))
 }
 
-export {deepMerge, getElement, getElements, createElement, toggleClass, addClass, hasClass, removeClass, bindEvent, removeEvent }
+export {
+  deepMerge,
+  getElement,
+  getElements,
+  createElement,
+  toggleClass,
+  addClass,
+  hasClass,
+  removeClass,
+  bindEvent,
+  removeEvent,
+}

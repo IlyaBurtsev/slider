@@ -38,11 +38,11 @@ class Handler {
 			return this.handler.getBoundingClientRect().top
 		}
 	}
-  protected setPosition(position: number): void {
+  public setPosition(position: number): void {
     this.position = position
   }
 
-  protected getPosition(): number {
+  public getPosition(): number {
     return this.position
   }
 
@@ -63,8 +63,8 @@ class Handler {
     }
 		this.viewConnector.getHandlerId(handler)
     this.trigger(this.eventsForTrigger.onTouchHandler, this.viewConnector.getHandlerId(handler))
-    bindEvent(this.actions.move.split(' '), (e) => this.onMoveHandler(e as BrowserEvent, handler), this.documentElement)
-    bindEvent(this.actions.end.split(' '), this.onStopHandler, this.documentElement)
+    bindEvent(this.actions.move.split(' '), this.onMoveHandler, this.documentElement, handler)
+    bindEvent(this.actions.end.split(' '), this.onStopHandler, this.documentElement, handler)
   }
 
   private getUsersHandlerPosition = (event: BrowserEvent): number | boolean => {
@@ -93,11 +93,10 @@ class Handler {
 		this.trigger(this.eventsForTrigger.onMoveHandler, this.viewConnector.getHandlerId(handler), userPosition, handler)
   }
 
-  private onStopHandler = (event: BrowserEvent): void => {
-    const handler = event.target as HTMLElement
+  private onStopHandler = (event: BrowserEvent, handler: HTMLElement): void => {
 
-    removeEvent(this.actions.move.split(' '), (e) => this.onMoveHandler(e as BrowserEvent, handler), this.documentElement)
-    removeEvent(this.actions.end.split(' '), this.onStopHandler, this.documentElement)
+    removeEvent(this.actions.move.split(' '), this.onMoveHandler, this.documentElement, handler)
+    removeEvent(this.actions.end.split(' '), this.onStopHandler, this.documentElement, handler)
   }
   public moveHandlerToPosition = (newPosition: number): void => {
     if (this.orientation === Orientation.Horizontal) {

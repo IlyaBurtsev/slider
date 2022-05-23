@@ -10,6 +10,7 @@ class Slider extends Observer {
   private position: number
 	private startPosition: number
 	private endPosition: number
+	private stepsLength: number
   private options: SliderOptions
   private viewConnector: ViewConnector
   private defaultOptions: SliderOptions = {
@@ -40,6 +41,7 @@ class Slider extends Observer {
     this.position = this.getPosition(this.options.orientation)
     this.createHandlers()
 		this.startPosition = this.handlers[0].getStartPosition();
+		this.setEndPositionAndStepLength();
     this.bindEvents()
   }
 
@@ -68,7 +70,7 @@ class Slider extends Observer {
     if (!this.options.isDraggableRange) {
       this.handlers.push(
         new Handler(this.viewConnector.getHandlerContainer(this.slider), {
-          id: 1,
+          id: 0,
           actions: this.actions,
           viewConnector: this.viewConnector,
           orientation: this.options.orientation,
@@ -78,7 +80,7 @@ class Slider extends Observer {
       )
     } else {
       const number = this.options.numberOfDraggableRanges * 2
-      for (let i = 1; i <= number; i++) {
+      for (let i = 0; i < number; i++) {
         this.handlers.push(
           new Handler(this.viewConnector.getHandlerContainer(this.slider), {
             id: i,
@@ -93,20 +95,31 @@ class Slider extends Observer {
     }
   }
 
-  private onMoveHandler(handlerNumber: number, newPosition: number): void {
-		if(handlerNumber === 0) {
+  private onMoveHandler = (handlerNumber: number, newPosition: number): void =>{
+		if(handlerNumber === -1) {
 			return;
 		}
-		
+		const handler = this.handlers[handlerNumber];
+		const oldPosition = handler.getPosition()
+		handler.moveHandlerToPosition(Math.floor((newPosition-oldPosition)/this.stepsLength));	
+	}
+	private checkLimits = (position: number): number => {
+		return 0
 	}
 
-	private getEndPosition(): number {
+	private setEndPositionAndStepLength(): void {
+		const width = this.slider.getBoundingClientRect().width; 
+		const heght = this.slider.getBoundingClientRect().height
+		const valuesRange = (this.options.maxValue - this.options.minValue);
 		if (this.options.orientation === Orientation.Horizontal) {
-			return this.startPosition + this.slider.getBoundingClientRect().width
+			this.endPosition = this.startPosition + width;
+			this.stepsLength = width/valuesRange;
 		}else {
-			return this.startPosition + this.slider.getBoundingClientRect().height
+			this.endPosition = this.startPosition + heght;
+			this.stepsLength = heght/valuesRange;
 		}
 	}
+
   private newTrigger = (event: string, ...args: Array<Object>): void => {
     this.trigger(event, ...args)
   }

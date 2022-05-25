@@ -6,6 +6,7 @@ class Handler {
   private documentElement: HTMLElement
   private actions: Actions
   private currentPosition: number =0
+	private currentValue: number = 0
 	private translate: number
 	private length: number
   private viewConnector: ViewConnector
@@ -60,31 +61,23 @@ class Handler {
 		const cs = window.getComputedStyle(this.handler, null);
 		if (orientation === Orientation.Horizontal) {
 			this.translate = Number(cs.left.match(/[-\d][0-9]+/)),
+			this.currentPosition = Number(cs.left.match(/[-\d][0-9]+/)),
 			this.length = Number(cs.width.match(/[-\d][0-9]+/))
 		}else {
 			this.translate = Number(cs.top.match(/[-\d][0-9]+/)),
+			this.currentPosition = Number(cs.top.match(/[-\d][0-9]+/)),
 			this.length = Number(cs.height.match(/[-\d][0-9]+/))
 		}
 	}
 
   private init(): void {
     this.bindEvents();
-		this.initCurrentPosition(this.orientation);
 		this.setHandlerParametrs(this.orientation);
   }
 
   private bindEvents(): void {
     bindEvent(this.actions.start.split(' '), this.onTouchHandler, this.handler)
   }
-
-	private initCurrentPosition(orientation: number): void {
-		const rect = this.handler.getBoundingClientRect();
-		if (orientation === Orientation.Horizontal) {
-			this.currentPosition = rect.left;
-		} else {
-			this.currentPosition = rect.top;
-		}
-	}
 
   private onTouchHandler = (event: BrowserEvent): void => {
     event.stopPropagation()

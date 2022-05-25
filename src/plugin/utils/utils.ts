@@ -90,24 +90,17 @@ function removeClass(el: Array<HTMLElement> | HTMLElement, ...classNames: Array<
 
 function bindEvent(
   events: Array<string>,
-  listener: Function,
+  listener: EventListener,
   element: HTMLElement,
-  handler?: HTMLElement,
   supportPassive?: boolean
 ): void {
-  const eListener = (e: BrowserEvent): void => {
-    listener(e, handler)
-  }
   events.forEach((eventName) =>
-    element.addEventListener(eventName, eListener, supportPassive ? { passive: true } : false)
+    element.addEventListener(eventName, listener, supportPassive ? { passive: true } : false)
   )
 }
 
-function removeEvent(events: Array<string>, listener: Function, element: HTMLElement, handler?: HTMLElement): void {
-	const eListener = (e: BrowserEvent): void => {
-    listener(e, handler)
-  }
-  events.forEach((eventName) => element.removeEventListener(eventName, eListener))
+function removeEvent(events: Array<string>, listener: EventListener, element: HTMLElement): void {
+  events.forEach((eventName) => element.removeEventListener(eventName, listener))
 }
 
 export {

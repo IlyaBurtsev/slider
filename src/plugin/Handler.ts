@@ -5,7 +5,9 @@ class Handler {
   private handler: HTMLElement
   private documentElement: HTMLElement
   private actions: Actions
-  private position: number = 0
+  private currentPosition: number =0
+	private translate: number
+	private length: number
   private viewConnector: ViewConnector
   private id: number
   private orientation: number
@@ -26,45 +28,74 @@ class Handler {
     this.init()
   }
 
-  
-
   public getHandler(): HTMLElement {
     return this.handler
   }
-	public getStartPosition(): number {
-		if (this.orientation === Orientation.Horizontal) {
-			return this.handler.getBoundingClientRect().left
+
+  public getId(): number {
+    return this.id
+  }
+
+	public setCurrentPosition(position: number): void {
+		this.currentPosition = position;
+	}
+
+	public getCurrentPosition(): number {
+		return this.currentPosition;
+	}
+
+	public getHandlerTranslate(): number {
+		return this.translate
+	}
+
+	public setHandlerTranslate (translate: number): void {
+		this.translate = translate;
+	}
+
+	public getHandlerLength (): number {
+		return this.length;
+	}
+
+	private setHandlerParametrs(orientation: number): void {
+		const cs = window.getComputedStyle(this.handler, null);
+		if (orientation === Orientation.Horizontal) {
+			this.translate = Number(cs.left.match(/[-\d][0-9]+/)),
+			this.length = Number(cs.width.match(/[-\d][0-9]+/))
 		}else {
-			return this.handler.getBoundingClientRect().top
+			this.translate = Number(cs.top.match(/[-\d][0-9]+/)),
+			this.length = Number(cs.height.match(/[-\d][0-9]+/))
 		}
 	}
-  public setPosition(position: number): void {
-    this.position = position
-  }
 
-  public getPosition(): number {
-    return this.position
-  }
-
-	private init(): void {
-    this.bindEvents()
+  private init(): void {
+    this.bindEvents();
+		this.initCurrentPosition(this.orientation);
+		this.setHandlerParametrs(this.orientation);
   }
 
   private bindEvents(): void {
     bindEvent(this.actions.start.split(' '), this.onTouchHandler, this.handler)
   }
 
+	private initCurrentPosition(orientation: number): void {
+		const rect = this.handler.getBoundingClientRect();
+		if (orientation === Orientation.Horizontal) {
+			this.currentPosition = rect.left;
+		} else {
+			this.currentPosition = rect.top;
+		}
+	}
+
   private onTouchHandler = (event: BrowserEvent): void => {
-    const handler = event.target as HTMLElement
     event.stopPropagation()
 
     if (!this.checkTouch(event)) {
       return
     }
-		this.viewConnector.getHandlerId(handler)
-    this.trigger(this.eventsForTrigger.onTouchHandler, this.viewConnector.getHandlerId(handler))
-    bindEvent(this.actions.move.split(' '), this.onMoveHandler, this.documentElement, handler)
-    bindEvent(this.actions.end.split(' '), this.onStopHandler, this.documentElement, handler)
+
+    this.trigger(this.eventsForTrigger.onTouchHandler, this.getId())
+    bindEvent(this.actions.move.split(' '), this.onMoveHandler, this.documentElement)
+    bindEvent(this.actions.end.split(' '), this.onStopHandler, this.documentElement)
   }
 
   private getUsersHandlerPosition = (event: BrowserEvent): number | boolean => {
@@ -88,15 +119,15 @@ class Handler {
     }
   }
 
-  private onMoveHandler = (event: BrowserEvent, handler: HTMLElement): void => {
+  private onMoveHandler = (event: BrowserEvent): void => {
     const userPosition = this.getUsersHandlerPosition(event)
-		this.trigger(this.eventsForTrigger.onMoveHandler, this.viewConnector.getHandlerId(handler), userPosition, handler)
+    this.trigger(this.eventsForTrigger.onMoveHandler, this.getId(), userPosition)
   }
 
-  private onStopHandler = (event: BrowserEvent, handler: HTMLElement): void => {
-
-    removeEvent(this.actions.move.split(' '), this.onMoveHandler, this.documentElement, handler)
-    removeEvent(this.actions.end.split(' '), this.onStopHandler, this.documentElement, handler)
+  private onStopHandler = (event: BrowserEvent): void => {
+    removeEvent(this.actions.move.split(' '), this.onMoveHandler, this.documentElement)
+    removeEvent(this.actions.end.split(' '), this.onStopHandler, this.documentElement)
+    this.trigger(this.eventsForTrigger.onMoveHandler, this.getId())
   }
   public moveHandlerToPosition = (newPosition: number): void => {
     if (this.orientation === Orientation.Horizontal) {

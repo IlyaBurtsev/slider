@@ -7,4 +7,5 @@ interface HandlerOptions {
   eventsForTrigger: DataObject<string>
 
 	numberOfHandlers: number
+	sliderLength: number
 }

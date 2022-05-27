@@ -1,31 +1,19 @@
 import './slider.scss'
-import { createElement, getElement } from "../../plugin/utils/utils"
+import { createElement} from "../../plugin/utils/utils"
+import { createHandler } from '../handler/handler'
 
-const className = {
-	slider: 'slider-plugin',
-	handlerContainer: 'slider-plugin__handler-container js-slider-plugin__handler-container',	
-}
+const createSlider = (bindElement: HTMLElement): Array<HTMLElement> => {
+	const className = {
+		slider: 'slider-plugin',
+		handlerContainer: 'slider-plugin__handler-container',	
+	}
 
-const selector = {
-	handlerContainer: '.js-slider-plugin__handler-container',
-}
-
-const createSlider = (bindElement: HTMLElement): HTMLElement => {
 	const slider = createElement({className: className.slider});
 	const handlerContainer = createElement({className: className.handlerContainer});
+	const handler = createHandler(handlerContainer);
 	slider.append(handlerContainer);
 	bindElement.append(slider);
-	return slider;
+	return [slider, handler];
 }
 
-const getHandlerContainer = (slider: HTMLElement):HTMLElement => {
-	const container = getElement(selector.handlerContainer, slider);
-	if(container) {
-		return container;
-	} else {
-		return slider;
-	}
-	
-}
-
-export {createSlider, getHandlerContainer}
+export {createSlider}

@@ -103,6 +103,8 @@ function removeEvent(events: Array<string>, listener: EventListener, element: HT
   events.forEach((eventName) => element.removeEventListener(eventName, listener))
 }
 
+
+
 export {
   deepMerge,
   getElement,

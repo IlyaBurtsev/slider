@@ -17,7 +17,7 @@ class HandlerController {
 
   constructor(bindElement: HTMLElement, options: HandlerOptions) {
     const { id, actions, viewConnector, orientation, trigger, eventsForTrigger } = options
-    this.handler = viewConnector.createHandler(bindElement, id)
+    // this.handler = viewConnector.createHandler(bindElement, id)
     this.id = id
     this.actions = actions
     this.documentElement = this.handler.ownerDocument.documentElement

@@ -3,13 +3,13 @@ import '../src/components/slider/slider'
 
 import { getElement } from '../src/plugin/utils/utils'
 import { Plugin } from '../src/plugin/SliderPlugin';
-import { Orientation } from '../src/models/Orientation';
-import { connector } from '../src/components/connector';
-import { createSlider } from '../src/components/slider/slider';
+import { getViewConnector } from '../src/components/connector';
+
 
 const sliderContainer = getElement('.slider');
-new Plugin(sliderContainer, connector, {
+if(sliderContainer) {
+	new Plugin(sliderContainer, getViewConnector(sliderContainer))
+}
 
-})
 
-createSlider(sliderContainer);
+

@@ -32,7 +32,7 @@ class Plugin extends Observer {
     if (!bindElement) {
       return
     }
-    this.slider = viewConnector.getSlider(bindElement)
+    // this.slider = viewConnector.getSlider(bindElement)
     this.updateOptions(newOptions)
     this.viewConnector = viewConnector
 
@@ -42,7 +42,7 @@ class Plugin extends Observer {
   private init(): void {
     this.actions = this.prepareEventNames()
     this.setSliderPosition(this.options.orientation)
-    this.createHandlers()
+    // this.createHandlers()
     this.handlerStartTranslate = this.handlers[0].getHandlerTranslate()
     this.setEndPositionAndStepLength()
     this.bindEvents()
@@ -69,36 +69,36 @@ class Plugin extends Observer {
     }
   }
 
-  private createHandlers(): void {
-    if (!this.options.isDraggableRange) {
-      this.handlers.push(
-        new Handler(this.viewConnector.getHandlerContainer(this.slider), {
-          id: 0,
-          actions: this.actions,
-          viewConnector: this.viewConnector,
-          orientation: this.options.orientation,
-          trigger: this.newTrigger,
-          eventsForTrigger: this.customEvents,
-          numberOfHandlers: 2,
-        })
-      )
-    } else {
-      const number = this.options.numberOfDraggableRanges * 2
-      for (let i = 0; i < number; i++) {
-        this.handlers.push(
-          new Handler(this.viewConnector.getHandlerContainer(this.slider), {
-            id: i,
-            actions: this.actions,
-            viewConnector: this.viewConnector,
-            orientation: this.options.orientation,
-            trigger: this.newTrigger,
-            eventsForTrigger: this.customEvents,
-            numberOfHandlers: 2,
-          })
-        )
-      }
-    }
-  }
+  // private createHandlers(): void {
+  //   if (!this.options.isDraggableRange) {
+  //     this.handlers.push(
+  //       new Handler(this.viewConnector.getHandlerContainer(this.slider), {
+  //         id: 0,
+  //         actions: this.actions,
+  //         viewConnector: this.viewConnector,
+  //         orientation: this.options.orientation,
+  //         trigger: this.newTrigger,
+  //         eventsForTrigger: this.customEvents,
+  //         numberOfHandlers: 2,
+  //       })
+  //     )
+  //   } else {
+  //     const number = this.options.numberOfDraggableRanges * 2
+  //     for (let i = 0; i < number; i++) {
+  //       this.handlers.push(
+  //         new Handler(this.viewConnector.getHandlerContainer(this.slider), {
+  //           id: i,
+  //           actions: this.actions,
+  //           viewConnector: this.viewConnector,
+  //           orientation: this.options.orientation,
+  //           trigger: this.newTrigger,
+  //           eventsForTrigger: this.customEvents,
+  //           numberOfHandlers: 2,
+  //         })
+  //       )
+  //     }
+  //   }
+  // }
 
   private onTouchHandler = (handlerId: number): void => {
     const handler = this.handlers[handlerId]

@@ -1,5 +1,5 @@
 interface ViewConnector {
-  getSlider(): HTMLElement
-  getStartHandlerElement(): HTMLElement
-  getEndHandlerElement?(): HTMLElement
+  slider: HTMLElement
+  startHandlerElement: HTMLElement
+  endHandlerElement?: HTMLElement
 }

@@ -1,10 +1,10 @@
-import { createHandler, getHandlerNumber } from '../components/handler/handler'
-import { createSlider, getHandlerContainer } from './slider/slider'
-const connector: ViewConnector = {
-  createSlider: createSlider,
-  getHandlerContainer: getHandlerContainer,
-  createHandler: createHandler,
-  getHandlerId: getHandlerNumber,
-}
+import { createSlider } from "./slider/slider";
 
-export { connector }
+function getViewConnector (bindElement: HTMLElement): ViewConnector {
+	const elements = createSlider(bindElement);
+	return {
+		slider: elements[0],
+		startHandlerElement: elements[1]
+	}
+}
+export {getViewConnector}

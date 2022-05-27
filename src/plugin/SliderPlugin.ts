@@ -1,22 +1,22 @@
 import { bindEvent, deepMerge, removeEvent } from './utils/utils'
-import { Handler } from './Handler'
+import { Handler } from './HandlerController'
 import { Observer } from './observer/Observer'
 import { Orientation } from '../models/Orientation'
 
-class Slider extends Observer {
+class Plugin extends Observer {
   private slider: HTMLElement
   private actions: Actions
   private handlers: Array<Handler> = []
-	private handlerStartTranslate: number
-	private hahdlerEndTranslate: number
-	private sliderStartPosition: number
+  private handlerStartTranslate: number
+  private hahdlerEndTranslate: number
+  private sliderStartPosition: number
   private sliderEndPosition: number
   private stepsLength: number
   private options: SliderOptions
   private viewConnector: ViewConnector
   private defaultOptions: SliderOptions = {
     orientation: Orientation.Horizontal,
-		isDraggableRange: false,
+    isDraggableRange: false,
     numberOfDraggableRanges: 1,
     minValue: 0,
     maxValue: 100,
@@ -32,7 +32,7 @@ class Slider extends Observer {
     if (!bindElement) {
       return
     }
-    this.slider = viewConnector.createSlider(bindElement)
+    this.slider = viewConnector.getSlider(bindElement)
     this.updateOptions(newOptions)
     this.viewConnector = viewConnector
 
@@ -41,11 +41,11 @@ class Slider extends Observer {
 
   private init(): void {
     this.actions = this.prepareEventNames()
-		this.setSliderPosition(this.options.orientation);
-    this.createHandlers();
-		this.handlerStartTranslate = this.handlers[0].getHandlerTranslate();
-    this.setEndPositionAndStepLength();
-    this.bindEvents();
+    this.setSliderPosition(this.options.orientation)
+    this.createHandlers()
+    this.handlerStartTranslate = this.handlers[0].getHandlerTranslate()
+    this.setEndPositionAndStepLength()
+    this.bindEvents()
   }
 
   private bindEvents(): void {
@@ -55,9 +55,9 @@ class Slider extends Observer {
   private setSliderPosition(orientation: number): void {
     const rect = this.slider.getBoundingClientRect()
     if (orientation === Orientation.Horizontal) {
-      this.sliderStartPosition = rect.left;
+      this.sliderStartPosition = rect.left
     } else {
-      this.sliderStartPosition = rect.top;
+      this.sliderStartPosition = rect.top
     }
   }
 
@@ -79,6 +79,7 @@ class Slider extends Observer {
           orientation: this.options.orientation,
           trigger: this.newTrigger,
           eventsForTrigger: this.customEvents,
+          numberOfHandlers: 2,
         })
       )
     } else {
@@ -92,6 +93,7 @@ class Slider extends Observer {
             orientation: this.options.orientation,
             trigger: this.newTrigger,
             eventsForTrigger: this.customEvents,
+            numberOfHandlers: 2,
           })
         )
       }
@@ -109,12 +111,12 @@ class Slider extends Observer {
       return
     }
     const handler = this.handlers[handlerId]
-		const position = this.getHandlerPosition(newUserPosition, handler);	
+    const position = this.getHandlerPosition(newUserPosition, handler)
 
-		if (position){
-			handler.moveHandlerToPosition(position);	
-			handler.setCurrentPosition(position);
-		}
+    if (position) {
+      handler.moveHandlerToPosition(position)
+      handler.setCurrentPosition(position)
+    }
   }
 
   private onStopMoving = (handlerId: number): void => {
@@ -125,51 +127,50 @@ class Slider extends Observer {
   }
 
   private getHandlerPosition = (newUserposition: number, handler: Handler): number | false => {
-    const calcUserPosition = newUserposition - this.sliderStartPosition;
-		if (isNaN(calcUserPosition)){
-			return false
-		}
-		if (newUserposition <=this.sliderStartPosition) {
-			return this.handlerStartTranslate
-		}
-		if (newUserposition > this.sliderEndPosition) {
-			return this.hahdlerEndTranslate;
-		}
-		
-		if(this.options.isDraggableRange){
+    const calcUserPosition = newUserposition - this.sliderStartPosition
+    if (isNaN(calcUserPosition)) {
+      return false
+    }
+    if (newUserposition <= this.sliderStartPosition) {
+      return this.handlerStartTranslate
+    }
+    if (newUserposition > this.sliderEndPosition) {
+      return this.hahdlerEndTranslate
+    }
 
-		}
-		let step: number =0;
+    if (this.options.isDraggableRange) {
+    }
+    let step: number = 0
 
-		if (handler.getCurrentPosition() <= (calcUserPosition+ this.handlerStartTranslate)) {	
-			step = Math.floor(Math.abs(calcUserPosition)/this.stepsLength);
-		}else  {
-			step =Math.ceil(Math.abs(calcUserPosition)/this.stepsLength);
-		}
-		if (step === 0) {
-			return this.handlerStartTranslate
-		}
+    if (handler.getCurrentPosition() <= calcUserPosition + this.handlerStartTranslate) {
+      step = Math.floor(Math.abs(calcUserPosition) / this.stepsLength)
+    } else {
+      step = Math.ceil(Math.abs(calcUserPosition) / this.stepsLength)
+    }
+    if (step === 0) {
+      return this.handlerStartTranslate
+    }
 
-		if (calcUserPosition<0){
-			return -(step*this.stepsLength + this.handlerStartTranslate)
-		}else {
-			return step*this.stepsLength + this.handlerStartTranslate
-		}
+    if (calcUserPosition < 0) {
+      return -(step * this.stepsLength + this.handlerStartTranslate)
+    } else {
+      return step * this.stepsLength + this.handlerStartTranslate
+    }
   }
 
   private setEndPositionAndStepLength(): void {
-    const width = this.slider.getBoundingClientRect().width;
-    const heght = this.slider.getBoundingClientRect().height;
-    const valuesRange = this.options.maxValue - this.options.minValue;
+    const width = this.slider.getBoundingClientRect().width
+    const heght = this.slider.getBoundingClientRect().height
+    const valuesRange = this.options.maxValue - this.options.minValue
 
     if (this.options.orientation === Orientation.Horizontal) {
-      this.sliderEndPosition =this.sliderStartPosition + width;
-			this.hahdlerEndTranslate = this.handlerStartTranslate + width;
-      this.stepsLength = Number(((width / valuesRange) * this.options.step).toFixed(5));
+      this.sliderEndPosition = this.sliderStartPosition + width
+      this.hahdlerEndTranslate = this.handlerStartTranslate + width
+      this.stepsLength = Number(((width / valuesRange) * this.options.step).toFixed(5))
     } else {
-      this.sliderEndPosition = this.sliderStartPosition + heght;
-			this.hahdlerEndTranslate = this.handlerStartTranslate + heght;
-      this.stepsLength = Number(((heght / valuesRange) * this.options.step).toFixed(5));
+      this.sliderEndPosition = this.sliderStartPosition + heght
+      this.hahdlerEndTranslate = this.handlerStartTranslate + heght
+      this.stepsLength = Number(((heght / valuesRange) * this.options.step).toFixed(5))
     }
   }
 
@@ -198,4 +199,4 @@ class Slider extends Observer {
   }
 }
 
-export { Slider }
+export { Plugin }

@@ -1,4 +1,4 @@
-interface Actions {
+type Actions ={
 	start: string;
 	move: string;
 	end: string;

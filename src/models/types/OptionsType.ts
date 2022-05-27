@@ -1,0 +1,1 @@
+type OptionsType = number | boolean

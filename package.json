@@ -8,6 +8,7 @@
     "build": "webpack --mode production",
     "watch": "webpack --mode development --watch",
     "start": "webpack-dev-server --mode development",
+		"test": "NODE_OPTIONS=--experimental-vm-modules npx jest",
     "lint": "eslint \"**/*.ts\"",
     "lint:fix": "eslint \"**/*.ts\" --fix"
   },
@@ -34,6 +35,8 @@
     "eslint-plugin-prettier": "^4.0.0",
     "file-loader": "^6.2.0",
     "html-webpack-plugin": "^5.5.0",
+    "jest": "^28.1.0",
+    "jsdom": "^19.0.0",
     "mini-css-extract-plugin": "^2.4.5",
     "prettier": "^2.6.2",
     "pug": "^3.0.2",

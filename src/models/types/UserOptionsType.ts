@@ -1,0 +1,1 @@
+type UserOptionsType = number | boolean | undefined

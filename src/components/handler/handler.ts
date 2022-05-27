@@ -7,8 +7,8 @@ const className = {
   disabledHandler: 'handler_disabled',
 }
 
-const createHandler = (bindElement: HTMLElement, handlerNumber: number): HTMLElement => {
-  const handler = createElement({ className: className.handler, attrs: { 'handler-number': `${handlerNumber}` } })
+const createHandler = (bindElement: HTMLElement): HTMLElement => {
+  const handler = createElement({ className: className.handler})
   bindElement.append(handler)
   return handler
 }

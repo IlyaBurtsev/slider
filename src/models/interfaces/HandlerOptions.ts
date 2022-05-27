@@ -5,4 +5,6 @@ interface HandlerOptions {
   orientation: number
   trigger: Function
   eventsForTrigger: DataObject<string>
+
+	numberOfHandlers: number
 }

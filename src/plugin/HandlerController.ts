@@ -1,7 +1,7 @@
 import { Orientation } from '../models/Orientation'
 import { bindEvent, removeEvent } from './utils/utils'
 
-class Handler {
+class HandlerController {
   private handler: HTMLElement
   private documentElement: HTMLElement
   private actions: Actions
@@ -155,4 +155,4 @@ class Handler {
   }
 }
 
-export { Handler }
+export { HandlerController as Handler }

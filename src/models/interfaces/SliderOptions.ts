@@ -5,4 +5,5 @@ interface SliderOptions extends DataObject<OptionsType> {
 	minValue: number
 	maxValue: number
 	step: number
+	startPositions: Array<Array<number>>
 }

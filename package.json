@@ -8,7 +8,7 @@
     "build": "webpack --mode production",
     "watch": "webpack --mode development --watch",
     "start": "webpack-dev-server --mode development",
-		"test": "NODE_OPTIONS=--experimental-vm-modules npx jest",
+    "test": "NODE_OPTIONS=--experimental-vm-modules npx jest",
     "lint": "eslint \"**/*.ts\"",
     "lint:fix": "eslint \"**/*.ts\" --fix"
   },
@@ -24,6 +24,7 @@
   },
   "homepage": "https://github.com/IlyaBurtsev/slider#readme",
   "devDependencies": {
+    "@types/jest": "^27.5.1",
     "@typescript-eslint/eslint-plugin": "^5.23.0",
     "@typescript-eslint/parser": "^5.23.0",
     "css-loader": "^6.5.1",
@@ -44,6 +45,7 @@
     "sass-loader": "^12.3.0",
     "simple-pug-loader": "^0.2.1",
     "style-loader": "^3.3.1",
+    "ts-jest": "^28.0.3",
     "ts-loader": "^9.3.0",
     "typescript": "^4.6.4",
     "uuid": "^8.3.2",

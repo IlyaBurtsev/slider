@@ -4,8 +4,9 @@ interface HandlerOptions {
   viewConnector: ViewConnector
   orientation: number
   trigger: Function
-  eventsForTrigger: DataObject<string>
+  customEvents: DataObject<string>
 
-	numberOfHandlers: number
-	sliderLength: number
+  numberOfHandlers: number
+  sliderLength: number
+  position?: number
 }

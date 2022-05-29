@@ -1,14 +1,14 @@
-import { Orientation } from '../models/Orientation'
-import { bindEvent, removeEvent } from './utils/utils'
+import { Orientation } from '../../models/Orientation'
+import { removeEvent } from '../utils/utils'
 
 class HandlerController {
   private handler: HTMLElement
   private documentElement: HTMLElement
   private actions: Actions
-  private currentPosition: number =0
-	private currentValue: number = 0
-	private translate: number
-	private length: number
+  private currentPosition: number = 0
+  private currentValue: number = 0
+  private translate: number
+  private length: number
   private viewConnector: ViewConnector
   private id: number
   private orientation: number
@@ -16,7 +16,7 @@ class HandlerController {
   private eventsForTrigger: DataObject<string>
 
   constructor(bindElement: HTMLElement, options: HandlerOptions) {
-    const { id, actions, viewConnector, orientation, trigger, eventsForTrigger } = options
+    const { id, actions, viewConnector, orientation, trigger, customEvents: eventsForTrigger } = options
     // this.handler = viewConnector.createHandler(bindElement, id)
     this.id = id
     this.actions = actions
@@ -37,46 +37,46 @@ class HandlerController {
     return this.id
   }
 
-	public setCurrentPosition(position: number): void {
-		this.currentPosition = position;
-	}
+  public setCurrentPosition(position: number): void {
+    this.currentPosition = position
+  }
 
-	public getCurrentPosition(): number {
-		return this.currentPosition;
-	}
+  public getCurrentPosition(): number {
+    return this.currentPosition
+  }
 
-	public getHandlerTranslate(): number {
-		return this.translate
-	}
+  public getHandlerTranslate(): number {
+    return this.translate
+  }
 
-	public setHandlerTranslate (translate: number): void {
-		this.translate = translate;
-	}
+  public setHandlerTranslate(translate: number): void {
+    this.translate = translate
+  }
 
-	public getHandlerLength (): number {
-		return this.length;
-	}
+  public getHandlerLength(): number {
+    return this.length
+  }
 
-	private setHandlerParametrs(orientation: number): void {
-		const cs = window.getComputedStyle(this.handler, null);
-		if (orientation === Orientation.Horizontal) {
-			this.translate = Number(cs.left.match(/[-\d][0-9]+/)),
-			this.currentPosition = Number(cs.left.match(/[-\d][0-9]+/)),
-			this.length = Number(cs.width.match(/[-\d][0-9]+/))
-		}else {
-			this.translate = Number(cs.top.match(/[-\d][0-9]+/)),
-			this.currentPosition = Number(cs.top.match(/[-\d][0-9]+/)),
-			this.length = Number(cs.height.match(/[-\d][0-9]+/))
-		}
-	}
+  private setHandlerParametrs(orientation: number): void {
+    const cs = window.getComputedStyle(this.handler, null)
+    if (orientation === Orientation.Horizontal) {
+      ;(this.translate = Number(cs.left.match(/[-\d][0-9]+/))),
+        (this.currentPosition = Number(cs.left.match(/[-\d][0-9]+/))),
+        (this.length = Number(cs.width.match(/[-\d][0-9]+/)))
+    } else {
+      ;(this.translate = Number(cs.top.match(/[-\d][0-9]+/))),
+        (this.currentPosition = Number(cs.top.match(/[-\d][0-9]+/))),
+        (this.length = Number(cs.height.match(/[-\d][0-9]+/)))
+    }
+  }
 
   private init(): void {
-    this.bindEvents();
-		this.setHandlerParametrs(this.orientation);
+    this.bindEvents()
+    this.setHandlerParametrs(this.orientation)
   }
 
   private bindEvents(): void {
-    bindEvent(this.actions.start.split(' '), this.onTouchHandler, this.handler)
+    // bindEvent(this.actions.start.split(' '), this.onTouchHandler, this.handler)
   }
 
   private onTouchHandler = (event: BrowserEvent): void => {
@@ -87,8 +87,8 @@ class HandlerController {
     }
 
     this.trigger(this.eventsForTrigger.onTouchHandler, this.getId())
-    bindEvent(this.actions.move.split(' '), this.onMoveHandler, this.documentElement)
-    bindEvent(this.actions.end.split(' '), this.onStopHandler, this.documentElement)
+    // bindEvent(this.actions.move.split(' '), this.onMoveHandler, this.documentElement)
+    // bindEvent(this.actions.end.split(' '), this.onStopHandler, this.documentElement)
   }
 
   private getUsersHandlerPosition = (event: BrowserEvent): number | boolean => {

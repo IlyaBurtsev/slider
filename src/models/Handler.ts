@@ -2,6 +2,14 @@ class Handler {
 	private id: number
 	private position: number
 	private length: number
+	constructor (id?: number, position?: number) {
+		if (id !== undefined) {
+			this.id = id;
+		}	
+		if (position) {
+			this.position = position;
+		}
+	}
 
 	public setId(id: number){
 		this.id = id;
@@ -27,3 +35,5 @@ class Handler {
 		return this.length;
 	}
 }
+
+export {Handler}

@@ -88,22 +88,11 @@ function removeClass(el: Array<HTMLElement> | HTMLElement, ...classNames: Array<
   }
 }
 
-function bindEvent(
-  events: Array<string>,
-  listener: EventListener,
-  element: HTMLElement,
-  supportPassive?: boolean
-): void {
-  events.forEach((eventName) =>
-    element.addEventListener(eventName, listener, supportPassive ? { passive: true } : false)
-  )
-}
+
 
 function removeEvent(events: Array<string>, listener: EventListener, element: HTMLElement): void {
   events.forEach((eventName) => element.removeEventListener(eventName, listener))
 }
-
-
 
 export {
   deepMerge,
@@ -114,6 +103,5 @@ export {
   addClass,
   hasClass,
   removeClass,
-  bindEvent,
   removeEvent,
 }

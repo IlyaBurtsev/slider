@@ -1,1 +1,1 @@
-type OptionsType = number | boolean | Array<Array<number>>
+type OptionsType = number | boolean | Array<number> | Array<Array<number>>

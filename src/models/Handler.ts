@@ -6,7 +6,7 @@ class Handler {
 		if (id !== undefined) {
 			this.id = id;
 		}	
-		if (position) {
+		if (position !== undefined) {
 			this.position = position;
 		}
 	}

@@ -48,6 +48,11 @@ const resultWithCorrectOptions2: Array<Handler> = [
 
 const resultWithCorrectOptionsOneRange: Array<Handler> = [new Handler(0, -200), new Handler(1, 0)];
 
+const resultWithCorrectOptionsOneHandler: Array<Handler> = [new Handler(0, 0)];
+
+const resultWithIncorrectOptionsOneHandler: Array<Handler> = [new Handler(0, -200)];
+
+
 const resultWithIncorrectOptions: Array<Handler> = [
   new Handler(0, -200),
   new Handler(1, 200),
@@ -57,13 +62,14 @@ const resultWithIncorrectOptions: Array<Handler> = [
   new Handler(5, 1000),
 ];
 
-// const data1 = {options: result}
 
 export {
   correctOptions,
   resultWithCorrectOptions,
   resultWithCorrectOptions2,
 	resultWithCorrectOptionsOneRange,
+	resultWithCorrectOptionsOneHandler,
+	resultWithIncorrectOptionsOneHandler,
   resultWithIncorrectOptions,
   handlerParametrs,
   sliderParametrs,

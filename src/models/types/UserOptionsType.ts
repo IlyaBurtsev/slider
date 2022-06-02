@@ -1,1 +1,1 @@
-type UserOptionsType = number | boolean | Array<Array<number>> | undefined
+type UserOptionsType = number | boolean | Array<Array<number>> | Array<number> | undefined

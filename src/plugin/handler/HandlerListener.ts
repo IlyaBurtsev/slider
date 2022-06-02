@@ -1,33 +1,30 @@
 import { Orientation } from '../../models/Orientation';
+import { PluginActionsType } from '../../models/PluginActionsType';
 import { removeEvent } from '../utils/utils';
 
-class HandlerListener {
-  private actions: HandlerActions;
+export default class HandlerListener {
+  private eventNames: HandlerActions;
   private handler: HTMLElement;
   private id: number;
-  private documentElement: HTMLElement;
   private orientation: number;
-  private customEvents: DataObject<string>;
-  private trigger: Function;
+  private trigger: (actions: PluginActionsType, ...args: Array<Object>) => void;
 
   constructor(
     handler: HTMLElement,
     id: number,
     orientation: number,
-    trigger: Function,
-    customEvents: DataObject<string>
+    trigger: (actions: PluginActionsType, ...args: Array<Object>) => void
   ) {
     this.orientation = orientation;
-    this.actions = this.prepareEventNames();
+    this.eventNames = this.prepareEventNames();
     this.handler = handler;
     this.id = id;
-    this.documentElement = this.handler.ownerDocument.documentElement;
     this.trigger = trigger;
-    this.customEvents = customEvents;
+    this.bindEvents(handler);
   }
 
   private bindEvents(handler: HTMLElement): void {
-    this.bindEvent(this.actions.start.split(' '), this.onTouchHandler, handler);
+    this.bindEvent(this.eventNames.start.split(' '), this.onTouchHandler, handler);
   }
 
   private onTouchHandler = (event: BrowserEvent): void => {
@@ -37,20 +34,20 @@ class HandlerListener {
       return;
     }
 
-    this.trigger(this.customEvents.onTouchHandler, this.id);
-    this.bindEvent(this.actions.move.split(' '), this.onMoveHandler, this.documentElement);
-    this.bindEvent(this.actions.end.split(' '), this.onStopHandler, this.documentElement);
+    this.bindEvent(this.eventNames.move.split(' '), this.onMoveHandler, document.documentElement);
+    this.bindEvent(this.eventNames.end.split(' '), this.onStopHandler, document.documentElement);
+    this.trigger(PluginActionsType.onTouchHandler, this.id);
   };
 
   private onMoveHandler = (event: BrowserEvent): void => {
     const userPosition = this.getUsersHandlerPosition(event);
-    this.trigger(this.customEvents.onMoveHandler, this.handler, this.id, userPosition);
+    this.trigger(PluginActionsType.onMoveHandler, this.handler, this.id, userPosition);
   };
 
-  private onStopHandler = (event: BrowserEvent): void => {
-    removeEvent(this.actions.move.split(' '), this.onMoveHandler, this.documentElement);
-    removeEvent(this.actions.end.split(' '), this.onStopHandler, this.documentElement);
-    this.trigger(this.customEvents.onStopHandler, this.id);
+  private onStopHandler = (): void => {
+    removeEvent(this.eventNames.move.split(' '), this.onMoveHandler, document.documentElement);
+    removeEvent(this.eventNames.end.split(' '), this.onStopHandler, document.documentElement);
+    this.trigger(PluginActionsType.onStopMoving, this.id);
   };
 
   private bindEvent(
@@ -130,5 +127,3 @@ class HandlerListener {
         };
   }
 }
-
-export { HandlerListener };

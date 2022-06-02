@@ -1,14 +1,18 @@
+import { handlerParametrs, sliderParametrs } from '../../tests/testData/DataForDataController';
 import { Handler } from '../models/Handler';
 import { Orientation } from '../models/Orientation';
+import { PluginActionsType } from '../models/PluginActionsType';
 import DataController from './DataController';
-import { HandlersDomController } from './handler/HandlersDomController';
+import HandlersDomController from './handler/HandlersDomController';
 import { Observer } from './observer/Observer';
+import SliderDomController from './slider/SliderDomController';
 import { deepMerge } from './utils/utils';
 
-class Plugin extends Observer {
+export default class Plugin extends Observer {
   private handlerController: HandlersDomController;
   private dataController: DataController;
   private handlers: Array<Handler> = [];
+  private states: Array<Object>;
   private options: SliderOptions;
   private defaultOptions: SliderOptions = {
     orientation: Orientation.Horizontal,
@@ -26,17 +30,35 @@ class Plugin extends Observer {
     this.init(viewConnector);
   }
   private init(viewConnector: ViewConnector): void {
+    const { slider } = viewConnector;
     const { orientation } = this.options;
-    new HandlersDomController(
+    this.dataController = new DataController(this.options);
+
+    new SliderDomController(slider, orientation, (sliderParametrs: SliderParametrs): void => {
+      this.dataController.setSliderParametrs(sliderParametrs);
+    });
+    const handlerDomController = new HandlersDomController(
       {
         viewConnector: viewConnector,
         orientation: orientation,
-        sliderLength: 10000,
+        sliderLength: this.dataController.getSliderLength(),
+        handlers: this.handlers,
+        trigger: this.newTrigger,
       },
-      (parametrs: HandlerParametrs) => {
-        console.log(parametrs);
+      (handlerParametrs: HandlerParametrs) => {
+        this.dataController.setHandlerParametrs(handlerParametrs);
       }
     );
+    this.handlers = this.dataController.initHandlers();
+    handlerDomController.createElements({
+      viewConnector: viewConnector,
+      orientation: orientation,
+      sliderLength: this.dataController.getSliderLength(),
+      handlers: this.handlers,
+      trigger: this.newTrigger,
+    });
+    this.dataController.initState();
+    this.on(PluginActionsType.onTouchHandler, this.onTouchHandler);
   }
 
   private updateOptions(newOptions?: UserOptions): void {
@@ -49,8 +71,8 @@ class Plugin extends Observer {
 
   private onTouchHandler = (handlerId: number): void => {
     const handler = this.handlers[handlerId];
-    this.on(PluginActions.onMoveHandler, this.onMoveHandler);
-    this.on(PluginActions.onStopMoving, this.onStopMoving);
+    this.on(PluginActionsType.onMoveHandler, this.onMoveHandler);
+    this.on(PluginActionsType.onStopMoving, this.onStopMoving);
   };
 
   private onMoveHandler = (handlerId: number, newUserPosition: number): void => {
@@ -69,13 +91,11 @@ class Plugin extends Observer {
   private onStopMoving = (handlerId: number): void => {
     const handler = this.handlers[handlerId];
 
-    this.off(PluginActions.onMoveHandler, this.onMoveHandler);
-    this.off(PluginActions.onStopMoving, this.onStopMoving);
+    this.off(PluginActionsType.onMoveHandler, this.onMoveHandler);
+    this.off(PluginActionsType.onStopMoving, this.onStopMoving);
   };
 
-  private newTrigger = (event: string, ...args: Array<Object>): void => {
-    this.trigger(event, ...args);
+  private newTrigger = (actions: PluginActionsType, ...args: Array<Object>): void => {
+    this.trigger(actions, ...args);
   };
 }
-
-export { Plugin };

@@ -1,40 +1,25 @@
-import { Handler } from '../../models/Handler';
+import HandlerDomControllerOptions from '../../models/interfaces/HandlerDomControllerOptions';
+import HandlerListener from './HandlerListener';
 import { Orientation } from '../../models/Orientation';
-import { Observer } from '../observer/Observer';
-import { HandlerListener } from './HandlerListener';
+import { Handler } from '../../models/Handler';
 
-class HandlersDomController extends Observer {
+export default class HandlersDomController {
   private orientation: number;
-  private handlers: Array<HTMLElement> = [];
-  private startHandlerLength: number;
-  private endHandlerLength: number | null;
-  private handlerMinTranslate: number;
-  private handlerMaxTranslate: number;
+  private handlerElements: Array<HTMLElement> = [];
 
-  private customEvents = {
-    onTouchHandler: 'onTouchHandler',
-    onMoveHandler: 'onMoveHandler',
-    onStopMoving: 'onStopMoving',
-  };
-
-  constructor(options: HandlerOptions, callback: Function) {
-    super();
+  constructor(options: HandlerDomControllerOptions, callback: (parametrs: HandlerParametrs) => void) {
     this.init(options);
     callback(this.getHandlersParametrs(options));
+    this.createElements(options);
+
   }
 
-  private init(options: HandlerOptions): void {
+  private init(options: HandlerDomControllerOptions): void {
     const { orientation } = options;
     this.orientation = orientation;
-    // const handlerElements = this.createHandlers(options);
-    // handlerElements.forEach((handler, id) => {
-    // this.prepareHandler(handler, id, position);
-    // new HandlerListener(handler, id, orientation, trigger, this.customEvents);
-    // }
-    // );
   }
 
-  private getHandlersParametrs = (options: HandlerOptions): HandlerParametrs => {
+  private getHandlersParametrs = (options: HandlerDomControllerOptions): HandlerParametrs => {
     const { viewConnector, orientation, sliderLength } = options;
     const { startHandlerElement, endHandlerElement } = viewConnector;
     let parametrs = {
@@ -50,49 +35,41 @@ class HandlersDomController extends Observer {
     return parametrs;
   };
 
-  // private createHandlers = (options: HandlerOptions): Array<HTMLElement> => {
-  //   const handlers: Array<HTMLElement> = [];
-  //   const { numberOfHandlers, viewConnector, orientation, sliderLength } = options;
-  //   const { startHandlerElement, endHandlerElement } = viewConnector;
-  //   if (!endHandlerElement) {
-  //     for (let i = 0; i < numberOfHandlers; i++) {
-  //       const newHandler = startHandlerElement.cloneNode(true) as HTMLElement;
-  //       handlers.push(newHandler);
-  //     }
-  //     // this.writeHandlerParametrs(orientation, handlers[0], true, sliderLength);
-  //   } else {
-  //     let newHandler: HTMLElement;
-  //     for (let i = 0; i < numberOfHandlers; i++) {
-  //       if (i % 2 === 0) {
-  //         newHandler = startHandlerElement.cloneNode(true) as HTMLElement;
-  //       } else {
-  //         newHandler = endHandlerElement.cloneNode(true) as HTMLElement;
-  //       }
-  //       handlers.push(newHandler);
-  //     }
-  //     // this.writeHandlerParametrs(orientation, handlers[1], true);
-  //   }
-  //   return handlers;
-  // };
-
-  private prepareHandler = (handler: HTMLElement, id: number, position?: number): void => {
-    this.setHandlerId(handler, id);
-    if (position) {
-      this.moveHandlerToPosition(id, position);
+  public createElements = (options: HandlerDomControllerOptions): void => {
+    const { handlers, viewConnector, orientation, trigger } = options;
+    const { startHandlerElement, endHandlerElement } = viewConnector;
+		console.log(handlers)
+    if (endHandlerElement === undefined) {
+      handlers.forEach((handler, id) => {
+        const element = this.pushNewElement(handler, startHandlerElement);
+        new HandlerListener(element, id, orientation, trigger);
+      });
+    } else {
+      handlers.forEach((handler, index) => {
+        if (index % 2 === 0) {
+          this.pushNewElement(handler, endHandlerElement);
+        } else {
+          this.pushNewElement(handler, startHandlerElement);
+        }
+      });
     }
+  };
+
+  private pushNewElement = (handler: Handler, element: HTMLElement): HTMLElement => {
+    let newElementHandler: HTMLElement;
+    newElementHandler = element.cloneNode(true) as HTMLElement;
+    this.moveHandlerToPosition(handler.getId(), handler.getPosition());
+    this.handlerElements.push(newElementHandler);
+    return newElementHandler;
   };
 
   public moveHandlerToPosition = (id: number, newPosition: number): void => {
     if (this.orientation === Orientation.Horizontal) {
-      this.handlers[id].style.left = `${newPosition}px`;
+      this.handlerElements[id].style.left = `${newPosition}px`;
     } else {
-      this.handlers[id].style.top = `${newPosition}px`;
+      this.handlerElements[id].style.top = `${newPosition}px`;
     }
   };
-
-  private setHandlerId(handler: HTMLElement, id: number): void {
-    handler.setAttribute('handler-id', `${id}`);
-  }
 
   private getParametrs = (
     orientation: number,
@@ -124,8 +101,4 @@ class HandlersDomController extends Observer {
       handlerParametrs.handlerMaxTranslate = translate + sliderLength;
     }
   };
-
- 
 }
-
-export { HandlersDomController };

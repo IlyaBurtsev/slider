@@ -1,21 +1,26 @@
 import { Orientation } from '../../models/Orientation';
 
-class SliderDomController {
-  private length: number;
-  private startPosition: number;
-  constructor(slider: HTMLElement, orientation: number, callback: Function) {
-    const parametrs = new SliderLisrener(slider);
+export default class SliderDomController {
+
+  constructor(slider: HTMLElement, orientation: number, callback: (parametrs: SliderParametrs) => void) {
+    callback(this.getSliderParametrs(slider, orientation));
   }
 
-  private getSliderParametrs(slider: HTMLElement, orientation: number): void {
+  private getSliderParametrs(slider: HTMLElement, orientation: number): SliderParametrs {
     const rect = slider.getBoundingClientRect();
-    
+
     if (orientation === Orientation.Horizontal) {
-			this.length = rect.width;
-      this.startPosition = rect.left;
+      return {
+        sliderLength: rect.width,
+        sliderStartPosition: rect.left,
+        sliderEndPosition: rect.left + rect.width,
+      };
     } else {
-			this.length = rect.height
-      this.startPosition = rect.top;
+			return {
+        sliderLength: rect.height,
+        sliderStartPosition: rect.top,
+        sliderEndPosition: rect.top + rect.height,
+      };
     }
   }
 }

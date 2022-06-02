@@ -4,5 +4,5 @@ interface UserOptions extends DataObject<UserOptionsType> {
   numberOfDraggableRanges?: number
 	startValue?: number
 	endValue?: number
-	startValues?:Array<Array<number>>
+	startValues?:Array<Array<number>> | Array<number> | number
 }

@@ -10,14 +10,171 @@ export default class DataController {
     this.sliderOptions = sliderOptions;
   }
 
-  public setHandlerParametrs(parametrs: HandlerParametrs): void {
-    this.handlerParametrs = parametrs;
-  }
-
   public setSliderParametrs(parametrs: SliderParametrs): void {
     this.sliderParametrs = parametrs;
     this.setStepLength();
   }
+
+  public getSliderLength(): number {
+    return this.sliderParametrs.sliderLength;
+  }
+
+  public setHandlerParametrs(parametrs: HandlerParametrs): void {
+    this.handlerParametrs = parametrs;
+  }
+
+  public initState = () => {
+    const states: Array<State> = [];
+    const { isDraggableRange, numberOfDraggableRanges, startValues, minValue, maxValue } = this.sliderOptions;
+    const { handlerMinTranslate, handlerMaxTranslate } = this.handlerParametrs;
+    const { sliderLength } = this.sliderParametrs;
+
+    if (isDraggableRange) {
+      let correctData: boolean = true;
+      let chancelPreviousInit = true;
+      let minCurrentValue = minValue;
+      if (Array.isArray(startValues)) {
+        if (startValues.length === numberOfDraggableRanges) {
+          chancelPreviousInit = false;
+          startValues.forEach((pair, pairIndex) => {
+            if (Array.isArray(pair)) {
+              if (pair.length === 2 && correctData) {
+                pair.forEach((value, valueIndex) => {
+                  if (value >= minCurrentValue && value <= maxValue) {
+                    let state: State = {
+                      position: this.convertValueToPosition(value, handlerMinTranslate),
+                      minTranslate: 0,
+                      maxTranslate: 0,
+                    };
+                    this.setLimits(
+                      pairIndex,
+                      valueIndex,
+                      minCurrentValue,
+                      handlerMinTranslate,
+                      maxValue,
+                      pair,
+                      state,
+                      startValues as Array<Array<number>>
+                    );
+                    states.push(state);
+                    minCurrentValue = value;
+                  } else {
+                    correctData = false;
+                  }
+                });
+              } else {
+                correctData = false;
+              }
+            }
+          });
+          if (!correctData) {
+            states.splice(0);
+            chancelPreviousInit = true;
+          }
+        }
+        if (startValues.length === numberOfDraggableRanges * 2) {
+          chancelPreviousInit = false;
+          startValues.forEach((value, i) => {
+            if (!Array.isArray(value)) {
+              if (value >= minCurrentValue && value <= maxValue && correctData) {
+                let state: State = {
+                  position: this.convertValueToPosition(value, handlerMinTranslate),
+                  minTranslate: 0,
+                  maxTranslate: 0,
+                };
+                this.setLimits(0, i, minValue, handlerMinTranslate, maxValue, startValues as Array<number>, state);
+                states.push(state);
+                minCurrentValue = value;
+              } else {
+                correctData = false;
+              }
+            } else {
+              correctData = false;
+            }
+          });
+          if (!correctData) {
+            states.splice(0);
+            chancelPreviousInit = true;
+          }
+        }
+        if (chancelPreviousInit) {
+					
+          for (let i = 0; i < numberOfDraggableRanges * 2; i++) {
+						let minTranslate: number
+						let position: number
+						let state: State = {
+							position: 0,
+							minTranslate: handlerMinTranslate,
+							maxTranslate: handlerMaxTranslate,
+						};
+						if((i-1) >=0) {
+							minTranslate = states[i-1].position
+							position = (i * sliderLength) / (numberOfDraggableRanges * 2 -1) + handlerMinTranslate;
+							states[i-1].maxTranslate = position
+						}else {
+							position = handlerMinTranslate;
+							minTranslate = handlerMinTranslate
+						}
+						if((i) < numberOfDraggableRanges*2) {
+							state.maxTranslate = handlerMaxTranslate
+						}
+						state.minTranslate = minTranslate;
+            state.position = position;
+						states.push(state)
+          }
+        }
+      }
+    } else {
+			let state: State = {
+				position: 0,
+				minTranslate: handlerMinTranslate,
+				maxTranslate: handlerMaxTranslate,
+			};
+      if (!Array.isArray(startValues)) { 
+        if (startValues >= minValue && startValues <= maxValue) {
+          state.position = this.convertValueToPosition(startValues, handlerMinTranslate);
+        } else {
+					state.position = handlerMinTranslate;
+				}				
+      } else {
+				state.position = handlerMinTranslate;
+			}
+			states.push(state);
+    }
+    return states;
+  };
+
+  private setLimits = (
+    pairIndex: number,
+    valueIndex: number,
+    minCurrentValue: number,
+    minTranslate: number,
+    maxValue: number,
+    pair: Array<number>,
+    state: State,
+    startValues?: Array<Array<number>>
+  ) => {
+    let minLimitValue: number;
+    let maxLimitValue: number;
+    if (valueIndex === 0) {
+      minLimitValue = minCurrentValue;
+      maxLimitValue = pair[1];
+    } else {
+      minLimitValue = pair[0];
+      if (startValues !== undefined) {
+        if ((pairIndex+1)<startValues.length) {
+          maxLimitValue = startValues[pairIndex + 1][0];
+        } else {
+          maxLimitValue = maxValue;
+        }
+      } else {
+        maxLimitValue = maxValue;
+      }
+    }
+
+    state.minTranslate = this.convertValueToPosition(minLimitValue, minTranslate);
+    state.maxTranslate = this.convertValueToPosition(maxLimitValue, minTranslate);
+  };
 
   public initHandlers = (): Array<Handler> => {
     const handlers: Array<Handler> = [];
@@ -47,7 +204,7 @@ export default class DataController {
               } else {
                 correctData = false;
               }
-            } 
+            }
           });
           if (!correctData) {
             handlers.splice(0);
@@ -56,26 +213,27 @@ export default class DataController {
             handlers.forEach((handler, id) => handler.setId(id));
           }
         }
-				if (startValues.length === 2) {
-					startValues.forEach((value, i) => {
-						if(!Array.isArray(value)){
-							if ((value )>= minCurrentValue && value <= maxValue && correctData) {
-								const handler = new Handler(i);
-								handler.setPosition(this.convertValueToPosition(value, handlerMinTranslate));
-								handlers.push(handler);
-								minCurrentValue = value;
-							} else {
-								correctData = false;
-							}
-						}else {
-							correctData = false;
-						}
-					})
-					if (!correctData) {
+        if (startValues.length === numberOfDraggableRanges * 2) {
+          chancelPreviousInit = false;
+          startValues.forEach((value, i) => {
+            if (!Array.isArray(value)) {
+              if (value >= minCurrentValue && value <= maxValue && correctData) {
+                const handler = new Handler(i);
+                handler.setPosition(this.convertValueToPosition(value, handlerMinTranslate));
+                handlers.push(handler);
+                minCurrentValue = value;
+              } else {
+                correctData = false;
+              }
+            } else {
+              correctData = false;
+            }
+          });
+          if (!correctData) {
             handlers.splice(0);
             chancelPreviousInit = true;
           }
-				}
+        }
         if (chancelPreviousInit) {
           for (let i = 0; i < numberOfDraggableRanges * 2; i++) {
             let position = (i * sliderLength) / (numberOfDraggableRanges * 2);
@@ -89,11 +247,13 @@ export default class DataController {
     } else {
       if (!Array.isArray(startValues)) {
         if (startValues >= minValue && startValues <= maxValue) {
-          handlers.push(new Handler(0, startValues));
+          handlers.push(new Handler(0, this.convertValueToPosition(startValues, handlerMinTranslate)));
+        } else {
+          handlers.push(new Handler(0, handlerMinTranslate));
         }
       }
     }
-    return handlers;
+    return [];
   };
 
   public getHandlerPosition = (newUserposition: number, handler: Handler): number | false => {

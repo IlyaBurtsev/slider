@@ -1,7 +1,6 @@
 import HandlerDomControllerOptions from '../../models/interfaces/HandlerDomControllerOptions';
 import HandlerListener from './HandlerListener';
 import { Orientation } from '../../models/Orientation';
-import { Handler } from '../../models/Handler';
 
 export default class HandlersDomController {
   private orientation: number;
@@ -16,6 +15,7 @@ export default class HandlersDomController {
     const { orientation, subscribeToChangeState } = options;
     this.orientation = orientation;
     this.handlerElements = this.createElements(options);
+		this.addListeners(options);
     subscribeToChangeState(this.onChachangeState);
   }
 
@@ -60,7 +60,7 @@ export default class HandlersDomController {
     function pushNewElement(primeElement: HTMLElement) {
       const newElement = primeElement.cloneNode(true) as HTMLElement;
       elements.push(newElement);
-      document.append(newElement);
+      fragment.append(newElement);
     }
     return elements;
   };

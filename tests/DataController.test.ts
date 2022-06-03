@@ -1,110 +1,110 @@
-import DataController from '../src/plugin/DataController';
-import {
-  correctOptions,
-  resultWithCorrectOptions,
-  resultWithIncorrectOptions,
-  handlerParametrs,
-  sliderParametrs,
-  resultWithCorrectOptions2,
-  resultWithCorrectOptionsOneRange,
-  resultWithCorrectOptionsOneHandler,
-  resultWithIncorrectOptionsOneHandler,
-} from './testData/DataForDataController';
+// import DataController from '../src/plugin/DataController';
+// import {
+//   correctOptions,
+//   resultWithCorrectOptions,
+//   resultWithIncorrectOptions,
+//   handlerParametrs,
+//   sliderParametrs,
+//   resultWithCorrectOptions2,
+//   resultWithCorrectOptionsOneRange,
+//   resultWithCorrectOptionsOneHandler,
+//   resultWithIncorrectOptionsOneHandler,
+// } from './testData/DataForDataController';
 
-describe('DataController', () => {
-  test('Should return initial array of Handler with set position', () => {
-    const controller = new DataController(correctOptions);
-    controller.setSliderParametrs(sliderParametrs);
-    controller.setHandlerParametrs(handlerParametrs);
-    expect(controller.initHandlers()).toEqual(resultWithCorrectOptions);
-  });
+// describe('DataController', () => {
+//   test('Should return initial array of Handler with set position', () => {
+//     const controller = new DataController(correctOptions);
+//     controller.setSliderParametrs(sliderParametrs);
+//     controller.setHandlerParametrs(handlerParametrs);
+//     expect(controller.initHandlers()).toEqual(resultWithCorrectOptions);
+//   });
 
-  test('Should return initial array of Handler with set position', () => {
-    correctOptions.startValues = [
-      [0, 20],
-      [20, 40],
-      [60, 120],
-    ];
-    const controller = new DataController(correctOptions);
-    controller.setSliderParametrs(sliderParametrs);
-    controller.setHandlerParametrs(handlerParametrs);
+//   test('Should return initial array of Handler with set position', () => {
+//     correctOptions.startValues = [
+//       [0, 20],
+//       [20, 40],
+//       [60, 120],
+//     ];
+//     const controller = new DataController(correctOptions);
+//     controller.setSliderParametrs(sliderParametrs);
+//     controller.setHandlerParametrs(handlerParametrs);
 
-    expect(controller.initHandlers()).toEqual(resultWithCorrectOptions2);
-  });
+//     expect(controller.initHandlers()).toEqual(resultWithCorrectOptions2);
+//   });
 
-  test('Should return initial array of Handler with default position', () => {
-    correctOptions.startValues = [
-      [-3, 30],
-      [40, 50],
-      [80, 100],
-    ];
-    const controller = new DataController(correctOptions);
-    controller.setSliderParametrs(sliderParametrs);
-    controller.setHandlerParametrs(handlerParametrs);
-    expect(controller.initHandlers()).toEqual(resultWithIncorrectOptions);
-  });
+//   test('Should return initial array of Handler with default position', () => {
+//     correctOptions.startValues = [
+//       [-3, 30],
+//       [40, 50],
+//       [80, 100],
+//     ];
+//     const controller = new DataController(correctOptions);
+//     controller.setSliderParametrs(sliderParametrs);
+//     controller.setHandlerParametrs(handlerParametrs);
+//     expect(controller.initHandlers()).toEqual(resultWithIncorrectOptions);
+//   });
 
-  test('Should return initial array of Handler with default position', () => {
-    correctOptions.startValues = [
-      [10, 30],
-      [40, 81],
-      [80, 100],
-    ];
-    const controller = new DataController(correctOptions);
-    controller.setSliderParametrs(sliderParametrs);
-    controller.setHandlerParametrs(handlerParametrs);
-    expect(controller.initHandlers()).toEqual(resultWithIncorrectOptions);
-  });
+//   test('Should return initial array of Handler with default position', () => {
+//     correctOptions.startValues = [
+//       [10, 30],
+//       [40, 81],
+//       [80, 100],
+//     ];
+//     const controller = new DataController(correctOptions);
+//     controller.setSliderParametrs(sliderParametrs);
+//     controller.setHandlerParametrs(handlerParametrs);
+//     expect(controller.initHandlers()).toEqual(resultWithIncorrectOptions);
+//   });
 
-  test('Should return initial array of Handler with default position', () => {
-    correctOptions.startValues = [
-      [10, 30],
-      [40, 60],
-      [80, 70],
-    ];
-    const controller = new DataController(correctOptions);
-    controller.setSliderParametrs(sliderParametrs);
-    controller.setHandlerParametrs(handlerParametrs);
-    expect(controller.initHandlers()).toEqual(resultWithIncorrectOptions);
-  });
+//   test('Should return initial array of Handler with default position', () => {
+//     correctOptions.startValues = [
+//       [10, 30],
+//       [40, 60],
+//       [80, 70],
+//     ];
+//     const controller = new DataController(correctOptions);
+//     controller.setSliderParametrs(sliderParametrs);
+//     controller.setHandlerParametrs(handlerParametrs);
+//     expect(controller.initHandlers()).toEqual(resultWithIncorrectOptions);
+//   });
 
-  test('Should return initial array of Handler with set position (one range)', () => {
-    correctOptions.startValues = [0, 20];
-    correctOptions.numberOfDraggableRanges = 1;
-    const controller = new DataController(correctOptions);
-    controller.setSliderParametrs(sliderParametrs);
-    controller.setHandlerParametrs(handlerParametrs);
+//   test('Should return initial array of Handler with set position (one range)', () => {
+//     correctOptions.startValues = [0, 20];
+//     correctOptions.numberOfDraggableRanges = 1;
+//     const controller = new DataController(correctOptions);
+//     controller.setSliderParametrs(sliderParametrs);
+//     controller.setHandlerParametrs(handlerParametrs);
 
-    expect(controller.initHandlers()).toEqual(resultWithCorrectOptionsOneRange);
-  });
+//     expect(controller.initHandlers()).toEqual(resultWithCorrectOptionsOneRange);
+//   });
 
-  test('Should return one Handler with set position', () => {
-    correctOptions.startValues = 20;
-    correctOptions.isDraggableRange = false;
-    const controller = new DataController(correctOptions);
-    controller.setSliderParametrs(sliderParametrs);
-    controller.setHandlerParametrs(handlerParametrs);
+//   test('Should return one Handler with set position', () => {
+//     correctOptions.startValues = 20;
+//     correctOptions.isDraggableRange = false;
+//     const controller = new DataController(correctOptions);
+//     controller.setSliderParametrs(sliderParametrs);
+//     controller.setHandlerParametrs(handlerParametrs);
 
-    expect(controller.initHandlers()).toEqual(resultWithCorrectOptionsOneHandler);
-  });
+//     expect(controller.initHandlers()).toEqual(resultWithCorrectOptionsOneHandler);
+//   });
 
-  test('Should return one Handler with default position', () => {
-    correctOptions.startValues = -1;
-    correctOptions.isDraggableRange = false;
-    const controller = new DataController(correctOptions);
-    controller.setSliderParametrs(sliderParametrs);
-    controller.setHandlerParametrs(handlerParametrs);
+//   test('Should return one Handler with default position', () => {
+//     correctOptions.startValues = -1;
+//     correctOptions.isDraggableRange = false;
+//     const controller = new DataController(correctOptions);
+//     controller.setSliderParametrs(sliderParametrs);
+//     controller.setHandlerParametrs(handlerParametrs);
 
-    expect(controller.initHandlers()).toEqual(resultWithIncorrectOptionsOneHandler);
-  });
+//     expect(controller.initHandlers()).toEqual(resultWithIncorrectOptionsOneHandler);
+//   });
 
-  test('Should return one Handler with default position', () => {
-    correctOptions.startValues = 140;
-    correctOptions.isDraggableRange = false;
-    const controller = new DataController(correctOptions);
-    controller.setSliderParametrs(sliderParametrs);
-    controller.setHandlerParametrs(handlerParametrs);
+//   test('Should return one Handler with default position', () => {
+//     correctOptions.startValues = 140;
+//     correctOptions.isDraggableRange = false;
+//     const controller = new DataController(correctOptions);
+//     controller.setSliderParametrs(sliderParametrs);
+//     controller.setHandlerParametrs(handlerParametrs);
 
-    expect(controller.initHandlers()).toEqual(resultWithIncorrectOptionsOneHandler);
-  });
-});
+//     expect(controller.initHandlers()).toEqual(resultWithIncorrectOptionsOneHandler);
+//   });
+// });

@@ -1,10 +1,9 @@
-import { handlerParametrs, sliderParametrs } from '../../tests/testData/DataForDataController';
+import DataController from './DataController';
+import SliderDomController from './slider/SliderDomController';
+import HandlersDomController from './handler/HandlersDomController';
 import { Orientation } from '../models/Orientation';
 import { PluginActionsType } from '../models/PluginActionsType';
-import DataController from './DataController';
-import HandlersDomController from './handler/HandlersDomController';
 import { Observer } from './observer/Observer';
-import SliderDomController from './slider/SliderDomController';
 import { deepMerge } from './utils/utils';
 
 export default class Plugin extends Observer {
@@ -28,7 +27,7 @@ export default class Plugin extends Observer {
   }
   private init(viewConnector: ViewConnector): void {
     const { slider } = viewConnector;
-    const { orientation } = this.options;
+    const { orientation, isDraggableRange, numberOfDraggableRanges } = this.options;
 
     this.dataController = new DataController(this.options);
 
@@ -39,7 +38,7 @@ export default class Plugin extends Observer {
         viewConnector: viewConnector,
         orientation: orientation,
         sliderLength: this.dataController.getSliderLength(),
-        numberOfHandlers: this.states.length,
+        numberOfHandlers: isDraggableRange? numberOfDraggableRanges*2: 1,
         trigger: this.newTrigger,
 				subscribeToChangeState: this.addStateSubscriber
       },
@@ -60,7 +59,6 @@ export default class Plugin extends Observer {
   }
 
   private onTouchHandler = (handlerId: number): void => {
-
     this.on(PluginActionsType.onMoveHandler, this.onMoveHandler);
     this.on(PluginActionsType.onStopMoving, this.onStopMoving);
   };

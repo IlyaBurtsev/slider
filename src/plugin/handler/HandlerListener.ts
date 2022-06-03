@@ -29,7 +29,6 @@ export default class HandlerListener {
 
   private onTouchHandler = (event: BrowserEvent): void => {
     event.stopPropagation();
-
     if (!this.checkTouch(event)) {
       return;
     }

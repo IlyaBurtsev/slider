@@ -9,8 +9,8 @@ import Plugin from '../src/plugin/Plugin';
 const sliderContainer = getElement('.slider');
 if (sliderContainer) {
   new Plugin(getViewConnector(sliderContainer), {
-    isDraggableRange: true,
+    isDraggableRange: false,
     numberOfDraggableRanges: 1,
-    startValues: [10,200],
+    startValues: 50,
   });
 }

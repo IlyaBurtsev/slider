@@ -1,5 +1,3 @@
-import { Handler } from '../models/Handler';
-
 export default class DataController {
   private handlerParametrs: HandlerParametrs;
   private sliderParametrs: SliderParametrs;
@@ -10,16 +8,16 @@ export default class DataController {
     this.sliderOptions = sliderOptions;
   }
 
-  public setSliderParametrs(parametrs: SliderParametrs): void {
+  public setSliderParametrs = (parametrs: SliderParametrs): void =>{
     this.sliderParametrs = parametrs;
     this.setStepLength();
   }
 
-  public getSliderLength(): number {
+  public getSliderLength = (): number => {
     return this.sliderParametrs.sliderLength;
   }
 
-  public setHandlerParametrs(parametrs: HandlerParametrs): void {
+  public setHandlerParametrs = (parametrs: HandlerParametrs): void =>{
     this.handlerParametrs = parametrs;
   }
 
@@ -104,6 +102,7 @@ export default class DataController {
           }
         }
       }
+			this.setLimits(states, handlerMinTranslate, handlerMaxTranslate);
     } else {
       let state: State = {
         position: 0,
@@ -121,7 +120,7 @@ export default class DataController {
       }
       states.push(state);
     }
-    return this.setLimits(states, handlerMinTranslate, handlerMaxTranslate);
+    return states;
   };
 
   private setLimits = (states: Array<State>, startTranslate: number, endTranslate: number): Array<State> => {
@@ -154,17 +153,16 @@ export default class DataController {
       return state;
     }
 
-    if (newUserposition <= state.minTranslate) {
+    if (calcUserPosition + handlerMinTranslate <= state.minTranslate) {
       state.position = state.minTranslate;
       return state;
     }
-    if (newUserposition >= state.maxTranslate) {
+    if (calcUserPosition + handlerMinTranslate >= state.maxTranslate) {
       state.position = state.maxTranslate;
       return state;
     }
 
     let step: number = 0;
-
     if (state.position <= calcUserPosition + handlerMinTranslate) {
       step = Math.floor(Math.abs(calcUserPosition) / this.stepsLength);
     } else {
@@ -173,7 +171,6 @@ export default class DataController {
     if (step === 0) {
       return state;
     }
-
     if (calcUserPosition < 0) {
       state.position = -(step * this.stepsLength + handlerMinTranslate);
       return state;

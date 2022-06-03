@@ -1,5 +1,4 @@
 import { handlerParametrs, sliderParametrs } from '../../tests/testData/DataForDataController';
-import { Handler } from '../models/Handler';
 import { Orientation } from '../models/Orientation';
 import { PluginActionsType } from '../models/PluginActionsType';
 import DataController from './DataController';
@@ -9,10 +8,8 @@ import SliderDomController from './slider/SliderDomController';
 import { deepMerge } from './utils/utils';
 
 export default class Plugin extends Observer {
-  private handlerController: HandlersDomController;
   private dataController: DataController;
-  private handlers: Array<Handler> = [];
-  private states: Array<Object>;
+  private states: Array<State>;
   private options: SliderOptions;
   private defaultOptions: SliderOptions = {
     orientation: Orientation.Horizontal,
@@ -32,32 +29,25 @@ export default class Plugin extends Observer {
   private init(viewConnector: ViewConnector): void {
     const { slider } = viewConnector;
     const { orientation } = this.options;
+
     this.dataController = new DataController(this.options);
 
-    new SliderDomController(slider, orientation, (sliderParametrs: SliderParametrs): void => {
-      this.dataController.setSliderParametrs(sliderParametrs);
-    });
-    const handlerDomController = new HandlersDomController(
+    new SliderDomController(slider, orientation, this.dataController.setSliderParametrs);
+
+    new HandlersDomController(
       {
         viewConnector: viewConnector,
         orientation: orientation,
         sliderLength: this.dataController.getSliderLength(),
-        handlers: this.handlers,
+        numberOfHandlers: this.states.length,
         trigger: this.newTrigger,
+				subscribeToChangeState: this.addStateSubscriber
       },
-      (handlerParametrs: HandlerParametrs) => {
-        this.dataController.setHandlerParametrs(handlerParametrs);
-      }
+      this.dataController.setHandlerParametrs
     );
-    this.handlers = this.dataController.initHandlers();
-    handlerDomController.createElements({
-      viewConnector: viewConnector,
-      orientation: orientation,
-      sliderLength: this.dataController.getSliderLength(),
-      handlers: this.handlers,
-      trigger: this.newTrigger,
-    });
-    this.dataController.initState();
+
+    this.states = this.dataController.initState();
+		this.states.forEach((state, id) => this.newTrigger(PluginActionsType.onChangeState, state, id))
     this.on(PluginActionsType.onTouchHandler, this.onTouchHandler);
   }
 
@@ -70,26 +60,18 @@ export default class Plugin extends Observer {
   }
 
   private onTouchHandler = (handlerId: number): void => {
-    const handler = this.handlers[handlerId];
+
     this.on(PluginActionsType.onMoveHandler, this.onMoveHandler);
     this.on(PluginActionsType.onStopMoving, this.onStopMoving);
   };
 
   private onMoveHandler = (handlerId: number, newUserPosition: number): void => {
-    if (handlerId === -1) {
-      return;
-    }
-    const handler = this.handlers[handlerId];
-    const position = this.dataController.getHandlerPosition(newUserPosition, handler);
-
-    if (position) {
-      this.handlerController.moveHandlerToPosition(handlerId, position);
-      handler.setPosition(position);
-    }
+		let state = this.states[handlerId]
+    state = this.dataController.changeState(state, newUserPosition, handlerId);
+    this.trigger(PluginActionsType.onChangeState, state, handlerId);
   };
 
   private onStopMoving = (handlerId: number): void => {
-    const handler = this.handlers[handlerId];
 
     this.off(PluginActionsType.onMoveHandler, this.onMoveHandler);
     this.off(PluginActionsType.onStopMoving, this.onStopMoving);
@@ -97,5 +79,13 @@ export default class Plugin extends Observer {
 
   private newTrigger = (actions: PluginActionsType, ...args: Array<Object>): void => {
     this.trigger(actions, ...args);
+  };
+
+  private addStateSubscriber = (handler: (state?: State, id?: number) => void): void => {
+    this.on(PluginActionsType.onChangeState, handler);
+  };
+
+  private removeStateSubscriber = (handler: (state?: State, id?: number) => void): void => {
+    this.off(PluginActionsType.onChangeState, handler);
   };
 }

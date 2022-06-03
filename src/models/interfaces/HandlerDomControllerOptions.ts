@@ -5,6 +5,7 @@ export default interface HandlerDomControllerOptions {
   viewConnector: ViewConnector;
   orientation: number;
   trigger: (actions: PluginActionsType, ...args: Array<Object>) => void;
+  subscribeToChangeState: (handler: (state?: State, id?: number) => void) => void;
   sliderLength: number;
-  handlers: Array<Handler>;
+  numberOfHandlers: number;
 }

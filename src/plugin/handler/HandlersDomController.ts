@@ -8,15 +8,15 @@ export default class HandlersDomController {
   private handlerElements: Array<HTMLElement> = [];
 
   constructor(options: HandlerDomControllerOptions, callback: (parametrs: HandlerParametrs) => void) {
-    this.init(options);
     callback(this.getHandlersParametrs(options));
-    this.createElements(options);
-
+    this.init(options);
   }
 
   private init(options: HandlerDomControllerOptions): void {
-    const { orientation } = options;
+    const { orientation, subscribeToChangeState } = options;
     this.orientation = orientation;
+    this.handlerElements = this.createElements(options);
+    subscribeToChangeState(this.onChachangeState);
   }
 
   private getHandlersParametrs = (options: HandlerDomControllerOptions): HandlerParametrs => {
@@ -35,35 +35,48 @@ export default class HandlersDomController {
     return parametrs;
   };
 
-  public createElements = (options: HandlerDomControllerOptions): void => {
-    const { handlers, viewConnector, orientation, trigger } = options;
+  private createElements = (options: HandlerDomControllerOptions): Array<HTMLElement> => {
+    const elements: Array<HTMLElement> = [];
+    const { numberOfHandlers, viewConnector } = options;
     const { startHandlerElement, endHandlerElement } = viewConnector;
-		console.log(handlers)
+    const fragment = document.createDocumentFragment();
     if (endHandlerElement === undefined) {
-      handlers.forEach((handler, id) => {
-        const element = this.pushNewElement(handler, startHandlerElement);
-        new HandlerListener(element, id, orientation, trigger);
-      });
+      elements.push(startHandlerElement);
+      for (let i = 1; i < numberOfHandlers; i++) {
+        pushNewElement(startHandlerElement);
+      }
     } else {
-      handlers.forEach((handler, index) => {
-        if (index % 2 === 0) {
-          this.pushNewElement(handler, endHandlerElement);
+      elements.push(startHandlerElement, endHandlerElement);
+      for (let i = 2; i < numberOfHandlers - 1; i++) {
+        if (i % 2 === 0) {
+          pushNewElement(endHandlerElement);
         } else {
-          this.pushNewElement(handler, startHandlerElement);
+          pushNewElement(startHandlerElement);
         }
-      });
+      }
     }
+    startHandlerElement.parentElement?.append(fragment);
+
+    function pushNewElement(primeElement: HTMLElement) {
+      const newElement = primeElement.cloneNode(true) as HTMLElement;
+      elements.push(newElement);
+      document.append(newElement);
+    }
+    return elements;
   };
 
-  private pushNewElement = (handler: Handler, element: HTMLElement): HTMLElement => {
-    let newElementHandler: HTMLElement;
-    newElementHandler = element.cloneNode(true) as HTMLElement;
-    this.moveHandlerToPosition(handler.getId(), handler.getPosition());
-    this.handlerElements.push(newElementHandler);
-    return newElementHandler;
+	private addListeners = (options: HandlerDomControllerOptions):void => {
+		const {trigger, orientation} = options
+		this.handlerElements.forEach((element, id) => {
+			new HandlerListener(element, id, orientation, trigger);
+		})
+	}
+
+  private onChachangeState = (state: State, id: number): void => {
+    this.moveHandlerToPosition(id, state.position);
   };
 
-  public moveHandlerToPosition = (id: number, newPosition: number): void => {
+  private moveHandlerToPosition = (id: number, newPosition: number): void => {
     if (this.orientation === Orientation.Horizontal) {
       this.handlerElements[id].style.left = `${newPosition}px`;
     } else {

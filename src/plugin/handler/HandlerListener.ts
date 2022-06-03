@@ -41,7 +41,7 @@ export default class HandlerListener {
 
   private onMoveHandler = (event: BrowserEvent): void => {
     const userPosition = this.getUsersHandlerPosition(event);
-    this.trigger(PluginActionsType.onMoveHandler, this.handler, this.id, userPosition);
+    this.trigger(PluginActionsType.onMoveHandler, this.id, userPosition);
   };
 
   private onStopHandler = (): void => {

@@ -3,4 +3,5 @@ export enum PluginActionsType {
   onTouchHandler = 'onTouchHandler',
   onMoveHandler = 'onMoveHandler',
   onStopMoving = 'onStopMoving',
+	onChangeState = 'onChangeState'
 }

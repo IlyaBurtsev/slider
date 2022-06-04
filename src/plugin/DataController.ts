@@ -123,22 +123,7 @@ export default class DataController {
     return states;
   };
 
-  private setLimits = (states: Array<State>, startTranslate: number, endTranslate: number): Array<State> => {
-    states.forEach((state, index) => {
-      if (index - 1 >= 0) {
-        state.minTranslate = states[index - 1].position;
-        states[index - 1].maxTranslate = state.position;
-      } else {
-        state.minTranslate = startTranslate;
-      }
-      if (index === states.length - 1) {
-        state.maxTranslate = endTranslate;
-      }
-    });
-    return states;
-  };
-
-  public changeState = (state: State, newUserposition: number, handlerId: number): State => {
+	public changeState = (state: State, newUserposition: number, handlerId: number): State => {
     if (handlerId === -1) {
       return state;
     }
@@ -178,6 +163,21 @@ export default class DataController {
       state.position = step * this.stepsLength + handlerMinTranslate;
       return state;
     }
+  };
+
+  private setLimits = (states: Array<State>, startTranslate: number, endTranslate: number): Array<State> => {
+    states.forEach((state, index) => {
+      if (index - 1 >= 0) {
+        state.minTranslate = states[index - 1].position;
+        states[index - 1].maxTranslate = state.position;
+      } else {
+        state.minTranslate = startTranslate;
+      }
+      if (index === states.length - 1) {
+        state.maxTranslate = endTranslate;
+      }
+    });
+    return states;
   };
 
   private setStepLength = (): void => {

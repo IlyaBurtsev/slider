@@ -3,6 +3,7 @@
 	height: 100%;
 	display: flex;
 	border: 1px solid darkgreen;
+	position: relative;
 	&__handler-container {
 		height: 300%;
 		aspect-ratio: 1;

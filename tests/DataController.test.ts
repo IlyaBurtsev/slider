@@ -1,110 +1,109 @@
-// import DataController from '../src/plugin/DataController';
-// import {
-//   correctOptions,
-//   resultWithCorrectOptions,
-//   resultWithIncorrectOptions,
-//   handlerParametrs,
-//   sliderParametrs,
-//   resultWithCorrectOptions2,
-//   resultWithCorrectOptionsOneRange,
-//   resultWithCorrectOptionsOneHandler,
-//   resultWithIncorrectOptionsOneHandler,
-// } from './testData/DataForDataController';
+import DataController from '../src/plugin/DataController';
+import {
+  correctOptions,
+  defaultInitialStates,
+  defaultState,
+  handlerParametrs,
+  resultInitialStates,
+  resultState,
+  sliderParametrs,
+} from './testData/DataController/oneHandler';
 
-// describe('DataController', () => {
-//   test('Should return initial array of Handler with set position', () => {
-//     const controller = new DataController(correctOptions);
-//     controller.setSliderParametrs(sliderParametrs);
-//     controller.setHandlerParametrs(handlerParametrs);
-//     expect(controller.initHandlers()).toEqual(resultWithCorrectOptions);
-//   });
+describe('DataController one handler', () => {
+  test('Should return initial state with set position', () => {
+    const controller = new DataController(correctOptions);
+    controller.setSliderParametrs(sliderParametrs);
+    controller.setHandlerParametrs(handlerParametrs);
+    expect(controller.initState()).toEqual(resultInitialStates(-10));
+  });
 
-//   test('Should return initial array of Handler with set position', () => {
-//     correctOptions.startValues = [
-//       [0, 20],
-//       [20, 40],
-//       [60, 120],
-//     ];
-//     const controller = new DataController(correctOptions);
-//     controller.setSliderParametrs(sliderParametrs);
-//     controller.setHandlerParametrs(handlerParametrs);
+  test('Should return initial state with set position', () => {
+    correctOptions.startValues = 100;
+    const controller = new DataController(correctOptions);
+    controller.setSliderParametrs(sliderParametrs);
+    controller.setHandlerParametrs(handlerParametrs);
+    expect(controller.initState()).toEqual(resultInitialStates(990));
+  });
 
-//     expect(controller.initHandlers()).toEqual(resultWithCorrectOptions2);
-//   });
+  test('Should return initial state with set position', () => {
+    correctOptions.startValues = 50;
+    const controller = new DataController(correctOptions);
+    controller.setSliderParametrs(sliderParametrs);
+    controller.setHandlerParametrs(handlerParametrs);
+    expect(controller.initState()).toEqual(resultInitialStates(490));
+  });
 
-//   test('Should return initial array of Handler with default position', () => {
-//     correctOptions.startValues = [
-//       [-3, 30],
-//       [40, 50],
-//       [80, 100],
-//     ];
-//     const controller = new DataController(correctOptions);
-//     controller.setSliderParametrs(sliderParametrs);
-//     controller.setHandlerParametrs(handlerParametrs);
-//     expect(controller.initHandlers()).toEqual(resultWithIncorrectOptions);
-//   });
+  test('Should return initial state with default position', () => {
+    correctOptions.startValues = -1;
+    const controller = new DataController(correctOptions);
+    controller.setSliderParametrs(sliderParametrs);
+    controller.setHandlerParametrs(handlerParametrs);
+    expect(controller.initState()).toEqual(defaultInitialStates);
+  });
 
-//   test('Should return initial array of Handler with default position', () => {
-//     correctOptions.startValues = [
-//       [10, 30],
-//       [40, 81],
-//       [80, 100],
-//     ];
-//     const controller = new DataController(correctOptions);
-//     controller.setSliderParametrs(sliderParametrs);
-//     controller.setHandlerParametrs(handlerParametrs);
-//     expect(controller.initHandlers()).toEqual(resultWithIncorrectOptions);
-//   });
+  test('Should return initial state with default position', () => {
+    correctOptions.startValues = 200;
+    const controller = new DataController(correctOptions);
+    controller.setSliderParametrs(sliderParametrs);
+    controller.setHandlerParametrs(handlerParametrs);
+    expect(controller.initState()).toEqual(defaultInitialStates);
+  });
 
-//   test('Should return initial array of Handler with default position', () => {
-//     correctOptions.startValues = [
-//       [10, 30],
-//       [40, 60],
-//       [80, 70],
-//     ];
-//     const controller = new DataController(correctOptions);
-//     controller.setSliderParametrs(sliderParametrs);
-//     controller.setHandlerParametrs(handlerParametrs);
-//     expect(controller.initHandlers()).toEqual(resultWithIncorrectOptions);
-//   });
+  test('Should return initial state with default position', () => {
+    correctOptions.startValues = [30, 40];
+    const controller = new DataController(correctOptions);
+    controller.setSliderParametrs(sliderParametrs);
+    controller.setHandlerParametrs(handlerParametrs);
+    expect(controller.initState()).toEqual(defaultInitialStates);
+  });
 
-//   test('Should return initial array of Handler with set position (one range)', () => {
-//     correctOptions.startValues = [0, 20];
-//     correctOptions.numberOfDraggableRanges = 1;
-//     const controller = new DataController(correctOptions);
-//     controller.setSliderParametrs(sliderParametrs);
-//     controller.setHandlerParametrs(handlerParametrs);
+  test('Should return correct state when change position (move forward)', () => {
+    const controller = new DataController(correctOptions);
+    controller.setSliderParametrs(sliderParametrs);
+    controller.setHandlerParametrs(handlerParametrs);
+    let newState: State = defaultState;
+		let handlerPosition: number = -10;
+    for (let userPosition = 0; userPosition < 2000; userPosition++) {
+      let relatePosition: number = 0;
+      const step =
+        (sliderParametrs.sliderLength / (correctOptions.maxValue - correctOptions.minValue)) * correctOptions.step;
+      if (userPosition >= 400 && userPosition <= 1400) {
+        relatePosition = userPosition - 400;
+        if (relatePosition % step === 0) {
+          handlerPosition = relatePosition -10;
+        }
+      }
+      if (userPosition >= 1400) {
+        handlerPosition = 990;
+      }
+      expect(controller.changeState(newState, userPosition, 0)).toEqual(resultState(handlerPosition));
+      newState = controller.changeState(newState, userPosition, 0);
+			
+    }
+  });
 
-//     expect(controller.initHandlers()).toEqual(resultWithCorrectOptionsOneRange);
-//   });
-
-//   test('Should return one Handler with set position', () => {
-//     correctOptions.startValues = 20;
-//     correctOptions.isDraggableRange = false;
-//     const controller = new DataController(correctOptions);
-//     controller.setSliderParametrs(sliderParametrs);
-//     controller.setHandlerParametrs(handlerParametrs);
-
-//     expect(controller.initHandlers()).toEqual(resultWithCorrectOptionsOneHandler);
-//   });
-
-//   test('Should return one Handler with default position', () => {
-//     correctOptions.startValues = -1;
-//     correctOptions.isDraggableRange = false;
-//     const controller = new DataController(correctOptions);
-//     controller.setSliderParametrs(sliderParametrs);
-//     controller.setHandlerParametrs(handlerParametrs);
-
-//     expect(controller.initHandlers()).toEqual(resultWithIncorrectOptionsOneHandler);
-//   });
-
-//   test('Should return one Handler with default position', () => {
-//     correctOptions.startValues = 140;
-//     correctOptions.isDraggableRange = false;
-//     const controller = new DataController(correctOptions);
-//     controller.setSliderParametrs(sliderParametrs);
-//     controller.setHandlerParametrs(handlerParametrs);
-
-//     expect(controller.initHandlers()).toEqual(resultWithIncorrectOptionsOneHandler);
-//   });
-// });
+	test('Should return correct state when change position (move backward)', () => {
+    const controller = new DataController(correctOptions);
+    controller.setSliderParametrs(sliderParametrs);
+    controller.setHandlerParametrs(handlerParametrs);
+    let newState: State = defaultState;
+		let handlerPosition: number = -10;
+    for (let userPosition = 2000; userPosition > 0; userPosition--) {
+      let relatePosition: number = 0;
+      const step =
+        (sliderParametrs.sliderLength / (correctOptions.maxValue - correctOptions.minValue)) * correctOptions.step;
+      if (userPosition >= 400 && userPosition <= 1400) {
+        relatePosition = userPosition - 400;
+        if (relatePosition % step === 0) {
+          handlerPosition = relatePosition -10;
+        }
+      }
+      if (userPosition >= 1400) {
+        handlerPosition = 990;
+      }
+      expect(controller.changeState(newState, userPosition, 0)).toEqual(resultState(handlerPosition));
+      newState = controller.changeState(newState, userPosition, 0);
+			
+    }
+  });
+});

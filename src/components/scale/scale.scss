@@ -1,0 +1,15 @@
+.scale {
+	padding-top: 10px;
+	position: absolute;
+	&__marker{
+		width: 2px;
+		height: 5px;
+		color: gray;
+		&_large{
+			height: 15px;
+		}
+	}
+	// &__value {
+
+	// }
+}

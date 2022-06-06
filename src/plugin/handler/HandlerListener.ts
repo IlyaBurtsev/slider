@@ -1,5 +1,5 @@
 import { Orientation } from '../../models/Orientation';
-import { PluginActionsType } from '../../models/PluginActionsType';
+import { PluginActions } from '../../models/PluginActions';
 import { removeEvent } from '../utils/utils';
 
 export default class HandlerListener {
@@ -7,13 +7,13 @@ export default class HandlerListener {
   private handler: HTMLElement;
   private id: number;
   private orientation: number;
-  private trigger: (actions: PluginActionsType, ...args: Array<Object>) => void;
+  private trigger: (actions: PluginActions, ...args: Array<Object>) => void;
 
   constructor(
     handler: HTMLElement,
     id: number,
     orientation: number,
-    trigger: (actions: PluginActionsType, ...args: Array<Object>) => void
+    trigger: (actions: PluginActions, ...args: Array<Object>) => void
   ) {
     this.orientation = orientation;
     this.eventNames = this.prepareEventNames();
@@ -35,18 +35,18 @@ export default class HandlerListener {
 
     this.bindEvent(this.eventNames.move.split(' '), this.onMoveHandler, document.documentElement);
     this.bindEvent(this.eventNames.end.split(' '), this.onStopHandler, document.documentElement);
-    this.trigger(PluginActionsType.onTouchHandler, this.id);
+    this.trigger(PluginActions.onTouchHandler, this.id);
   };
 
   private onMoveHandler = (event: BrowserEvent): void => {
     const userPosition = this.getUsersHandlerPosition(event);
-    this.trigger(PluginActionsType.onMoveHandler, this.id, userPosition);
+    this.trigger(PluginActions.onMoveHandler, this.id, userPosition);
   };
 
   private onStopHandler = (): void => {
     removeEvent(this.eventNames.move.split(' '), this.onMoveHandler, document.documentElement);
     removeEvent(this.eventNames.end.split(' '), this.onStopHandler, document.documentElement);
-    this.trigger(PluginActionsType.onStopMoving, this.id);
+    this.trigger(PluginActions.onStopMoving, this.id);
   };
 
   private bindEvent(

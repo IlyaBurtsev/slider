@@ -1,6 +1,7 @@
-interface ViewConnector extends DataObject<HTMLElement | undefined> {
+interface ViewConnector extends DataObject<HTMLElement | Scale | undefined> {
   slider: HTMLElement
   startHandlerElement: HTMLElement
-	progressBar: HTMLElement
+	progressBar?: HTMLElement
   endHandlerElement?: HTMLElement
+	scaleElements?: Scale
 }

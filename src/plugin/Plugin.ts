@@ -1,11 +1,12 @@
 import DataController from './DataController';
 import SliderDomController from './slider/SliderDomController';
 import HandlersDomController from './handler/HandlersDomController';
+import progressBarDomController from './progress-bar/ProgressBarDomController';
 import { Orientation } from '../models/Orientation';
-import { PluginActionsType } from '../models/PluginActionsType';
+import { PluginActions } from '../models/PluginActions';
 import { Observer } from './observer/Observer';
 import { deepMerge } from './utils/utils';
-import progressBarDomController from './progress-bar/ProgressBarDomController';
+
 
 export default class Plugin extends Observer {
   private dataController: DataController;
@@ -39,24 +40,24 @@ export default class Plugin extends Observer {
         viewConnector: viewConnector,
         orientation: orientation,
         sliderLength: this.dataController.getSliderLength(),
-        numberOfHandlers: isDraggableRange? numberOfDraggableRanges*2: 1,
+        numberOfHandlers: isDraggableRange ? numberOfDraggableRanges * 2 : 1,
         trigger: this.newTrigger,
-				subscribeToChangeState: this.addStateSubscriber
+        subscribeToChangeState: this.addStateSubscriber,
       },
       this.dataController.setHandlerParametrs
     );
 
-		new progressBarDomController({
-			viewConnector: viewConnector,
-			orientation: orientation,
-			isDraggableRange: isDraggableRange,
-			numberOfDraggableRanges: isDraggableRange? numberOfDraggableRanges*2: 1,
-			subscribeToChangeState: this.addStateSubscriber
-		})
+    new progressBarDomController({
+      viewConnector: viewConnector,
+      orientation: orientation,
+      isDraggableRange: isDraggableRange,
+      numberOfDraggableRanges: isDraggableRange ? numberOfDraggableRanges * 2 : 1,
+      subscribeToChangeState: this.addStateSubscriber,
+    });
 
     this.states = this.dataController.initState();
-		this.states.forEach((state, id) => this.newTrigger(PluginActionsType.onChangeState, state, id))
-    this.on(PluginActionsType.onTouchHandler, this.onTouchHandler);
+    this.states.forEach((state, id) => this.newTrigger(PluginActions.onChangeState, state, id));
+    this.on(PluginActions.onTouchHandler, this.onTouchHandler);
   }
 
   private updateOptions(newOptions?: UserOptions): void {
@@ -68,31 +69,30 @@ export default class Plugin extends Observer {
   }
 
   private onTouchHandler = (handlerId: number): void => {
-    this.on(PluginActionsType.onMoveHandler, this.onMoveHandler);
-    this.on(PluginActionsType.onStopMoving, this.onStopMoving);
+    this.on(PluginActions.onMoveHandler, this.onMoveHandler);
+    this.on(PluginActions.onStopMoving, this.onStopMoving);
   };
 
   private onMoveHandler = (handlerId: number, newUserPosition: number): void => {
-		let state = this.states[handlerId]
+    let state = this.states[handlerId];
     state = this.dataController.changeState(state, newUserPosition, handlerId);
-    this.trigger(PluginActionsType.onChangeState, state, handlerId);
+    this.trigger(PluginActions.onChangeState, state, handlerId);
   };
 
   private onStopMoving = (handlerId: number): void => {
-
-    this.off(PluginActionsType.onMoveHandler, this.onMoveHandler);
-    this.off(PluginActionsType.onStopMoving, this.onStopMoving);
+    this.off(PluginActions.onMoveHandler, this.onMoveHandler);
+    this.off(PluginActions.onStopMoving, this.onStopMoving);
   };
 
-  private newTrigger = (actions: PluginActionsType, ...args: Array<Object>): void => {
+  private newTrigger = (actions: PluginActions, ...args: Array<Object>): void => {
     this.trigger(actions, ...args);
   };
 
   private addStateSubscriber = (handler: (state?: State, id?: number) => void): void => {
-    this.on(PluginActionsType.onChangeState, handler);
+    this.on(PluginActions.onChangeState, handler);
   };
 
   private removeStateSubscriber = (handler: (state?: State, id?: number) => void): void => {
-    this.off(PluginActionsType.onChangeState, handler);
+    this.off(PluginActions.onChangeState, handler);
   };
 }

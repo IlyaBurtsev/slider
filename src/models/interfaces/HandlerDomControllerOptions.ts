@@ -1,4 +1,3 @@
-import { Handler } from '../Handler';
 import { PluginActionsType } from '../PluginActionsType';
 
 export default interface HandlerDomControllerOptions {

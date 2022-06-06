@@ -5,6 +5,7 @@ import { Orientation } from '../models/Orientation';
 import { PluginActionsType } from '../models/PluginActionsType';
 import { Observer } from './observer/Observer';
 import { deepMerge } from './utils/utils';
+import progressBarDomController from './progress-bar/ProgressBarDomController';
 
 export default class Plugin extends Observer {
   private dataController: DataController;
@@ -44,6 +45,14 @@ export default class Plugin extends Observer {
       },
       this.dataController.setHandlerParametrs
     );
+
+		new progressBarDomController({
+			viewConnector: viewConnector,
+			orientation: orientation,
+			isDraggableRange: isDraggableRange,
+			numberOfDraggableRanges: isDraggableRange? numberOfDraggableRanges*2: 1,
+			subscribeToChangeState: this.addStateSubscriber
+		})
 
     this.states = this.dataController.initState();
 		this.states.forEach((state, id) => this.newTrigger(PluginActionsType.onChangeState, state, id))

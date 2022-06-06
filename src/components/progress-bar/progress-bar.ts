@@ -1,3 +1,4 @@
+import './progress-bar.scss'
 import { createElement } from '../../plugin/utils/utils';
 
 const createProgressBar = (bindElement: HTMLElement): HTMLElement => {

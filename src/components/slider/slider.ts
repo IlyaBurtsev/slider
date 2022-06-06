@@ -1,4 +1,5 @@
 import './slider.scss'
+
 import { createElement} from "../../plugin/utils/utils"
 import { createHandler } from '../handler/handler'
 import { createProgressBar } from '../progress-bar/progress-bar'

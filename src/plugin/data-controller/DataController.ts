@@ -8,18 +8,18 @@ export default class DataController {
     this.sliderOptions = sliderOptions;
   }
 
-  public setSliderParametrs = (parametrs: SliderParametrs): void =>{
+  public setSliderParametrs = (parametrs: SliderParametrs): void => {
     this.sliderParametrs = parametrs;
     this.setStepLength();
-  }
+  };
 
   public getSliderLength = (): number => {
     return this.sliderParametrs.sliderLength;
-  }
+  };
 
-  public setHandlerParametrs = (parametrs: HandlerParametrs): void =>{
+  public setHandlerParametrs = (parametrs: HandlerParametrs): void => {
     this.handlerParametrs = parametrs;
-  }
+  };
 
   public initState = (): Array<State> => {
     const states: Array<State> = [];
@@ -102,7 +102,7 @@ export default class DataController {
           }
         }
       }
-			this.setLimits(states, handlerMinTranslate, handlerMaxTranslate);
+      this.setLimits(states, handlerMinTranslate, handlerMaxTranslate);
     } else {
       let state: State = {
         position: 0,
@@ -123,7 +123,7 @@ export default class DataController {
     return states;
   };
 
-	public changeState = (state: State, newUserposition: number, handlerId: number): State => {
+  public changeState = (state: State, newUserposition: number, handlerId: number): State => {
     if (handlerId === -1) {
       return state;
     }
@@ -132,7 +132,6 @@ export default class DataController {
     const { handlerMinTranslate } = this.handlerParametrs;
 
     const calcUserPosition = newUserposition - sliderStartPosition;
-
 
     if (isNaN(calcUserPosition)) {
       return state;
@@ -191,4 +190,20 @@ export default class DataController {
     const { minValue, maxValue } = this.sliderOptions;
     return (sliderLength / (maxValue - minValue)) * value + minTranslate;
   };
+
+  public convertPositionToValue = (position: number): string => {
+    const { handlerMinTranslate } = this.handlerParametrs;
+    const { sliderLength } = this.sliderParametrs;
+    const { minValue, maxValue, step } = this.sliderOptions;
+		let count = this.getCount(step)
+    return (((maxValue - minValue) / sliderLength) * (position - handlerMinTranslate)).toFixed(1);
+
+  };
+	private getCount(step: number): number | undefined {
+		if (step.toString().includes('.')) {
+			return step.toString().split('.').pop()?.length;
+		} else {
+			return 0;
+		}
+	}
 }

@@ -1,4 +1,4 @@
-import DataController from '../src/plugin/DataController';
+import DataController from '../src/plugin/data-controller/DataController';
 import {
   correctOptions,
   defaultInitialStates,
@@ -102,8 +102,7 @@ describe('DataController one handler', () => {
         handlerPosition = 990;
       }
       expect(controller.changeState(newState, userPosition, 0)).toEqual(resultState(handlerPosition));
-      newState = controller.changeState(newState, userPosition, 0);
-			
+      newState = controller.changeState(newState, userPosition, 0);			
     }
   });
 });

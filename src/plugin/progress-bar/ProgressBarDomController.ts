@@ -20,17 +20,20 @@ export default class progressBarDomController {
     subscribeToChangeState(this.onChangeState);
 
     function initBars(): Array<HTMLElement> {
-      const elements: Array<HTMLElement> = [progressBar];
-      if (isDraggableRange) {
-        const fragment = document.createDocumentFragment();
-        for (let i = 1; i < numberOfDraggableRanges; i++) {
-          const newBar = progressBar.cloneNode(true) as HTMLElement;
-          fragment.append(newBar);
-          elements.push(newBar);
-        }
-        progressBar.parentElement?.append(fragment);
-      }
-      return elements;
+			if(progressBar !== undefined) {
+				const elements: Array<HTMLElement> = [progressBar];
+				if (isDraggableRange) {
+					const fragment = document.createDocumentFragment();
+					for (let i = 1; i < numberOfDraggableRanges; i++) {
+						const newBar = progressBar.cloneNode(true) as HTMLElement;
+						fragment.append(newBar);
+						elements.push(newBar);
+					}
+					progressBar.parentElement?.append(fragment);
+				}
+				return elements;
+			}
+     return []
     }
   }
 

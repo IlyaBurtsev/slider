@@ -4,8 +4,9 @@ import { createElement} from "../../plugin/utils/utils"
 import { createHandler } from '../handler/handler'
 import { createProgressBar } from '../progress-bar/progress-bar'
 import { createScale } from '../scale/scale'
+import { createTooltip } from '../tooltip/tooltip'
 
-const createSlider = (bindElement: HTMLElement): Array<HTMLElement | Scale> => {
+const createSlider = (bindElement: HTMLElement): Array<HTMLElement> => {
 	const className = {
 		slider: 'slider-plugin',
 		handlerContainer: 'slider-plugin__handler-container',	
@@ -16,9 +17,9 @@ const createSlider = (bindElement: HTMLElement): Array<HTMLElement | Scale> => {
 	const handler = createHandler(handlerContainer);
 	slider.append(handlerContainer);
 	const bar = createProgressBar(slider)
-	const scaleElements: Scale = createScale(slider);
+	const tooltip = createTooltip(handler)
 	bindElement.append(slider);
-	return [slider, handler, bar, scaleElements];
+	return [slider, handler, bar, tooltip];
 }
 
 export {createSlider}

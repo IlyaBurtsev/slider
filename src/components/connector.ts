@@ -1,12 +1,14 @@
 import { createSlider } from "./slider/slider";
+import { setValueInTooltip } from "./tooltip/tooltip";
 
 function getViewConnector (bindElement: HTMLElement): ViewConnector {
-	const elements: Array<HTMLElement | Scale> = createSlider(bindElement);
+	const elements: Array<HTMLElement> = createSlider(bindElement);
 	return {
-		slider: elements[0] as HTMLElement,
-		startHandlerElement: elements[1] as HTMLElement,
-		progressBar: elements[2] as HTMLElement,
-		scaleElements: elements[3] as Scale
+		slider: elements[0],
+		startHandlerElement: elements[1],
+		progressBar: elements[2],
+		tooltip: elements[3],
+		setValueInTooltip: setValueInTooltip	
 	}
 }
 export {getViewConnector}

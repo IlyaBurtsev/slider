@@ -1,7 +1,6 @@
 interface TooltipDomControllerOptions {
   viewConnector: ViewConnector;
-  orientation: number;
-  numberOfTooltips: number;
+  handlerElements: Array<HTMLElement>;
   convertPositionToValue: (position: number) => string;
   subscribeToChangeState: (handler: (state?: State, id?: number) => void) => void;
 	subscribeToTouchHandler: (handler: (id?: number) => void) => void;

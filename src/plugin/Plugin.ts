@@ -11,6 +11,7 @@ import TooltipDomController from './tooltip/TooltipDomController';
 
 export default class Plugin extends Observer {
   private dataController: DataController;
+	private handlersDomContrtoller: HandlersDomController
   private states: Array<State>;
   private options: SliderOptions;
   private defaultOptions: SliderOptions = {
@@ -20,7 +21,7 @@ export default class Plugin extends Observer {
     minValue: 0,
     maxValue: 100,
     startValues: [],
-    step: 0.1,
+    step: 1,
   };
 
   constructor(viewConnector: ViewConnector, newOptions?: UserOptions) {
@@ -36,7 +37,7 @@ export default class Plugin extends Observer {
 
     new SliderDomController(slider, orientation, this.dataController.setSliderParametrs);
 
-    new HandlersDomController(
+    this.handlersDomContrtoller = new HandlersDomController(
       {
         viewConnector: viewConnector,
         orientation: orientation,
@@ -58,8 +59,7 @@ export default class Plugin extends Observer {
 
 		new TooltipDomController({
 			viewConnector: viewConnector,
-			orientation: orientation,
-			numberOfTooltips: isDraggableRange ? numberOfDraggableRanges * 2 : 1,
+			handlerElements: this.handlersDomContrtoller.getHandlerElements(),
 			convertPositionToValue: this.dataController.convertPositionToValue,
 			subscribeToChangeState: this.addStateSubscriber,
 			subscribeToTouchHandler: this.addOnTouchSubscriber,

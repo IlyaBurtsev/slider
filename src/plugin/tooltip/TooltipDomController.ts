@@ -1,11 +1,8 @@
-import { Orientation } from '../../models/Orientation';
-
 export default class TooltipDomController {
   private tooltips: Array<HTMLElement>;
   private setValue: (tooltip: HTMLElement, value: string) => void;
   private convertPositionToValue: (position: number) => string;
   private parametrs: TooltipParametrs;
-  private orientation: number;
   constructor(options: TooltipDomControllerOptions) {
     const { subscribeToChangeState, subscribeToTouchHandler, subscribeToStopMovingHandler } = options;
     this.init(options);
@@ -15,7 +12,7 @@ export default class TooltipDomController {
   }
 
   private init(options: TooltipDomControllerOptions) {
-    const { numberOfTooltips, viewConnector, orientation, convertPositionToValue } = options;
+    const { handlerElements, viewConnector, convertPositionToValue } = options;
     const { tooltip, setValueInTooltip } = viewConnector;
     if (tooltip === undefined) {
       return;
@@ -25,38 +22,32 @@ export default class TooltipDomController {
     }
     this.convertPositionToValue = convertPositionToValue;
     this.setValue = setValueInTooltip;
-    this.parametrs = this.getParametrs(tooltip, orientation);
+    this.parametrs = this.getParametrs(tooltip);
     this.tooltips = initTooltips();
 
     function initTooltips(): Array<HTMLElement> {
+      const elements: Array<HTMLElement> = [];
       if (tooltip !== undefined) {
         tooltip.style.display = 'none';
-        const elements: Array<HTMLElement> = [tooltip];
-        if (numberOfTooltips > 1) {
-          const fragment = document.createDocumentFragment();
-          for (let i = 1; i < numberOfTooltips; i++) {
-            const newTooltip = tooltip.cloneNode(true) as HTMLElement;
-            fragment.append(newTooltip);
-            elements.push(newTooltip);
-          }
+        if (tooltip.parentElement === handlerElements[0]) {
+          elements.push(tooltip);
+          handlerElements.forEach((handler, index) => {
+            if (index > 0) {
+              const newTooltip = tooltip.cloneNode(true) as HTMLElement;
+              handler.append(newTooltip);
+              elements.push(newTooltip);
+            }
+          });
         }
-        return elements;
       }
-      return [];
+      return elements;
     }
   }
 
-  private getParametrs = (tooltip: HTMLElement, orientation: number): TooltipParametrs => {
+  private getParametrs = (tooltip: HTMLElement): TooltipParametrs => {
     const cs = window.getComputedStyle(tooltip, null);
-    let translate: number = 0;
     let display: string = cs.display;
-    if (orientation === Orientation.Horizontal) {
-      translate = Number(cs.left.match(/[-\d][0-9]+/));
-    } else {
-      translate = Number(cs.top.match(/[-\d][0-9]+/));
-    }
     return {
-      startTranslate: translate,
       display: display,
     };
   };
@@ -75,5 +66,4 @@ export default class TooltipDomController {
   private onStopMovingHandler = (id: number): void => {
     this.tooltips[id].style.display = 'none';
   };
-
 }

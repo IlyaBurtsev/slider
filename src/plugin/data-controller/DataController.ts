@@ -196,7 +196,7 @@ export default class DataController {
     const { sliderLength } = this.sliderParametrs;
     const { minValue, maxValue, step } = this.sliderOptions;
 		let count = this.getCount(step)
-    return (((maxValue - minValue) / sliderLength) * (position - handlerMinTranslate)).toFixed(1);
+    return (((maxValue - minValue) / sliderLength) * (position - handlerMinTranslate)).toFixed(count);
 
   };
 	private getCount(step: number): number | undefined {

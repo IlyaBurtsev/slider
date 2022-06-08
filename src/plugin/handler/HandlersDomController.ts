@@ -11,11 +11,15 @@ export default class HandlersDomController {
     this.init(options);
   }
 
+  public getHandlerElements = (): Array<HTMLElement> => {
+    return this.handlerElements;
+  };
+
   private init(options: HandlerDomControllerOptions): void {
     const { orientation, subscribeToChangeState } = options;
     this.orientation = orientation;
     this.handlerElements = this.createElements(options);
-		this.addListeners(options);
+    this.addListeners(options);
     subscribeToChangeState(this.onChachangeState);
   }
 
@@ -65,12 +69,12 @@ export default class HandlersDomController {
     return elements;
   };
 
-	private addListeners = (options: HandlerDomControllerOptions):void => {
-		const {trigger, orientation} = options
-		this.handlerElements.forEach((element, id) => {
-			new HandlerListener(element, id, orientation, trigger);
-		})
-	}
+  private addListeners = (options: HandlerDomControllerOptions): void => {
+    const { trigger, orientation } = options;
+    this.handlerElements.forEach((element, id) => {
+      new HandlerListener(element, id, orientation, trigger);
+    });
+  };
 
   private onChachangeState = (state: State, id: number): void => {
     this.moveHandlerToPosition(id, state.position);

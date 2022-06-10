@@ -8,11 +8,10 @@ import { Observer } from './observer/Observer';
 import { deepMerge } from './utils/utils';
 import TooltipDomController from './tooltip/TooltipDomController';
 
-export default class Plugin extends Observer {
+class Plugin extends Observer {
   private dataController: DataController;
   private state: RootState;
-  private options: SliderOptions;
-  private defaultOptions: SliderOptions = {
+  private options: SliderOptions = {
     orientation: Orientation.Horizontal,
     isDraggableRange: false,
     numberOfDraggableRanges: 1,
@@ -22,12 +21,18 @@ export default class Plugin extends Observer {
     step: 1,
   };
 
-  constructor(viewConnector: ViewConnector, newOptions?: UserOptions) {
+  constructor(viewConnector: ViewConnector, newOptions?: InitOptions) {
     super();
     this.updateOptions(newOptions);
     this.init(viewConnector);
   }
-	
+
+	public updateOptions = (newOptions?: InitOptions): void =>{
+    if (newOptions) {
+      this.options = deepMerge(this.options, newOptions);
+    }
+  }
+
   private init(viewConnector: ViewConnector): void {
     const { slider } = viewConnector;
     const { orientation, isDraggableRange, numberOfDraggableRanges } = this.options;
@@ -35,8 +40,8 @@ export default class Plugin extends Observer {
     this.dataController = new DataController(this.options);
 
     const sliderDomController = new SliderDomController(slider, orientation, this.dataController.getSliderParametrs);
-		this.dataController.getSliderParametrs = sliderDomController.getSliderParametrs
-		
+    this.dataController.getSliderParametrs = sliderDomController.getSliderParametrs;
+
     const handlersDomContrtoller = new HandlersDomController(
       {
         viewConnector: viewConnector,
@@ -71,14 +76,6 @@ export default class Plugin extends Observer {
     this.on(PluginActions.onTouchHandler, this.onTouchHandler);
   }
 
-  private updateOptions(newOptions?: UserOptions): void {
-    if (newOptions) {
-      this.options = deepMerge(this.defaultOptions, newOptions);
-    } else {
-      this.options = this.defaultOptions;
-    }
-  }
-
   private onTouchHandler = (handlerId: number): void => {
     this.on(PluginActions.onMoveHandler, this.onMoveHandler);
     this.on(PluginActions.onStopMoving, this.onStopMoving);
@@ -111,3 +108,30 @@ export default class Plugin extends Observer {
     this.on(PluginActions.onStopMoving, handler);
   };
 }
+
+const createSliderPlugin = (viewConnector: ViewConnector, options?: UserOptions): API => {
+  const { slider } = viewConnector;
+  const rect = viewConnector.slider.getBoundingClientRect();
+
+  if (rect.width > rect.height) {
+    if (options === undefined) {
+      options = { orientation: Orientation.Horizontal };
+    } else {
+      options.orientation = Orientation.Horizontal;
+    }
+  } else {
+    if (options === undefined) {
+      options = { orientation: Orientation.Vertical };
+    } else {
+      options.orientation = Orientation.Vertical;
+    }
+  }
+
+  const sliderPlugin = new Plugin(viewConnector, options);
+  const api: API = {
+		updateSliderOptions: sliderPlugin.updateOptions
+	};
+  return api;
+};
+
+export { createSliderPlugin };

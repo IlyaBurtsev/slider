@@ -1,5 +1,6 @@
-interface UserOptions extends DataObject<UserOptionsType> {
-	isDraggableRange?: boolean;
+interface InitOptions extends DataObject<UserOptionsType> {
+  orientation?: number;
+  isDraggableRange?: boolean;
   numberOfDraggableRanges?: number;
   startValue?: number;
   endValue?: number;

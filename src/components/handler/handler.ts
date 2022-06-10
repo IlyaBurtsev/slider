@@ -1,14 +1,21 @@
 import './handler.scss'
-import { createElement } from '../../plugin/utils/utils'
+import { addClass, createElement } from '../../plugin/utils/utils'
+
+const className = {
+	handler: 'handler',
+	handlerVertical: 'handler_vertical'
+}
 
 const createHandler = (bindElement: HTMLElement): HTMLElement => {
-	const className = {
-		handler: 'handler',
-	}
+	
 
   const handler = createElement({ className: className.handler})
   bindElement.append(handler)
   return handler
 }
 
-export { createHandler }
+const createHandlerVertival =(handler: HTMLElement):void => {
+	addClass(handler, className.handlerVertical)
+}
+
+export { createHandler, createHandlerVertival }

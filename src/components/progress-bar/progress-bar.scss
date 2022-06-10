@@ -3,4 +3,7 @@
 	height: 100%;
 	background-color: lightgreen;
 	z-index: 2;
+	&_vertical {
+		width: 100%;
+	}
 }

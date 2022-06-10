@@ -1,13 +1,19 @@
-import './progress-bar.scss'
-import { createElement } from '../../plugin/utils/utils';
+import './progress-bar.scss';
+import { addClass, createElement } from '../../plugin/utils/utils';
 
-const createProgressBar = (bindElement: HTMLElement): HTMLElement => {
-  const className = {
-    progresBar: 'progress-bar',
-  };
-	const progresBar = createElement({ className: className.progresBar })
-  bindElement.append(progresBar);
-	return progresBar;
+const className = {
+  progresBar: 'progress-bar',
+  progresBarVertical: 'progress-bar_vertical',
 };
 
-export { createProgressBar };
+const createProgressBar = (bindElement: HTMLElement): HTMLElement => {
+  const progresBar = createElement({ className: className.progresBar });
+  bindElement.append(progresBar);
+  return progresBar;
+};
+
+const createBarVertical = (progressBar: HTMLElement): void => {
+  addClass(progressBar, className.progresBarVertical);
+};
+
+export { createProgressBar, createBarVertical };

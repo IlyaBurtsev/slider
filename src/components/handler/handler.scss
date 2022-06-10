@@ -7,4 +7,8 @@
 	top: calc(-100%/3);
 	left: -50%;
 	z-index: 3;
+	&_vertical {
+		top: -50%;
+		left:calc(-100%/3);
+	}
 }

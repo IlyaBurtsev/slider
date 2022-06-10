@@ -11,7 +11,7 @@ import TooltipDomController from './tooltip/TooltipDomController';
 export default class Plugin extends Observer {
   private dataController: DataController;
   private handlersDomContrtoller: HandlersDomController;
-  private states: Array<State>;
+  private state: RootState;
   private options: SliderOptions;
   private defaultOptions: SliderOptions = {
     orientation: Orientation.Horizontal,
@@ -53,20 +53,20 @@ export default class Plugin extends Observer {
       orientation: orientation,
       isDraggableRange: isDraggableRange,
       numberOfDraggableRanges: numberOfDraggableRanges,
+      handlerLength: this.dataController.getHandlerLength(),
       subscribeToChangeState: this.addStateSubscriber,
     });
 
     new TooltipDomController({
       viewConnector: viewConnector,
       handlerElements: this.handlersDomContrtoller.getHandlerElements(),
-      convertPositionToValue: this.dataController.convertPositionToValue,
       subscribeToChangeState: this.addStateSubscriber,
       subscribeToTouchHandler: this.addOnTouchSubscriber,
       subscribeToStopMovingHandler: this.addOnStopMovingSubscriber,
     });
 
-    this.states = this.dataController.initState();
-    this.states.forEach((state, id) => this.newTrigger(PluginActions.onChangeState, state, id));
+    this.state = this.dataController.initState();
+    this.newTrigger(PluginActions.onChangeState, this.state);
     this.on(PluginActions.onTouchHandler, this.onTouchHandler);
   }
 
@@ -84,22 +84,21 @@ export default class Plugin extends Observer {
   };
 
   private onMoveHandler = (handlerId: number, newUserPosition: number): void => {
-    let state = this.states[handlerId];
-    state = this.dataController.changeState(state, newUserPosition, handlerId);
-    this.trigger(PluginActions.onChangeState, state, handlerId);
+    this.state = this.dataController.changeState(this.state, newUserPosition, handlerId);
+    this.trigger(PluginActions.onChangeState, this.state, handlerId);
   };
 
   private onStopMoving = (handlerId: number): void => {
     this.off(PluginActions.onMoveHandler, this.onMoveHandler);
     this.off(PluginActions.onStopMoving, this.onStopMoving);
-    this.dataController.updateLimits(this.states);
+    this.dataController.updateLimits(this.state.handlerStates);
   };
 
   private newTrigger = (actions: PluginActions, ...args: Array<Object>): void => {
     this.trigger(actions, ...args);
   };
 
-  private addStateSubscriber = (handler: (state?: State, id?: number) => void): void => {
+  private addStateSubscriber = (handler: (state?: RootState, id?: number) => void): void => {
     this.on(PluginActions.onChangeState, handler);
   };
 
@@ -109,9 +108,5 @@ export default class Plugin extends Observer {
 
   private addOnStopMovingSubscriber = (handler: (id?: number) => void): void => {
     this.on(PluginActions.onStopMoving, handler);
-  };
-
-  private removeStateSubscriber = (handler: (state?: State, id?: number) => void): void => {
-    this.off(PluginActions.onChangeState, handler);
   };
 }

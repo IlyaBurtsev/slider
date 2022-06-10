@@ -1,18 +1,21 @@
 export default class TooltipDomController {
   private tooltips: Array<HTMLElement>;
   private setValue: (tooltip: HTMLElement, value: string) => void;
-  private convertPositionToValue: (position: number) => string;
   private parametrs: TooltipParametrs;
   constructor(options: TooltipDomControllerOptions) {
-    const { subscribeToChangeState, subscribeToTouchHandler, subscribeToStopMovingHandler } = options;
+    const {
+      subscribeToChangeState: subscribeToChangeValues,
+      subscribeToTouchHandler,
+      subscribeToStopMovingHandler,
+    } = options;
     this.init(options);
-    subscribeToChangeState(this.onChangeState);
+    subscribeToChangeValues(this.onChangeValues);
     subscribeToTouchHandler(this.onTouchHandler);
     subscribeToStopMovingHandler(this.onStopMovingHandler);
   }
 
   private init(options: TooltipDomControllerOptions) {
-    const { handlerElements, viewConnector, convertPositionToValue } = options;
+    const { handlerElements, viewConnector } = options;
     const { tooltip, setValueInTooltip } = viewConnector;
     if (tooltip === undefined) {
       return;
@@ -20,7 +23,6 @@ export default class TooltipDomController {
     if (setValueInTooltip === undefined) {
       return;
     }
-    this.convertPositionToValue = convertPositionToValue;
     this.setValue = setValueInTooltip;
     this.parametrs = this.getParametrs(tooltip);
     this.tooltips = initTooltips();
@@ -52,10 +54,8 @@ export default class TooltipDomController {
     };
   };
 
-  private onChangeState = (state: State, id: number): void => {
-    const tooltip = this.tooltips[id];
-    const value = this.convertPositionToValue(state.position);
-    this.setValue(tooltip, value);
+  private onChangeValues = (state: RootState): void => {
+    this.tooltips.forEach((tooltip, id) => this.setValue(tooltip, state.valuesState.values[id]));
   };
 
   private onTouchHandler = (id: number): void => {

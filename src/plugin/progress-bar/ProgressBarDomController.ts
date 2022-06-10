@@ -2,67 +2,98 @@ import { Orientation } from '../../models/Orientation';
 
 export default class progressBarDomController {
   private bars: Array<HTMLElement>;
-  private barStartTranslate: number = 0;
   private isDraggableRange: boolean;
   private orientation: number;
+  private handlerLength: number;
 
   constructor(options: BarDomControllerOptions) {
     this.init(options);
   }
 
   private init(options: BarDomControllerOptions): void {
-    const { viewConnector, isDraggableRange, numberOfDraggableRanges, orientation, subscribeToChangeState } = options;
+    const {
+      viewConnector,
+      isDraggableRange,
+      numberOfDraggableRanges,
+      orientation,
+      handlerLength,
+      subscribeToChangeState,
+    } = options;
     const { progressBar } = viewConnector;
-
-		this.orientation = orientation
+    this.isDraggableRange = isDraggableRange;
+    this.orientation = orientation;
+    this.handlerLength = handlerLength;
     this.bars = initBars();
 
     subscribeToChangeState(this.onChangeState);
 
     function initBars(): Array<HTMLElement> {
-			if(progressBar !== undefined) {
-				const elements: Array<HTMLElement> = [progressBar];
-				if (isDraggableRange) {
-					const fragment = document.createDocumentFragment();
-					for (let i = 1; i < numberOfDraggableRanges; i++) {
-						const newBar = progressBar.cloneNode(true) as HTMLElement;
-						fragment.append(newBar);
-						elements.push(newBar);
-					}
-					progressBar.parentElement?.append(fragment);
-				}
-				return elements;
-			}
-     return []
+      if (progressBar !== undefined) {
+        const elements: Array<HTMLElement> = [progressBar];
+        if (isDraggableRange) {
+          const fragment = document.createDocumentFragment();
+          for (let i = 1; i < numberOfDraggableRanges; i++) {
+            const newBar = progressBar.cloneNode(true) as HTMLElement;
+            fragment.append(newBar);
+            elements.push(newBar);
+          }
+          progressBar.parentElement?.append(fragment);
+        }
+
+        return elements;
+      }
+      return [];
     }
   }
 
-  private onChangeState = (state: State, handlerId: number): void => {
-    const { minTranslate, position, maxTranslate } = state;
-		let length: number = 0
-		let barId: number = 0
-		let startPosition: number = this.barStartTranslate
+  private onChangeState = (state: RootState, id: number): void => {
+    let barId: number = 0;
+    let length;
+    let startPosition: number;
     if (!this.isDraggableRange) {
-      length = position - this.barStartTranslate;
+      length = state.handlerStates[0].position;
+      if (state.handlerStates[0].position === state.handlerStates[0].minTranslate) {
+        length = 0;
+      }
+      this.updateBarView(this.bars[0], 0, length);
     } else {
-      const isStartElement = handlerId % 2 === 0;
-      barId = Math.floor(handlerId / 2);
-      startPosition = isStartElement ? position : minTranslate;
-      length = isStartElement ? maxTranslate : position;
+      if (id === undefined) {
+        state.handlerStates.forEach((state, index) => {
+          setBarParametrs(index, state, this);
+        });
+      } else {
+        setBarParametrs(id, state.handlerStates[id], this);
+      }
     }
-		if(position === minTranslate) {
-			length = 0;
-		}
-		this.updateBarView(this.bars[barId], startPosition, length);
+    function setBarParametrs(id: number, state: HandlerState, that: progressBarDomController): void {
+      const isStartElement = id % 2 === 0;
+      const { minTranslate, position, maxTranslate } = state;
+      barId = Math.floor(id / 2);
+      if (isStartElement) {
+        startPosition = position;
+        length = maxTranslate + that.handlerLength * 1.5 - position;
+      } else {
+        length = position - minTranslate + that.handlerLength * 1.5;
+      }
+
+      that.updateBarView(that.bars[barId], startPosition, length);
+    }
   };
 
-  private updateBarView = (bar: HTMLElement, startPosition: number, length: number): void => {
-    if (this.orientation === Orientation.Horizontal) {
-      bar.style.left = `${startPosition}px`;
-      bar.style.width = `${length}px`;
-    } else {
-      bar.style.top = `${startPosition}px`;
-      bar.style.height = `${length}px`;
+  private updateBarView = (bar: HTMLElement, startPosition?: number, length?: number): void => {
+    if (startPosition !== undefined) {
+      if (this.orientation === Orientation.Horizontal) {
+        bar.style.left = `${startPosition}px`;
+      } else {
+        bar.style.top = `${startPosition}px`;
+      }
+    }
+    if (length !== undefined) {
+      if (this.orientation === Orientation.Horizontal) {
+        bar.style.width = `${length}px`;
+      } else {
+        bar.style.height = `${length}px`;
+      }
     }
   };
 }

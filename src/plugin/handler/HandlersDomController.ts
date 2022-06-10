@@ -76,8 +76,13 @@ export default class HandlersDomController {
     });
   };
 
-  private onChachangeState = (state: State, id: number): void => {
-    this.moveHandlerToPosition(id, state.position);
+  private onChachangeState = (state: RootState, id: number): void => {
+		if(id !== undefined){
+			this.moveHandlerToPosition(id, state.handlerStates[id].position);
+		} else {
+			state.handlerStates.forEach((state, index) => this.moveHandlerToPosition(index, state.position))
+		}
+    
   };
 
   private moveHandlerToPosition = (id: number, newPosition: number): void => {

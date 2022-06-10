@@ -23,7 +23,7 @@ const sliderParametrs: SliderParametrs = {
   sliderEndPosition: 1400,
 };
 
-const defaultInitialState: State = {
+const defaultInitialState: HandlerState = {
   position: -10,
   minTranslate: -10,
   maxTranslate: 990,
@@ -31,8 +31,8 @@ const defaultInitialState: State = {
 
 const defaultInitialStates = [defaultInitialState];
 
-const resultInitialStates = (position: number): Array<State> => {
-  const newState: State = {
+const resultInitialStates = (position: number): Array<HandlerState> => {
+  const newState: HandlerState = {
     position: -10,
     minTranslate: -10,
     maxTranslate: 990,
@@ -41,14 +41,14 @@ const resultInitialStates = (position: number): Array<State> => {
   return [newState];
 };
 
-const defaultState: State = {
+const defaultState: HandlerState = {
   position: -10,
   minTranslate: -10,
   maxTranslate: 990,
 };
 
-const resultState = (position: number): State => {
-  const state: State = {
+const resultState = (position: number): HandlerState => {
+  const state: HandlerState = {
     position: -10,
     minTranslate: -10,
     maxTranslate: 990,
@@ -57,4 +57,12 @@ const resultState = (position: number): State => {
   return state;
 };
 
-export { correctOptions, handlerParametrs, sliderParametrs, defaultInitialStates, resultInitialStates, defaultState, resultState};
+export {
+  correctOptions,
+  handlerParametrs,
+  sliderParametrs,
+  defaultInitialStates,
+  resultInitialStates,
+  defaultState,
+  resultState,
+};

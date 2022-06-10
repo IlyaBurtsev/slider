@@ -1,6 +1,5 @@
-interface State {
+interface HandlerState {
   position: number;
-	minTranslate: number
-	maxTranslate: number
+  minTranslate: number;
+  maxTranslate: number;
 }
-

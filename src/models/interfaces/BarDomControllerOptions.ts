@@ -1,7 +1,8 @@
 interface BarDomControllerOptions {
-	viewConnector: ViewConnector;
+  viewConnector: ViewConnector;
   orientation: number;
-	isDraggableRange: boolean;
+  isDraggableRange: boolean;
   numberOfDraggableRanges: number;
-	subscribeToChangeState: (handler: (state?: State, id?: number) => void) => void;
+  handlerLength: number;
+  subscribeToChangeState: (handler: (state?: RootState, id?: number) => void) => void;
 }

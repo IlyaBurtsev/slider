@@ -1,9 +1,8 @@
 interface InitOptions extends DataObject<UserOptionsType> {
   orientation?: number;
-  isDraggableRange?: boolean;
-  numberOfDraggableRanges?: number;
+  numberOfHandlers?: number;
   startValue?: number;
   endValue?: number;
-  startValues?: Array<Array<number>> | Array<number> | number;
+  startValues?:  Array<number> | number;
   step?: number;
 }

@@ -1,20 +1,19 @@
 import DataController from './data-controller/DataController';
 import SliderDomController from './slider/SliderDomController';
 import HandlersDomController from './handler/HandlersDomController';
-import progressBarDomController from './progress-bar/ProgressBarDomController';
+import ProgressBarDomController from './progress-bar/ProgressBarDomController';
+import TooltipDomController from './tooltip/TooltipDomController';
 import { Orientation } from '../models/Orientation';
 import { PluginActions } from '../models/PluginActions';
 import { Observer } from './observer/Observer';
 import { deepMerge } from './utils/utils';
-import TooltipDomController from './tooltip/TooltipDomController';
 
 class Plugin extends Observer {
   private dataController: DataController;
   private state: RootState;
   private options: SliderOptions = {
     orientation: Orientation.Horizontal,
-    isDraggableRange: false,
-    numberOfDraggableRanges: 1,
+    numberOfHandlers: 1,
     minValue: 0,
     maxValue: 100,
     startValues: [],
@@ -23,46 +22,48 @@ class Plugin extends Observer {
 
   constructor(viewConnector: ViewConnector, newOptions?: InitOptions) {
     super();
-    this.updateOptions(newOptions);
-    this.init(viewConnector);
-  }
-
-	public updateOptions = (newOptions?: InitOptions): void =>{
     if (newOptions) {
       this.options = deepMerge(this.options, newOptions);
     }
+    this.init(viewConnector);
   }
 
+  public updateOptions = (newOptions?: InitOptions): void => {
+    if (newOptions) {
+      this.options = deepMerge(this.options, newOptions);
+      this.state = this.dataController.initState();
+      this.trigger(PluginActions.onChangeState, this.state);
+    }
+  };
+
   private init(viewConnector: ViewConnector): void {
-    const { orientation, isDraggableRange, numberOfDraggableRanges } = this.options;
+    const { orientation, numberOfHandlers } = this.options;
 
     this.dataController = new DataController(this.options);
 
-    const sliderDomController = new SliderDomController({
-			viewConnector: viewConnector,
-			orientation: orientation,
-			subscribeToTouchHandler: this.addOnTouchSubscriber,
-			callback: this.dataController.setSliderParametrs
-		});
-
+    new SliderDomController({
+      viewConnector: viewConnector,
+      orientation: orientation,
+      subscribeToTouchHandler: this.addOnTouchSubscriber,
+      callback: this.dataController.setSliderParametrs,
+    });
 
     const handlersDomContrtoller = new HandlersDomController(
       {
         viewConnector: viewConnector,
         orientation: orientation,
         sliderLength: this.dataController.getSliderLength(),
-        numberOfHandlers: isDraggableRange ? numberOfDraggableRanges * 2 : 1,
+        numberOfHandlers: numberOfHandlers,
         trigger: this.newTrigger,
         subscribeToChangeState: this.addStateSubscriber,
       },
       this.dataController.setHandlerParametrs
     );
 
-    new progressBarDomController({
+    new ProgressBarDomController({
       viewConnector: viewConnector,
       orientation: orientation,
-      isDraggableRange: isDraggableRange,
-      numberOfDraggableRanges: numberOfDraggableRanges,
+      numberOfHandlers: numberOfHandlers,
       handlerLength: this.dataController.getHandlerLength(),
       subscribeToChangeState: this.addStateSubscriber,
     });
@@ -133,8 +134,8 @@ const createSliderPlugin = (viewConnector: ViewConnector, options?: UserOptions)
 
   const sliderPlugin = new Plugin(viewConnector, options);
   const api: API = {
-		updateSliderOptions: sliderPlugin.updateOptions
-	};
+    updateSliderOptions: sliderPlugin.updateOptions,
+  };
   return api;
 };
 

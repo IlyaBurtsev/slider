@@ -1,10 +1,10 @@
 import { Orientation } from '../../models/Orientation';
 
-export default class progressBarDomController {
+export default class ProgressBarDomController {
   private bars: Array<HTMLElement>;
-  private isDraggableRange: boolean;
   private orientation: number;
   private handlerLength: number;
+	private numberOfHandlers: number
 
   constructor(options: BarDomControllerOptions) {
     this.init(options);
@@ -13,16 +13,15 @@ export default class progressBarDomController {
   private init(options: BarDomControllerOptions): void {
     const {
       viewConnector,
-      isDraggableRange,
-      numberOfDraggableRanges,
+      numberOfHandlers,
       orientation,
       handlerLength,
       subscribeToChangeState,
     } = options;
     const { progressBar } = viewConnector;
-    this.isDraggableRange = isDraggableRange;
     this.orientation = orientation;
     this.handlerLength = handlerLength;
+		this.numberOfHandlers = numberOfHandlers;
     this.bars = initBars();
 
     subscribeToChangeState(this.onChangeState);
@@ -30,12 +29,14 @@ export default class progressBarDomController {
     function initBars(): Array<HTMLElement> {
       if (progressBar !== undefined) {
         const elements: Array<HTMLElement> = [progressBar];
-        if (isDraggableRange) {
+        if (numberOfHandlers > 1) {
           const fragment = document.createDocumentFragment();
-          for (let i = 1; i < numberOfDraggableRanges; i++) {
-            const newBar = progressBar.cloneNode(true) as HTMLElement;
-            fragment.append(newBar);
-            elements.push(newBar);
+          for (let i = 1; i < numberOfHandlers; i++) {
+						if (i%2 === 0) {
+							const newBar = progressBar.cloneNode(true) as HTMLElement;
+							fragment.append(newBar);
+							elements.push(newBar);
+						}
           }
           progressBar.parentElement?.append(fragment);
         }
@@ -50,7 +51,7 @@ export default class progressBarDomController {
     let barId: number = 0;
     let length;
     let startPosition: number;
-    if (!this.isDraggableRange) {
+    if (this.numberOfHandlers === 1) {
       length = state.handlerStates[0].position;
       if (state.handlerStates[0].position === state.handlerStates[0].minTranslate) {
         length = 0;
@@ -65,7 +66,7 @@ export default class progressBarDomController {
         setBarParametrs(id, state.handlerStates[id], this);
       }
     }
-    function setBarParametrs(id: number, state: HandlerState, that: progressBarDomController): void {
+    function setBarParametrs(id: number, state: HandlerState, that: ProgressBarDomController): void {
       const isStartElement = id % 2 === 0;
       const { minTranslate, position, maxTranslate } = state;
       barId = Math.floor(id / 2);

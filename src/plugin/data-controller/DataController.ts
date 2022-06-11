@@ -1,15 +1,19 @@
 export default class DataController {
   private handlerParametrs: HandlerParametrs;
   private sliderOptions: SliderOptions;
-  public getSliderParametrs: () => SliderParametrs;
+  private sliderParametrs: SliderParametrs;
 
   constructor(sliderOptions: SliderOptions) {
     this.sliderOptions = sliderOptions;
   }
 
   public getSliderLength = (): number => {
-		const {sliderLength} = this.getSliderParametrs()
+    const { sliderLength } = this.sliderParametrs;
     return sliderLength;
+  };
+
+  public setSliderParametrs = (parametrs: SliderParametrs): void => {
+    this.sliderParametrs = parametrs;
   };
 
   public getHandlerLength = (): number => {
@@ -28,7 +32,7 @@ export default class DataController {
     const { values } = valuesState;
     const { isDraggableRange, numberOfDraggableRanges, startValues, minValue, maxValue } = this.sliderOptions;
     const { handlerMinTranslate, handlerMaxTranslate, startHandlerLength } = this.handlerParametrs;
-    const { sliderLength } = this.getSliderParametrs()
+    const { sliderLength } = this.sliderParametrs;
     const minValueRange = this.getMinValuesRange();
 
     if (isDraggableRange) {
@@ -160,7 +164,7 @@ export default class DataController {
 
   public changeState = (state: RootState, newUserposition: number, id: number): RootState => {
     const { minValue, maxValue } = this.sliderOptions;
-    const sliderParametrs = this.getSliderParametrs();
+    const sliderParametrs = this.sliderParametrs;
     const { sliderStartPosition, sliderLength } = sliderParametrs;
     const stepsLength = this.getStepLength(sliderLength);
     if (id === -1) {
@@ -240,14 +244,14 @@ export default class DataController {
   };
 
   private convertValueToPosition = (value: number, minTranslate: number): number => {
-    const { sliderLength } = this.getSliderParametrs();
+    const { sliderLength } = this.sliderParametrs;
     const { minValue, maxValue } = this.sliderOptions;
     return (sliderLength / (maxValue - minValue)) * value + minTranslate;
   };
 
   private convertPositionToValue = (position: number): string => {
     const { handlerMinTranslate } = this.handlerParametrs;
-    const { sliderLength } = this.getSliderParametrs();
+    const { sliderLength } = this.sliderParametrs;
     const { minValue, maxValue, step } = this.sliderOptions;
     let calcPosition = position;
     let count = this.getCount(step);
@@ -258,7 +262,7 @@ export default class DataController {
   private getMinValuesRange = (): number => {
     const { minValue, maxValue, step } = this.sliderOptions;
     const { startHandlerLength, endHandlerLength } = this.handlerParametrs;
-    const { sliderLength } = this.getSliderParametrs();
+    const { sliderLength } = this.sliderParametrs;
     // TODO add range if end and start HandlerLengths are different
     return ((maxValue - minValue) * startHandlerLength) / sliderLength;
   };

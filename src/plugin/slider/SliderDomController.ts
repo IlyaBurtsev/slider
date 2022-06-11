@@ -3,14 +3,22 @@ import { Orientation } from '../../models/Orientation';
 export default class SliderDomController {
   private sliderElement: HTMLElement;
   private orientation: number;
+  private callback: (parametrs: SliderParametrs) => void;
 
-  constructor(slider: HTMLElement, orientation: number, callback: () => SliderParametrs) {
-    this.sliderElement = slider;
+  constructor(options: SliderDomControllerOptions) {
+    const { viewConnector, orientation, subscribeToTouchHandler, callback } = options;
+    this.sliderElement = viewConnector.slider;
     this.orientation = orientation;
-    callback = this.getSliderParametrs;
+    this.callback = callback;
+    callback(this.getSliderParametrs());
+    subscribeToTouchHandler(this.onTouchHandler);
   }
 
-  public getSliderParametrs = (): SliderParametrs =>{
+  private onTouchHandler = (): void => {
+    this.callback(this.getSliderParametrs());
+  };
+
+  private getSliderParametrs = (): SliderParametrs => {
     const rect = this.sliderElement.getBoundingClientRect();
 
     if (this.orientation === Orientation.Horizontal) {
@@ -26,5 +34,5 @@ export default class SliderDomController {
         sliderEndPosition: rect.top + rect.height,
       };
     }
-  }
+  };
 }

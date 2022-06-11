@@ -34,13 +34,17 @@ class Plugin extends Observer {
   }
 
   private init(viewConnector: ViewConnector): void {
-    const { slider } = viewConnector;
     const { orientation, isDraggableRange, numberOfDraggableRanges } = this.options;
 
     this.dataController = new DataController(this.options);
 
-    const sliderDomController = new SliderDomController(slider, orientation, this.dataController.getSliderParametrs);
-    this.dataController.getSliderParametrs = sliderDomController.getSliderParametrs;
+    const sliderDomController = new SliderDomController({
+			viewConnector: viewConnector,
+			orientation: orientation,
+			subscribeToTouchHandler: this.addOnTouchSubscriber,
+			callback: this.dataController.setSliderParametrs
+		});
+
 
     const handlersDomContrtoller = new HandlersDomController(
       {

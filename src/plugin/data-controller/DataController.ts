@@ -4,8 +4,12 @@ export default class DataController {
   private sliderParametrs: SliderParametrs;
 
   constructor(sliderOptions: SliderOptions) {
-    this.sliderOptions = sliderOptions;
+    this.sliderOptions = this.checkOptions(sliderOptions);
   }
+
+  public getCheckedOptions = (): SliderOptions => {
+    return this.sliderOptions;
+  };
 
   public getSliderLength = (): number => {
     const { sliderLength } = this.sliderParametrs;
@@ -85,26 +89,25 @@ export default class DataController {
         minTranslate: handlerMinTranslate,
         maxTranslate: handlerMaxTranslate,
       };
-      let startValue: number;
+      let startValue: number = minValue;
       if (Array.isArray(startValues)) {
         if (startValues.length === 1) {
           startValue = startValues[0];
-        } else {
-          startValue = handlerMinTranslate;
-          values.push(`${minValue}`);
         }
       } else {
         startValue = startValues;
       }
       if (startValue >= minValue && startValue <= maxValue) {
         state.position = this.convertValueToPosition(startValue, handlerMinTranslate);
-        values.push(`${startValue}`);
       } else {
         state.position = handlerMinTranslate;
-        values.push(`${minValue}`);
+        startValue = minValue;
       }
+
+      values.push(`${startValue}`);
       handlerStates.push(state);
     }
+		
     return {
       handlerStates: handlerStates,
       valuesState: valuesState,
@@ -203,28 +206,22 @@ export default class DataController {
 
     let step: number = 0;
     if (handlerState.position <= calcUserPosition + handlerMinTranslate) {
-
-    		step = Math.floor(Math.abs(calcUserPosition) / stepsLength);
-
+      step = Math.floor(Math.abs(calcUserPosition) / stepsLength);
     } else {
       step = Math.ceil(Math.abs(calcUserPosition) / stepsLength);
     }
-
 
     if (step === 0) {
       return state;
     }
     let position: number = step * stepsLength + handlerMinTranslate;
-		console.log(position)
-		console.log(handlerState)
-		if (position < handlerState.minTranslate && position > handlerState.maxTranslate) {
-			return state;
-		}
-    if (calcUserPosition < 0) {
-      position = -position;
+    if (position > handlerState.minTranslate && position < handlerState.maxTranslate) {
+      if (calcUserPosition < 0) {
+        position = -position;
+      }
+      handlerState.position = position;
+      values[id] = this.convertPositionToValue(position);
     }
-    handlerState.position = position;
-    values[id] = this.convertPositionToValue(position);
     return state;
   };
 
@@ -243,6 +240,14 @@ export default class DataController {
       }
     });
     return states;
+  };
+
+  private checkOptions = (options: SliderOptions): SliderOptions => {
+    let { numberOfHandlers } = options;
+    if (numberOfHandlers > 1 && numberOfHandlers % 2 !== 0) {
+      options.numberOfHandlers = 1;
+    }
+    return options;
   };
 
   private getStepLength = (sliderLength: number): number => {

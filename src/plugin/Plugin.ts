@@ -16,7 +16,7 @@ class Plugin extends Observer {
     numberOfHandlers: 1,
     minValue: 0,
     maxValue: 100,
-    startValues: [],
+    startValues: 0,
     step: 1,
   };
 
@@ -33,9 +33,9 @@ class Plugin extends Observer {
   };
 
   private init(viewConnector: ViewConnector): void {
-    const { orientation, numberOfHandlers } = this.options;
-
     this.dataController = new DataController(this.options);
+    this.options = this.dataController.getCheckedOptions();
+    const { orientation, numberOfHandlers } = this.options;
 
     new SliderDomController({
       viewConnector: viewConnector,
@@ -52,7 +52,7 @@ class Plugin extends Observer {
         numberOfHandlers: numberOfHandlers,
         trigger: this.newTrigger,
         subscribeToChangeState: this.addStateSubscriber,
-				subscribeToDestroy: this.addOnDestroySubscriber,
+        subscribeToDestroy: this.addOnDestroySubscriber,
       },
       this.dataController.setHandlerParametrs
     );
@@ -63,7 +63,7 @@ class Plugin extends Observer {
       numberOfHandlers: numberOfHandlers,
       handlerLength: this.dataController.getHandlerLength(),
       subscribeToChangeState: this.addStateSubscriber,
-			subscribeToDestroy: this.addOnDestroySubscriber,
+      subscribeToDestroy: this.addOnDestroySubscriber,
     });
 
     new TooltipDomController({
@@ -72,13 +72,14 @@ class Plugin extends Observer {
       subscribeToChangeState: this.addStateSubscriber,
       subscribeToTouchHandler: this.getOnTouchSubscriber,
       subscribeToStopMovingHandler: this.addOnStopMovingSubscriber,
-			subscribeToDestroy: this.addOnDestroySubscriber,
+      subscribeToDestroy: this.addOnDestroySubscriber,
     });
 
     this.state = this.dataController.initState();
+    console.log(this.state);
     this.newTrigger(PluginActions.onChangeState, this.state);
     this.on(PluginActions.onTouchHandler, this.onTouchHandler);
-		this.on(PluginActions.onDestroy, this.onDestroy);
+    this.on(PluginActions.onDestroy, this.onDestroy);
   }
 
   private onTouchHandler = (handlerId: number): void => {
@@ -97,9 +98,9 @@ class Plugin extends Observer {
     this.dataController.updateLimits(this.state.handlerStates);
   };
 
-	private onDestroy = ():void => {
-		this.onMoveHandler(0, this.dataController.getHandlerStartPosition())
-	}
+  private onDestroy = (): void => {
+    this.onMoveHandler(0, this.dataController.getHandlerStartPosition());
+  };
 
   private newTrigger = (actions: PluginActions, ...args: Array<Object>): void => {
     this.trigger(actions, ...args);
@@ -110,19 +111,18 @@ class Plugin extends Observer {
   };
 
   private getOnTouchSubscriber = (handler: (id?: number) => void, subscribe = true): void => {
-		if (subscribe){
-			this.on(PluginActions.onTouchHandler, handler);
-		} else {
-			this.off(PluginActions.onTouchHandler, handler);
-		}
-    
+    if (subscribe) {
+      this.on(PluginActions.onTouchHandler, handler);
+    } else {
+      this.off(PluginActions.onTouchHandler, handler);
+    }
   };
 
   private addOnStopMovingSubscriber = (handler: (id?: number) => void): void => {
     this.on(PluginActions.onStopMoving, handler);
   };
 
-	private addOnDestroySubscriber = (handler: () => void): void => {
+  private addOnDestroySubscriber = (handler: () => void): void => {
     this.on(PluginActions.onDestroy, handler);
   };
 }
@@ -150,7 +150,7 @@ const createSliderPlugin = (viewConnector: ViewConnector, options?: UserOptions)
 
   const updateSliderOptions = (options: UserOptions): void => {
     initOptions = deepMerge(initOptions, options);
-		sliderPlugin.trigger(PluginActions.onDestroy)
+    sliderPlugin.trigger(PluginActions.onDestroy);
     sliderPlugin = new Plugin(view, initOptions);
   };
 

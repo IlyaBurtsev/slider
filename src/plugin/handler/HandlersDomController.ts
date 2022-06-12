@@ -8,6 +8,7 @@ export default class HandlersDomController {
   private handlerElements: Array<HTMLElement> = [];
 
   constructor(options: HandlerDomControllerOptions, callback: (parametrs: HandlerParametrs) => void) {
+		console.log(options)
     callback(this.getHandlersParametrs(options));
     this.init(options);
   }
@@ -88,14 +89,6 @@ export default class HandlersDomController {
   };
 
 	private onDestroy = (): void => {
-		this.handlerElements.forEach((handler, index) => {
-			if(index >0) {
-				while (handler.firstChild) {
-					handler.removeChild(handler.firstChild);
-				}
-			}
-			
-		})
 		removeElementsFromDom(this.handlerElements, 1)
 	}
 

@@ -69,9 +69,9 @@ export default class ProgressBarDomController {
         setBarParametrs(id, state.handlerStates[id], this);
       }
     }
-    function setBarParametrs(id: number, state: HandlerState, that: ProgressBarDomController): void {
+    function setBarParametrs(id: number, handlerState: HandlerState, that: ProgressBarDomController): void {
       const isStartElement = id % 2 === 0;
-      const { minTranslate, position, maxTranslate } = state;
+      const { minTranslate, position, maxTranslate } = handlerState;
       barId = Math.floor(id / 2);
       if (isStartElement) {
         startPosition = position;
@@ -79,7 +79,7 @@ export default class ProgressBarDomController {
       } else {
         length = position - minTranslate + that.handlerLength * 1.5;
       }
-
+	
       that.updateBarView(that.bars[barId], startPosition, length);
     }
   };

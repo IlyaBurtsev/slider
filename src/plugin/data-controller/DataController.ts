@@ -20,6 +20,10 @@ export default class DataController {
     return this.handlerParametrs.startHandlerLength;
   };
 
+  public getHandlerStartPosition = (): number => {
+    return this.handlerParametrs.handlerMinTranslate;
+  };
+
   public setHandlerParametrs = (parametrs: HandlerParametrs): void => {
     this.handlerParametrs = parametrs;
   };
@@ -30,10 +34,11 @@ export default class DataController {
       values: [],
     };
     const { values } = valuesState;
-    const { numberOfHandlers, startValues, minValue, maxValue } = this.sliderOptions;
+    const { numberOfHandlers, startValues, minValue, maxValue, step } = this.sliderOptions;
     const { handlerMinTranslate, handlerMaxTranslate } = this.handlerParametrs;
     const { sliderLength } = this.sliderParametrs;
     const minValueRange = this.getMinValuesRange();
+    let count = this.getCount(step);
 
     if (numberOfHandlers > 1) {
       let correctData = true;
@@ -52,20 +57,24 @@ export default class DataController {
       if (!correctData) {
         handlerStates.splice(0);
         values.splice(0);
+        let currentValue: number;
         for (let i = 0; i < numberOfHandlers; i++) {
-          let position: number;
           let state: HandlerState = {
             position: 0,
             minTranslate: 0,
             maxTranslate: 0,
           };
           if (i !== 0) {
-            position = (i * sliderLength) / (numberOfHandlers - 1) + handlerMinTranslate;
+            currentValue = ((maxValue - minValue) * i) / (numberOfHandlers - 1);
+            const different = currentValue % step;
+            if (different !== 0) {
+              currentValue = currentValue - different;
+            }
           } else {
-            position = handlerMinTranslate;
+            currentValue = minValue;
           }
-          state.position = position;
-          values.push(this.convertPositionToValue(position));
+          state.position = this.convertValueToPosition(currentValue, handlerMinTranslate);
+          values.push(`${currentValue.toFixed(count)}`);
           handlerStates.push(state);
         }
       }
@@ -82,7 +91,7 @@ export default class DataController {
           startValue = startValues[0];
         } else {
           startValue = handlerMinTranslate;
-					values.push(`${minValue}`);
+          values.push(`${minValue}`);
         }
       } else {
         startValue = startValues;
@@ -109,6 +118,10 @@ export default class DataController {
         minTranslate: 0,
         maxTranslate: 0,
       };
+
+      if (value % step !== 0) {
+        return false;
+      }
       if (!Array.isArray(startValues)) {
         return false;
       }
@@ -158,7 +171,7 @@ export default class DataController {
       return state;
     }
 
-    const { handlerMinTranslate } = this.handlerParametrs;
+    const { handlerMinTranslate, startHandlerLength } = this.handlerParametrs;
 
     const handlerState = state.handlerStates[id];
     const values = state.valuesState.values;
@@ -190,18 +203,25 @@ export default class DataController {
 
     let step: number = 0;
     if (handlerState.position <= calcUserPosition + handlerMinTranslate) {
-      step = Math.floor(Math.abs(calcUserPosition) / stepsLength);
+
+    		step = Math.floor(Math.abs(calcUserPosition) / stepsLength);
+
     } else {
       step = Math.ceil(Math.abs(calcUserPosition) / stepsLength);
     }
+
+
     if (step === 0) {
       return state;
     }
-    let position: number;
+    let position: number = step * stepsLength + handlerMinTranslate;
+		console.log(position)
+		console.log(handlerState)
+		if (position < handlerState.minTranslate && position > handlerState.maxTranslate) {
+			return state;
+		}
     if (calcUserPosition < 0) {
-      position = -(step * stepsLength + handlerMinTranslate);
-    } else {
-      position = step * stepsLength + handlerMinTranslate;
+      position = -position;
     }
     handlerState.position = position;
     values[id] = this.convertPositionToValue(position);

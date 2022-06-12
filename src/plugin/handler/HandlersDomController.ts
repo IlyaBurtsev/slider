@@ -1,6 +1,7 @@
 import HandlerDomControllerOptions from '../../models/interfaces/HandlerDomControllerOptions';
 import HandlerListener from './HandlerListener';
 import { Orientation } from '../../models/Orientation';
+import { removeElementsFromDom } from '../utils/utils';
 
 export default class HandlersDomController {
   private orientation: number;
@@ -16,11 +17,12 @@ export default class HandlersDomController {
   };
 
   private init(options: HandlerDomControllerOptions): void {
-    const { orientation, subscribeToChangeState } = options;
+    const { orientation, subscribeToChangeState, subscribeToDestroy} = options;
     this.orientation = orientation;
     this.handlerElements = this.createElements(options);
     this.addListeners(options);
     subscribeToChangeState(this.onChachangeState);
+		subscribeToDestroy(this.onDestroy);
   }
 
   private getHandlersParametrs = (options: HandlerDomControllerOptions): HandlerParametrs => {
@@ -62,7 +64,7 @@ export default class HandlersDomController {
     startHandlerElement.parentElement?.append(fragment);
 
     function pushNewElement(primeElement: HTMLElement) {
-      const newElement = primeElement.cloneNode(true) as HTMLElement;
+      const newElement = primeElement.cloneNode() as HTMLElement;
       elements.push(newElement);
       fragment.append(newElement);
     }
@@ -84,6 +86,18 @@ export default class HandlersDomController {
 		}
     
   };
+
+	private onDestroy = (): void => {
+		this.handlerElements.forEach((handler, index) => {
+			if(index >0) {
+				while (handler.firstChild) {
+					handler.removeChild(handler.firstChild);
+				}
+			}
+			
+		})
+		removeElementsFromDom(this.handlerElements, 1)
+	}
 
   private moveHandlerToPosition = (id: number, newPosition: number): void => {
     if (this.orientation === Orientation.Horizontal) {

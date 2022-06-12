@@ -9,9 +9,13 @@ import { createSliderPlugin } from '../src/plugin/Plugin';
 const sliderContainer = getElement('.slider');
 const view = getViewConnector(sliderContainer);
 const plugin = createSliderPlugin(view, {
-  // numberOfHandlers: 4,
+  numberOfHandlers: 2,
   startValues: 10,
   step: 0.1,
 });
 
-plugin.updateSliderOptions({ step: 10 });
+plugin.updateSliderOptions({ 
+numberOfHandlers: 4,
+step:20,
+startValues: [10, 30, 50, 80]
+});

@@ -7,4 +7,5 @@ export default interface HandlerDomControllerOptions {
   numberOfHandlers: number;
 	trigger: (actions: PluginActions, ...args: Array<Object>) => void;
   subscribeToChangeState: (handler: (state?: RootState, id?: number) => void) => void;
+	subscribeToDestroy: (handler: () => void) => void;
 }

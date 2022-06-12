@@ -1,4 +1,4 @@
-interface SliderOptions extends DataObject<OptionsType> {
+interface SliderOptions extends InitOptions{
   orientation: number;
   numberOfHandlers: number;
   minValue: number;

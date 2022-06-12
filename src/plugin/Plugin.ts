@@ -22,17 +22,13 @@ class Plugin extends Observer {
 
   constructor(viewConnector: ViewConnector, newOptions?: InitOptions) {
     super();
-    if (newOptions) {
-      this.options = deepMerge(this.options, newOptions);
-    }
+    this.updateOptions(newOptions);
     this.init(viewConnector);
   }
 
-  public updateOptions = (newOptions?: InitOptions): void => {
+  private updateOptions = (newOptions?: InitOptions): void => {
     if (newOptions) {
       this.options = deepMerge(this.options, newOptions);
-      this.state = this.dataController.initState();
-      this.trigger(PluginActions.onChangeState, this.state);
     }
   };
 
@@ -44,7 +40,7 @@ class Plugin extends Observer {
     new SliderDomController({
       viewConnector: viewConnector,
       orientation: orientation,
-      subscribeToTouchHandler: this.addOnTouchSubscriber,
+      subscribeToTouchHandler: this.getOnTouchSubscriber,
       callback: this.dataController.setSliderParametrs,
     });
 
@@ -56,6 +52,7 @@ class Plugin extends Observer {
         numberOfHandlers: numberOfHandlers,
         trigger: this.newTrigger,
         subscribeToChangeState: this.addStateSubscriber,
+				subscribeToDestroy: this.addOnDestroySubscriber,
       },
       this.dataController.setHandlerParametrs
     );
@@ -66,19 +63,22 @@ class Plugin extends Observer {
       numberOfHandlers: numberOfHandlers,
       handlerLength: this.dataController.getHandlerLength(),
       subscribeToChangeState: this.addStateSubscriber,
+			subscribeToDestroy: this.addOnDestroySubscriber,
     });
 
     new TooltipDomController({
       viewConnector: viewConnector,
       handlerElements: handlersDomContrtoller.getHandlerElements(),
       subscribeToChangeState: this.addStateSubscriber,
-      subscribeToTouchHandler: this.addOnTouchSubscriber,
+      subscribeToTouchHandler: this.getOnTouchSubscriber,
       subscribeToStopMovingHandler: this.addOnStopMovingSubscriber,
+			subscribeToDestroy: this.addOnDestroySubscriber,
     });
 
     this.state = this.dataController.initState();
     this.newTrigger(PluginActions.onChangeState, this.state);
     this.on(PluginActions.onTouchHandler, this.onTouchHandler);
+		this.on(PluginActions.onDestroy, this.onDestroy);
   }
 
   private onTouchHandler = (handlerId: number): void => {
@@ -97,6 +97,10 @@ class Plugin extends Observer {
     this.dataController.updateLimits(this.state.handlerStates);
   };
 
+	private onDestroy = ():void => {
+		this.onMoveHandler(0, this.dataController.getHandlerStartPosition())
+	}
+
   private newTrigger = (actions: PluginActions, ...args: Array<Object>): void => {
     this.trigger(actions, ...args);
   };
@@ -105,18 +109,27 @@ class Plugin extends Observer {
     this.on(PluginActions.onChangeState, handler);
   };
 
-  private addOnTouchSubscriber = (handler: (id?: number) => void): void => {
-    this.on(PluginActions.onTouchHandler, handler);
+  private getOnTouchSubscriber = (handler: (id?: number) => void, subscribe = true): void => {
+		if (subscribe){
+			this.on(PluginActions.onTouchHandler, handler);
+		} else {
+			this.off(PluginActions.onTouchHandler, handler);
+		}
+    
   };
 
   private addOnStopMovingSubscriber = (handler: (id?: number) => void): void => {
     this.on(PluginActions.onStopMoving, handler);
   };
+
+	private addOnDestroySubscriber = (handler: () => void): void => {
+    this.on(PluginActions.onDestroy, handler);
+  };
 }
 
 const createSliderPlugin = (viewConnector: ViewConnector, options?: UserOptions): API => {
-  const { slider } = viewConnector;
-  const rect = viewConnector.slider.getBoundingClientRect();
+  const view = viewConnector;
+  const rect = view.slider.getBoundingClientRect();
 
   if (rect.width > rect.height) {
     if (options === undefined) {
@@ -131,10 +144,18 @@ const createSliderPlugin = (viewConnector: ViewConnector, options?: UserOptions)
       options.orientation = Orientation.Vertical;
     }
   }
+  let initOptions: InitOptions = options;
 
-  const sliderPlugin = new Plugin(viewConnector, options);
+  let sliderPlugin = new Plugin(view, initOptions);
+
+  const updateSliderOptions = (options: UserOptions): void => {
+    initOptions = deepMerge(initOptions, options);
+		sliderPlugin.trigger(PluginActions.onDestroy)
+    sliderPlugin = new Plugin(view, initOptions);
+  };
+
   const api: API = {
-    updateSliderOptions: sliderPlugin.updateOptions,
+    updateSliderOptions: updateSliderOptions,
   };
   return api;
 };

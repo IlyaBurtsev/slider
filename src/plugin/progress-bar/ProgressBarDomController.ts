@@ -1,4 +1,5 @@
 import { Orientation } from '../../models/Orientation';
+import { removeElementsFromDom } from '../utils/utils';
 
 export default class ProgressBarDomController {
   private bars: Array<HTMLElement>;
@@ -17,6 +18,7 @@ export default class ProgressBarDomController {
       orientation,
       handlerLength,
       subscribeToChangeState,
+			subscribeToDestroy
     } = options;
     const { progressBar } = viewConnector;
     this.orientation = orientation;
@@ -25,6 +27,7 @@ export default class ProgressBarDomController {
     this.bars = initBars();
 
     subscribeToChangeState(this.onChangeState);
+		subscribeToDestroy(this.onDestroy);
 
     function initBars(): Array<HTMLElement> {
       if (progressBar !== undefined) {
@@ -80,6 +83,10 @@ export default class ProgressBarDomController {
       that.updateBarView(that.bars[barId], startPosition, length);
     }
   };
+
+	private onDestroy = ():void => {
+		removeElementsFromDom(this.bars, 1);
+	}
 
   private updateBarView = (bar: HTMLElement, startPosition?: number, length?: number): void => {
     if (startPosition !== undefined) {

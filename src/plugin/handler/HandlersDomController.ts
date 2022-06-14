@@ -8,7 +8,6 @@ export default class HandlersDomController {
   private handlerElements: Array<HTMLElement> = [];
 
   constructor(options: HandlerDomControllerOptions, callback: (parametrs: HandlerParametrs) => void) {
-		console.log(options)
     callback(this.getHandlersParametrs(options));
     this.init(options);
   }
@@ -73,9 +72,9 @@ export default class HandlersDomController {
   };
 
   private addListeners = (options: HandlerDomControllerOptions): void => {
-    const { trigger, orientation } = options;
+    const { trigger, orientation, getEventNames } = options;
     this.handlerElements.forEach((element, id) => {
-      new HandlerListener(element, id, orientation, trigger);
+      new HandlerListener(element, id, orientation, getEventNames,  trigger);
     });
   };
 

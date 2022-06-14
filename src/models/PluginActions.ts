@@ -4,5 +4,6 @@ export enum PluginActions {
   onMoveHandler = 'onMoveHandler',
   onStopMoving = 'onStopMoving',
   onChangeState = 'onChangeState',
+	onChangeValue = 'onCangeValue',
 	onDestroy = 'onDestroy'
 }

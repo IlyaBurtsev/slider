@@ -11,11 +11,29 @@ const view = getViewConnector(sliderContainer);
 const plugin = createSliderPlugin(view, {
   numberOfHandlers: 1,
   startValues: 10,
-  step: 0.1,
+  step: 1,
 });
 
 plugin.updateSliderOptions({ 
-numberOfHandlers: 3,
-step:1,
-startValues: [20]
-});
+	numberOfHandlers: 4,
+	step:1,
+	startValues: 20
+	});
+const startSubscriber = (id: number): void => {
+	console.log('start '+id)
+}
+const endSubscriber = (): void => {
+	console.log('end')
+}
+
+const state =(state: RootState):void => {
+	// console.log(state)
+}
+plugin.moveHandlerTo(0, 0)
+plugin.moveHandlerTo(40, 1)
+
+plugin.subscribeToGetStarted(startSubscriber)
+plugin.subscribeToTheEndOfTheMovement(endSubscriber)
+plugin.subscribeToChangeState(state)
+
+

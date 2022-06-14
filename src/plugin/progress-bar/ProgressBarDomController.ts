@@ -56,7 +56,7 @@ export default class ProgressBarDomController {
     let startPosition: number;
     if (this.numberOfHandlers === 1) {
       length = state.handlerStates[0].position;
-      if (state.handlerStates[0].position === state.handlerStates[0].minTranslate) {
+      if (state.handlerStates[0].position <= 0) {
         length = 0;
       }
       this.updateBarView(this.bars[0], 0, length);

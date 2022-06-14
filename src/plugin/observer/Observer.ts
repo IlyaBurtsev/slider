@@ -3,6 +3,7 @@
 class Observer {
   private events: Map<string, Set<Function>> = new Map();
   public on(eventName: string, handler: Function): void {
+		// console.log(this.events)
     if (!this.events.get(eventName)) {
 			const set:Set<Function> = new Set()
       this.events.set(eventName, set.add(handler));

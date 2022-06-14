@@ -1,5 +1,3 @@
-import { removeElementsFromDom } from '../utils/utils';
-
 export default class TooltipDomController {
   private tooltips: Array<HTMLElement> = [];
   private setValue: (tooltip: HTMLElement, value: string) => void;
@@ -50,9 +48,7 @@ export default class TooltipDomController {
         }
       }
       return elements;
-    }
-
-    
+    }  
   }
 
   private getParametrs = (tooltip: HTMLElement): TooltipParametrs => {

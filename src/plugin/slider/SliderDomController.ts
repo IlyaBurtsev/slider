@@ -1,4 +1,6 @@
+import { SliderDomControllerOptions } from '../../models/interfaces/SliderDomControllerOptions';
 import { Orientation } from '../../models/Orientation';
+import SliderLisrener from './SliderListener';
 
 export default class SliderDomController {
   private sliderElement: HTMLElement;
@@ -6,10 +8,11 @@ export default class SliderDomController {
   private callback: (parametrs: SliderParametrs) => void;
 
   constructor(options: SliderDomControllerOptions) {
-    const { viewConnector, orientation, subscribeToTouchHandler, callback } = options;
+    const { viewConnector, orientation, subscribeToTouchHandler, callback, trigger, getEventNames } = options;
     this.sliderElement = viewConnector.slider;
     this.orientation = orientation;
     this.callback = callback;
+    new SliderLisrener(this.sliderElement, orientation, getEventNames, trigger);
     callback(this.getSliderParametrs());
     subscribeToTouchHandler(this.onTouchHandler);
   }

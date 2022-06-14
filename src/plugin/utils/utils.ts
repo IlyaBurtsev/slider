@@ -1,10 +1,19 @@
-function deepMerge<T extends InitOptions>(target: T, ...objects: Array<InitOptions>): T {
+import { Orientation } from '../../models/Orientation';
+
+function deepMerge<T extends InitOptions>(target: T, allowAddOptions: boolean, ...objects: Array<InitOptions>): T {
+  const keys: (keyof T)[] = Object.keys(target);
   objects
     .filter((o) => o)
     .forEach((obj) => {
       for (let [key, value] of Object.entries(obj)) {
         if (value !== undefined) {
-          target[key as keyof T] = value as T[keyof T];
+          if (allowAddOptions) {
+            target[key as keyof T] = value as T[keyof T];
+          } else {
+            if (keys.includes(key)) {
+              target[key as keyof T] = value as T[keyof T];
+            }
+          }
         }
       }
     });
@@ -88,7 +97,18 @@ function removeClass(el: Array<HTMLElement> | HTMLElement, ...classNames: Array<
   }
 }
 
-function removeEvent(events: Array<string>, listener: EventListener, element: HTMLElement): void {
+function bindEvents(
+  events: Array<string>,
+  listener: EventListener,
+  element: HTMLElement,
+  supportPassive?: boolean
+): void {
+  events.forEach((eventName) =>
+    element.addEventListener(eventName, listener, supportPassive ? { passive: true } : false)
+  );
+}
+
+function removeEvents(events: Array<string>, listener: EventListener, element: HTMLElement): void {
   events.forEach((eventName) => element.removeEventListener(eventName, listener));
 }
 
@@ -100,6 +120,52 @@ function removeElementsFromDom(elements: Array<HTMLElement>, startIndex: number)
   });
 }
 
+function getTouchPosition(event: BrowserEvent, targetElement: HTMLElement, orientation: number): number | boolean {
+  let x: number = 0;
+  let y: number = 0;
+  if (event.type.indexOf('touch') === 0) {
+    const targetTouch = checkTouch(event, targetElement);
+    if (!targetTouch) {
+      return false;
+    }
+    x = (targetTouch as Touch).pageX;
+    y = (targetTouch as Touch).pageY;
+  } else {
+    x = event.clientX;
+    y = event.clientY;
+  }
+  if (orientation === Orientation.Horizontal) {
+    return x;
+  } else {
+    return y;
+  }
+}
+
+function checkTouch(event: BrowserEvent, targetElement: HTMLElement): boolean | Touch {
+  if (event.type.indexOf('touch') === 0) {
+    const touches = Array.prototype.filter.call(event.touches, isTouchOnTarget);
+
+    // Do not support more than one touch per handle.
+    if (touches.length > 1) {
+      return false;
+    } else {
+      return touches[0];
+    }
+  } else {
+    return true;
+  }
+}
+
+function isTouchOnTarget(event: BrowserEvent, targetElement: HTMLElement, currentTouch: Touch): boolean {
+  const target: HTMLElement = currentTouch.target as HTMLElement;
+
+  return (
+    target === targetElement ||
+    targetElement.contains(target) ||
+    (event.composed && event.composedPath().shift() === targetElement)
+  );
+}
+
 export {
   deepMerge,
   getElement,
@@ -109,6 +175,9 @@ export {
   addClass,
   hasClass,
   removeClass,
-  removeEvent,
+  bindEvents,
+  removeEvents,
   removeElementsFromDom,
+  getTouchPosition,
+	checkTouch
 };

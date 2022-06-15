@@ -1,6 +1,6 @@
 import { Orientation } from '../../models/Orientation';
 
-function deepMerge<T extends InitOptions>(target: T, allowAddOptions: boolean, ...objects: Array<InitOptions>): T {
+function deepMerge<T extends UserOptions>(target: T, allowAddOptions: boolean, ...objects: Array<UserOptions>): T {
   const keys: (keyof T)[] = Object.keys(target);
   objects
     .filter((o) => o)

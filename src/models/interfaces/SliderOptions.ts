@@ -1,5 +1,4 @@
-interface SliderOptions extends InitOptions{
-  orientation: number;
+interface SliderOptions extends UserOptions {
   numberOfHandlers: number;
   minValue: number;
   maxValue: number;

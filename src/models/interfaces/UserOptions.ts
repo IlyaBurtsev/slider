@@ -1,6 +1,7 @@
 interface UserOptions extends DataObject<UserOptionsType> {
   numberOfHandlers?: number;
-  sliderLimits?: Array<number>;
+	startValue?: number;
+  endValue?: number;
   startValues?:  Array<number> | number;
   step?: number;
 }

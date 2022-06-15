@@ -15,7 +15,7 @@ const plugin = createSliderPlugin(view, {
 });
 
 plugin.updateSliderOptions({ 
-	numberOfHandlers: 4,
+	numberOfHandlers: 3,
 	step:1,
 	startValues: 20
 	});
@@ -27,7 +27,7 @@ const endSubscriber = (): void => {
 }
 
 const state =(state: RootState):void => {
-	// console.log(state)
+
 }
 plugin.moveHandlerTo(0, 0)
 plugin.moveHandlerTo(40, 1)

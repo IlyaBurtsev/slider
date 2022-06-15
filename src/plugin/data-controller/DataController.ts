@@ -1,16 +1,32 @@
 import { ChangeStateTypes } from '../../models/ChangeStateTypes';
 import { PluginActions } from '../../models/PluginActions';
+import { deepMerge } from '../utils/utils';
 
 export default class DataController {
   private handlerParametrs: HandlerParametrs;
-  private sliderOptions: SliderOptions;
   private sliderParametrs: SliderParametrs;
   private trigger: (actions: PluginActions, ...args: Array<Object>) => void;
+  private options: SliderOptions = {
+    numberOfHandlers: 1,
+    minValue: 0,
+    maxValue: 100,
+    startValues: 0,
+    step: 1,
+  };
 
-  constructor(sliderOptions: SliderOptions, trigger: (actions: PluginActions, ...args: Array<Object>) => void) {
-    this.sliderOptions = sliderOptions;
+  constructor(trigger: (actions: PluginActions, ...args: Array<Object>) => void, userOptions?: UserOptions) {
+    this.updateOptions(userOptions);
+    this.options = this.checkOptions(this.options);
     this.trigger = trigger;
   }
+
+  public getOrientation = (): number => {
+    return this.sliderParametrs.orientation;
+  };
+
+  public getNumberOfHandlers = (): number => {
+    return this.options.numberOfHandlers;
+  };
 
   public getSliderLength = (): number => {
     const { sliderLength } = this.sliderParametrs;
@@ -39,9 +55,8 @@ export default class DataController {
       values: [],
     };
     const { values } = valuesState;
-    const { numberOfHandlers, startValues, minValue, maxValue, step } = this.sliderOptions;
+    const { numberOfHandlers, startValues, minValue, maxValue, step } = this.options;
     const { handlerMinTranslate, handlerMaxTranslate } = this.handlerParametrs;
-    const { sliderLength } = this.sliderParametrs;
     const minValueRange = this.getMinValuesRange();
     let count = this.getCount(step);
 
@@ -167,29 +182,30 @@ export default class DataController {
   };
 
   public changeState = (state: RootState, newUserposition: number, id: number, type: ChangeStateTypes): RootState => {
-		let newState: RootState
+    let newState: RootState;
     switch (type) {
       case ChangeStateTypes.handlerMovement:
         newState = this.changeStateWhenChangePosition(state, newUserposition, id);
         this.trigger(PluginActions.onChangeState, newState, id);
         return newState;
-			case ChangeStateTypes.tapOnSlider:
-				const handlerId = this.getClosestHandlerId(newUserposition, state.handlerStates);
-				newState = this.changeStateWhenChangePosition(state, newUserposition, handlerId);
-				this.updateLimits(state.handlerStates)
-				this.trigger(PluginActions.onChangeState, newState, handlerId);
-				return newState;
-			case ChangeStateTypes.externalChangeValue:
-				if(id >= state.handlerStates.length) {
-					return state;
-				}
-				const {handlerMinTranslate} = this.handlerParametrs
-				const {sliderStartPosition} = this.sliderParametrs
-				const newPosition = this.convertValueToPosition(newUserposition, handlerMinTranslate) + sliderStartPosition - handlerMinTranslate;
-				newState = this.changeStateWhenChangePosition(state, newPosition, id);
-				this.updateLimits(state.handlerStates)
-				this.trigger(PluginActions.onChangeState, newState, id);
-				return newState;
+      case ChangeStateTypes.tapOnSlider:
+        const handlerId = this.getClosestHandlerId(newUserposition, state.handlerStates);
+        newState = this.changeStateWhenChangePosition(state, newUserposition, handlerId);
+        this.updateLimits(state.handlerStates);
+        this.trigger(PluginActions.onChangeState, newState, handlerId);
+        return newState;
+      case ChangeStateTypes.externalChangeValue:
+        if (id >= state.handlerStates.length) {
+          return state;
+        }
+        const { handlerMinTranslate } = this.handlerParametrs;
+        const { sliderStartPosition } = this.sliderParametrs;
+        const newPosition =
+          this.convertValueToPosition(newUserposition, handlerMinTranslate) + sliderStartPosition - handlerMinTranslate;
+        newState = this.changeStateWhenChangePosition(state, newPosition, id);
+        this.updateLimits(state.handlerStates);
+        this.trigger(PluginActions.onChangeState, newState, id);
+        return newState;
       default:
         return state;
     }
@@ -232,10 +248,14 @@ export default class DataController {
         };
   };
 
-  
+  private updateOptions = (newOptions?: UserOptions): void => {
+    if (newOptions) {
+      this.options = deepMerge(this.options, false, newOptions);
+    }
+  };
 
   private changeStateWhenChangePosition = (state: RootState, newUserposition: number, id: number): RootState => {
-    const { minValue, maxValue } = this.sliderOptions;
+    const { minValue, maxValue } = this.options;
     const sliderParametrs = this.sliderParametrs;
     const { sliderStartPosition, sliderLength } = sliderParametrs;
     const stepsLength = this.getStepLength(sliderLength);
@@ -295,14 +315,13 @@ export default class DataController {
   };
 
   private getClosestHandlerId = (targetPosition: number, handlerStates: Array<HandlerState>): number => {
-		
     if (handlerStates.length === 1) {
       return 0;
     }
-		const {sliderStartPosition} = this.sliderParametrs
-		let calcPosition = targetPosition - sliderStartPosition
+    const { sliderStartPosition } = this.sliderParametrs;
+    let calcPosition = targetPosition - sliderStartPosition;
     let closestHandlerId = 0;
-    let minDistance = Math.abs(handlerStates[0].position- calcPosition);
+    let minDistance = Math.abs(handlerStates[0].position - calcPosition);
     handlerStates.forEach((state, id) => {
       let currentDistance = Math.abs(state.position - calcPosition);
       if (currentDistance < minDistance) {
@@ -311,24 +330,24 @@ export default class DataController {
       }
     });
 
-		return closestHandlerId;
+    return closestHandlerId;
   };
 
   private getStepLength = (sliderLength: number): number => {
-    const { step, minValue, maxValue } = this.sliderOptions;
+    const { step, minValue, maxValue } = this.options;
     return Number(((sliderLength / (maxValue - minValue)) * step).toFixed(5));
   };
 
   private convertValueToPosition = (value: number, minTranslate: number): number => {
     const { sliderLength } = this.sliderParametrs;
-    const { minValue, maxValue } = this.sliderOptions;
+    const { minValue, maxValue } = this.options;
     return (sliderLength / (maxValue - minValue)) * value + minTranslate;
   };
 
   private convertPositionToValue = (position: number): string => {
     const { handlerMinTranslate } = this.handlerParametrs;
     const { sliderLength } = this.sliderParametrs;
-    const { minValue, maxValue, step } = this.sliderOptions;
+    const { minValue, maxValue, step } = this.options;
     let calcPosition = position;
     let count = this.getCount(step);
     const value = ((maxValue - minValue) / sliderLength) * (calcPosition - handlerMinTranslate);
@@ -336,7 +355,7 @@ export default class DataController {
   };
 
   private getMinValuesRange = (): number => {
-    const { minValue, maxValue, step } = this.sliderOptions;
+    const { minValue, maxValue, step } = this.options;
     const { startHandlerLength, endHandlerLength } = this.handlerParametrs;
     const { sliderLength } = this.sliderParametrs;
     // TODO add range if end and start HandlerLengths are different
@@ -350,4 +369,23 @@ export default class DataController {
       return 0;
     }
   }
+
+  private checkOptions = (options: SliderOptions): SliderOptions => {
+    let { numberOfHandlers, minValue, maxValue, step } = options;
+
+    if (numberOfHandlers > 1 && numberOfHandlers % 2 !== 0) {
+      numberOfHandlers = 1;
+      options.numberOfHandlers = 1;
+    }
+		if (minValue >= maxValue) {
+			options.minValue = 0;
+			options.maxValue = 100;
+		}
+   
+    if ((maxValue - minValue) / numberOfHandlers <= step) {
+      options.step = step / 10;
+    }
+
+    return options;
+  };
 }

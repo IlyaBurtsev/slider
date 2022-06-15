@@ -1,5 +1,6 @@
 type SliderParametrs = {
-	sliderLength: number
-	sliderStartPosition: number
-	sliderEndPosition: number
-}
+  orientation: number;
+  sliderLength: number;
+  sliderStartPosition: number;
+  sliderEndPosition: number;
+};

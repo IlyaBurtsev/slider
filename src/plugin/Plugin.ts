@@ -3,7 +3,6 @@ import SliderDomController from './slider/SliderDomController';
 import HandlersDomController from './handler/HandlersDomController';
 import ProgressBarDomController from './progress-bar/ProgressBarDomController';
 import TooltipDomController from './tooltip/TooltipDomController';
-import { Orientation } from '../models/Orientation';
 import { PluginActions } from '../models/PluginActions';
 import { Observer } from './observer/Observer';
 import { deepMerge } from './utils/utils';
@@ -12,34 +11,17 @@ import { ChangeStateTypes } from '../models/ChangeStateTypes';
 class Plugin extends Observer {
   private dataController: DataController;
   private state: RootState;
-  private options: SliderOptions = {
-    orientation: Orientation.Horizontal,
-    numberOfHandlers: 1,
-    minValue: 0,
-    maxValue: 100,
-    startValues: 0,
-    step: 1,
-  };
 
-  constructor(viewConnector: ViewConnector, newOptions?: InitOptions) {
+  constructor(viewConnector: ViewConnector, newOptions?: UserOptions) {
     super();
-    this.updateOptions(newOptions);
-    this.init(viewConnector);
+    this.init(viewConnector, newOptions);
   }
 
-  private updateOptions = (newOptions?: InitOptions): void => {
-    if (newOptions) {
-      this.options = deepMerge(this.options, false, newOptions);
-    }
-  };
-
-  private init(viewConnector: ViewConnector): void {
-    this.dataController = new DataController(this.options, this.newTrigger);
-    const { orientation, numberOfHandlers } = this.options;
+  private init(viewConnector: ViewConnector, newOptions?: UserOptions): void {
+    this.dataController = new DataController(this.newTrigger, newOptions);
 
     new SliderDomController({
       viewConnector: viewConnector,
-      orientation: orientation,
       subscribeToTouchHandler: this.getOnTouchSubscriber,
       callback: this.dataController.setSliderParametrs,
       getEventNames: this.dataController.getEventNames,
@@ -49,9 +31,9 @@ class Plugin extends Observer {
     const handlersDomContrtoller = new HandlersDomController(
       {
         viewConnector: viewConnector,
-        orientation: orientation,
+        orientation: this.dataController.getOrientation(),
         sliderLength: this.dataController.getSliderLength(),
-        numberOfHandlers: numberOfHandlers,
+        numberOfHandlers: this.dataController.getNumberOfHandlers(),
         getEventNames: this.dataController.getEventNames,
         trigger: this.newTrigger,
         subscribeToChangeState: this.getStateSubscriber,
@@ -62,8 +44,8 @@ class Plugin extends Observer {
 
     new ProgressBarDomController({
       viewConnector: viewConnector,
-      orientation: orientation,
-      numberOfHandlers: numberOfHandlers,
+      orientation: this.dataController.getOrientation(),
+      numberOfHandlers: this.dataController.getNumberOfHandlers(),
       handlerLength: this.dataController.getHandlerLength(),
       subscribeToChangeState: this.getStateSubscriber,
       subscribeToDestroy: this.addOnDestroySubscriber,
@@ -148,56 +130,10 @@ class Plugin extends Observer {
 
 const createSliderPlugin = (viewConnector: ViewConnector, options?: UserOptions): API => {
   const view = viewConnector;
-  const rect = view.slider.getBoundingClientRect();
   const handlers: Map<PluginActions, Function> = new Map();
+	let userOptions: UserOptions |undefined = options
 
-	const checkOptions = (options?: UserOptions): InitOptions => {
-		if (rect.width > rect.height) {
-			if (options === undefined) {
-				return options = { orientation: Orientation.Horizontal };
-			} else {
-				options.orientation = Orientation.Horizontal;
-			}
-		} else {
-			if (options === undefined) {
-				return options = { orientation: Orientation.Vertical };
-			} else {
-				options.orientation = Orientation.Vertical;
-			}
-		}
-    let { numberOfHandlers, sliderLimits, step } = options;
-		if (numberOfHandlers !== undefined) {
-			if (numberOfHandlers > 1 && numberOfHandlers % 2 !== 0) {
-				numberOfHandlers =1;
-				options.numberOfHandlers = 1;
-			}
-			if (sliderLimits !== undefined) {
-				let min = sliderLimits[0];
-				let max = sliderLimits[1]
-				if (sliderLimits.length === 2 && min < max) {
-					options.minValue = min;
-					options.maxValue = max;
-					if(step !== undefined) {
-						if((max -min)/numberOfHandlers <= step) {
-							options.step = step/10
-						}
-					}else {
-						if((max -min)/numberOfHandlers <= 1) {
-							options.step = 0.1
-						}
-					}
-				}
-			}
-		}
-		
-	
-	
-    return options;
-  };
-
-	let initOptions: InitOptions = checkOptions(options);
-
-  let sliderPlugin = new Plugin(view, initOptions);
+  let sliderPlugin = new Plugin(view, options);
 
   const getOnTouchSubscriber = (handler: (id?: number) => void, subscribe = true): void => {
     if (subscribe) {
@@ -227,10 +163,13 @@ const createSliderPlugin = (viewConnector: ViewConnector, options?: UserOptions)
   };
 
   const updateSliderOptions = (options: UserOptions): void => {
-		let initOptions = checkOptions(options)
-    initOptions = deepMerge(initOptions, true, options);
+		if (userOptions !== undefined) {
+			userOptions = deepMerge(userOptions, true, options);
+		} else {
+			userOptions = options
+		}
     sliderPlugin.trigger(PluginActions.onDestroy);
-    sliderPlugin = new Plugin(view, initOptions);
+    sliderPlugin = new Plugin(view, options);
     handlers.forEach((hanler, actions) => sliderPlugin.on(actions, hanler));
   };
 

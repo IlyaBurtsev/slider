@@ -3,13 +3,12 @@ import './slider.scss';
 import { addClass, createElement, removeClass } from '../../plugin/utils/utils';
 import { createHandler, createHandlerVertival } from '../handler/handler';
 import { createBarVertical, createProgressBar } from '../progress-bar/progress-bar';
-import { createScale } from '../scale/scale';
 import { createTooltip, createTooltipVertical } from '../tooltip/tooltip';
 
 const createSlider = (bindElement: HTMLElement): Array<HTMLElement> => {
   const className = {
     slider: 'slider-plugin',
-		sliderVertical: 'slider-plugin_vertical',
+    sliderVertical: 'slider-plugin_vertical',
     handlerContainer: 'slider-plugin__handler-container',
     handlerContainerVertical: 'slider-plugin__handler-container_vertical',
   };
@@ -23,11 +22,11 @@ const createSlider = (bindElement: HTMLElement): Array<HTMLElement> => {
   const tooltip = createTooltip(handler);
   bindElement.append(slider);
   if (rect.height > rect.width) {
-		addClass(slider, className.sliderVertical)
+    addClass(slider, className.sliderVertical);
     addClass(handlerContainer, className.handlerContainerVertical);
     createHandlerVertival(handler);
     createTooltipVertical(tooltip);
-		createBarVertical(bar);
+    createBarVertical(bar);
   }
   return [slider, handler, bar, tooltip];
 };

@@ -4,4 +4,8 @@ interface SliderOptions extends UserOptions {
   maxValue: number;
   step: number;
   startValues: Array<number> | number;
+	progressBar: boolean;
+	toolTips: boolean;
+	scale: boolean;
+	scaleStep: number;
 }

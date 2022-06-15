@@ -12,6 +12,10 @@ export default class DataController {
     maxValue: 100,
     startValues: 0,
     step: 1,
+		toolTips: false,
+		progressBar: false,
+		scale: false,
+		scaleStep: 10
   };
 
   constructor(trigger: (actions: PluginActions, ...args: Array<Object>) => void, userOptions?: UserOptions) {

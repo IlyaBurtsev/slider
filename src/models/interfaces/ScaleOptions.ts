@@ -1,6 +1,9 @@
 interface ScaleOptions {
-	viewConnector: ViewConnector,
-	numberOfSteps: number,
-	stepsLength: number,
-	scaleStep: number
+  orientation: number;
+  numberOfSteps: number;
+  scaleStep: number;
+  sliderLength: number;
+  handlerBottom: number;
+  handlerTop: number;
+	callback: (scaleSize: number) => void;
 }

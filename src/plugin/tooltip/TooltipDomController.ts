@@ -1,16 +1,20 @@
+import { Orientation } from '../../models/Orientation';
+
 export default class TooltipDomController {
   private tooltips: Array<HTMLElement> = [];
   private setValue: (tooltip: HTMLElement, value: string) => void;
   private parametrs: TooltipParametrs;
   constructor(options: TooltipDomControllerOptions) {
-    const {} = options;
     this.init(options);
   }
 
   private init(options: TooltipDomControllerOptions) {
     const {
+      orientation,
       handlerElements,
+      handlerBottom,
       viewConnector,
+      createTooltips,
       subscribeToChangeState,
       subscribeToTouchHandler,
       subscribeToStopMovingHandler,
@@ -20,12 +24,20 @@ export default class TooltipDomController {
     if (tooltip === undefined) {
       return;
     }
+
+    this.parametrs = this.getParametrs(tooltip);
+
     if (setValueInTooltip === undefined) {
+      tooltip.style.display = 'none';
       return;
     }
-		
+    if (!createTooltips) {
+      tooltip.style.display = 'none';
+      return;
+    }
+
     this.setValue = setValueInTooltip;
-    this.parametrs = this.getParametrs(tooltip);
+
     this.tooltips = initTooltips();
     subscribeToChangeState(this.onChangeValues);
     subscribeToTouchHandler(this.onTouchHandler);
@@ -37,6 +49,9 @@ export default class TooltipDomController {
       if (tooltip !== undefined) {
         tooltip.style.display = 'none';
         if (tooltip.parentElement === handlerElements[0]) {
+          if (orientation === Orientation.Vertical) {
+            tooltip.style.left = `${handlerBottom + 5}px`;
+          }
           elements.push(tooltip);
           handlerElements.forEach((handler, index) => {
             if (index > 0) {
@@ -48,7 +63,7 @@ export default class TooltipDomController {
         }
       }
       return elements;
-    }  
+    }
   }
 
   private getParametrs = (tooltip: HTMLElement): TooltipParametrs => {
@@ -72,8 +87,8 @@ export default class TooltipDomController {
     this.tooltips[id].style.display = 'none';
   };
 
-	private onDestroy =(): void =>{
-		const { display } = this.parametrs;
-		this.tooltips[0].style.display = display;
-	}
+  private onDestroy = (): void => {
+    const { display } = this.parametrs;
+    this.tooltips[0].style.display = display;
+  };
 }

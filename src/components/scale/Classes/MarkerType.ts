@@ -1,4 +1,4 @@
-enum MarkerType {
+export enum MarkerType {
 	Default = 'scale__marker',
-	Large = 'scale__marker_large'
+	Large = 'scale__marker scale__marker_large'
 }

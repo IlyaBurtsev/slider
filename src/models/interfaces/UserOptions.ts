@@ -4,4 +4,8 @@ interface UserOptions extends DataObject<UserOptionsType> {
   endValue?: number;
   startValues?:  Array<number> | number;
   step?: number;
+	progressBar?: boolean;
+	toolTips?: boolean;
+	scale?: boolean;
+	scaleStep?: number;
 }

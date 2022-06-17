@@ -5,18 +5,19 @@ import { deepMerge } from '../utils/utils';
 export default class DataController {
   private handlerParametrs: HandlerParametrs;
   private sliderParametrs: SliderParametrs;
-  private trigger: (actions: PluginActions, ...args: Array<Object>) => void;
+	private scaleSize: number;
   private options: SliderOptions = {
     numberOfHandlers: 1,
     minValue: 0,
     maxValue: 100,
     startValues: 0,
     step: 1,
-		toolTips: false,
-		progressBar: false,
-		scale: false,
-		scaleStep: 10
+    toolTips: false,
+    progressBar: false,
+    scale: false,
+    scaleStep: 10,
   };
+	private trigger: (actions: PluginActions, ...args: Array<Object>) => void;
 
   constructor(trigger: (actions: PluginActions, ...args: Array<Object>) => void, userOptions?: UserOptions) {
     this.updateOptions(userOptions);
@@ -24,12 +25,53 @@ export default class DataController {
     this.trigger = trigger;
   }
 
+	public getBindElelementPaddingParametrs = (): PaddingParametrs =>{
+		const {handlerMinTranslate, handlerTop, handlerBottom} = this.handlerParametrs
+		return {
+			handlerMinTrahslate: handlerMinTranslate,
+			handlerTop: handlerTop,
+			handlerBottom: handlerBottom,
+			scaleSize: this.scaleSize
+		}
+	}
+
+  public getScaleOptions = (): ScaleOptions => {
+    const { scaleStep, maxValue, minValue, step } = this.options;
+    const { sliderLength } = this.sliderParametrs;
+    const { handlerBottom, handlerTop } = this.handlerParametrs;
+    return {
+      orientation: this.sliderParametrs.orientation,
+      numberOfSteps: (maxValue - minValue) / step,
+      scaleStep: scaleStep,
+      sliderLength: sliderLength,
+      handlerBottom: handlerBottom,
+      handlerTop: handlerTop,
+			callback: this.setScaleSize
+    };
+  };
+
+  public createTooltips = (): boolean => {
+    return this.options.toolTips;
+  };
+
+  public createProgressBar = (): boolean => {
+    return this.options.progressBar;
+  };
+
+  public createScale = (): boolean => {
+    return this.options.scale;
+  };
+
   public getOrientation = (): number => {
     return this.sliderParametrs.orientation;
   };
 
   public getNumberOfHandlers = (): number => {
     return this.options.numberOfHandlers;
+  };
+
+  public getHandlerBottom = (): number => {
+    return this.handlerParametrs.handlerBottom;
   };
 
   public getSliderLength = (): number => {
@@ -42,7 +84,7 @@ export default class DataController {
   };
 
   public getHandlerLength = (): number => {
-    return this.handlerParametrs.startHandlerLength;
+    return this.handlerParametrs.handlerLength;
   };
 
   public getHandlerStartPosition = (): number => {
@@ -216,8 +258,7 @@ export default class DataController {
   };
 
   public updateLimits = (states: Array<HandlerState>): Array<HandlerState> => {
-    const { handlerMinTranslate, handlerMaxTranslate, startHandlerLength, endHandlerLength } = this.handlerParametrs;
-    // TODO add limits if end and start HandlerLengths are different
+    const { handlerMinTranslate, handlerMaxTranslate, handlerLength: startHandlerLength } = this.handlerParametrs;
     states.forEach((state, index) => {
       if (index - 1 >= 0) {
         state.minTranslate = states[index - 1].position + startHandlerLength;
@@ -267,7 +308,7 @@ export default class DataController {
       return state;
     }
 
-    const { handlerMinTranslate, startHandlerLength } = this.handlerParametrs;
+    const { handlerMinTranslate, handlerLength: startHandlerLength } = this.handlerParametrs;
 
     const handlerState = state.handlerStates[id];
     const values = state.valuesState.values;
@@ -359,10 +400,10 @@ export default class DataController {
   };
 
   private getMinValuesRange = (): number => {
-    const { minValue, maxValue, step } = this.options;
-    const { startHandlerLength, endHandlerLength } = this.handlerParametrs;
+    const { minValue, maxValue } = this.options;
+    const { handlerLength: startHandlerLength } = this.handlerParametrs;
     const { sliderLength } = this.sliderParametrs;
-    // TODO add range if end and start HandlerLengths are different
+
     return ((maxValue - minValue) * startHandlerLength) / sliderLength;
   };
 
@@ -381,15 +422,20 @@ export default class DataController {
       numberOfHandlers = 1;
       options.numberOfHandlers = 1;
     }
-		if (minValue >= maxValue) {
-			options.minValue = 0;
-			options.maxValue = 100;
-		}
-   
+    if (minValue >= maxValue) {
+      options.minValue = 0;
+      options.maxValue = 100;
+    }
+
     if ((maxValue - minValue) / numberOfHandlers <= step) {
       options.step = step / 10;
     }
 
     return options;
   };
+
+	private setScaleSize = (size: number): void => {
+		this.scaleSize = size;
+	}
+
 }

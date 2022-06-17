@@ -1,21 +1,27 @@
-import { createElement } from '../../plugin/utils/utils';
+import './scale.scss';
+import { addClass, createElement } from '../../plugin/utils/utils';
+import { MarkerType } from './Classes/MarkerType';
 import { createMarker } from './__marker/marker';
-import { createValue } from './__value/value';
 
-const getScale = (bindElement: HTMLElement): ScaleElements => {
+const getScale = (sliderPlugin: HTMLElement): ScaleElements => {
   const className = {
     scale: 'scale',
+		scaleVertical: 'scale_vertical'
   };
+
+	const rect = sliderPlugin.getBoundingClientRect();
   const scale = createElement({ className: className.scale });
-  const markerLarge = createMarker(scale, MarkerType.Large);
-  const markerDefault = createMarker(scale, MarkerType.Default);
-  const value = createValue(scale);
-	bindElement.append(scale);
+  const markerLarge = createMarker(MarkerType.Large);
+  const markerDefault = createMarker(MarkerType.Default);
+
+	if (rect.height > rect.width) {
+		addClass(scale, className.scaleVertical);
+	}
+  sliderPlugin.append(scale);
   return {
     scale: scale,
     markerLarge: markerLarge,
     markerDefault: markerDefault,
-    value: value,
   };
 };
 

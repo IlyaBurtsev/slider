@@ -9,15 +9,23 @@ import { createSliderPlugin } from '../src/plugin/Plugin';
 const sliderContainer = getElement('.slider');
 const view = getViewConnector(sliderContainer);
 const plugin = createSliderPlugin(view, {
-  numberOfHandlers: 1,
+  numberOfHandlers: 4,
   startValues: 10,
   step: 1,
+	scaleStep:10,
+	toolTips: true,
+	progressBar: true,
+	scale: true,
 });
 
 plugin.updateSliderOptions({ 
 	numberOfHandlers: 3,
-	step:1,
-	startValues: 20
+	step:10,
+	startValues: 20,
+	// toolTips: false,
+	progressBar: false,
+	// scale: false,
+	scaleStep:2,
 	});
 const startSubscriber = (id: number): void => {
 	console.log('start '+id)

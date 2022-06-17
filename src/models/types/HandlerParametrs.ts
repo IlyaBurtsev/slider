@@ -1,6 +1,7 @@
 type HandlerParametrs = {
-  startHandlerLength: number;
-  endHandlerLength: number | null;
+  handlerLength: number;
   handlerMinTranslate: number;
   handlerMaxTranslate: number;
+	handlerTop: number;
+	handlerBottom: number;
 };

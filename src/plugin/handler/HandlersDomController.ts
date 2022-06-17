@@ -17,51 +17,40 @@ export default class HandlersDomController {
   };
 
   private init(options: HandlerDomControllerOptions): void {
-    const { orientation, subscribeToChangeState, subscribeToDestroy} = options;
+    const { orientation, subscribeToChangeState, subscribeToDestroy } = options;
     this.orientation = orientation;
     this.handlerElements = this.createElements(options);
     this.addListeners(options);
     subscribeToChangeState(this.onChachangeState);
-		subscribeToDestroy(this.onDestroy);
+    subscribeToDestroy(this.onDestroy);
   }
 
   private getHandlersParametrs = (options: HandlerDomControllerOptions): HandlerParametrs => {
     const { viewConnector, orientation, sliderLength } = options;
-    const { startHandlerElement, endHandlerElement } = viewConnector;
-    let parametrs = {
-      sliderLength: 0,
-      startHandlerLength: 0,
-      endHandlerLength: null,
+    const {handlerElement} = viewConnector;
+    let parametrs: HandlerParametrs = {
+      handlerLength: 0,
       handlerMinTranslate: 0,
       handlerMaxTranslate: 0,
+			handlerTop: 0,
+			handlerBottom: 0
     };
-    [startHandlerElement, endHandlerElement].forEach((handler, i) =>
-      this.getParametrs(orientation, handler, i, sliderLength, parametrs)
-    );
+    this.getParametrs(orientation, handlerElement, sliderLength, parametrs);
+
     return parametrs;
   };
 
   private createElements = (options: HandlerDomControllerOptions): Array<HTMLElement> => {
     const elements: Array<HTMLElement> = [];
     const { numberOfHandlers, viewConnector } = options;
-    const { startHandlerElement, endHandlerElement } = viewConnector;
+    const { handlerElement: handlerElement } = viewConnector;
     const fragment = document.createDocumentFragment();
-    if (endHandlerElement === undefined) {
-      elements.push(startHandlerElement);
-      for (let i = 1; i < numberOfHandlers; i++) {
-        pushNewElement(startHandlerElement);
-      }
-    } else {
-      elements.push(startHandlerElement, endHandlerElement);
-      for (let i = 2; i < numberOfHandlers - 1; i++) {
-        if (i % 2 === 0) {
-          pushNewElement(endHandlerElement);
-        } else {
-          pushNewElement(startHandlerElement);
-        }
-      }
+    elements.push(handlerElement);
+    for (let i = 1; i < numberOfHandlers; i++) {
+      pushNewElement(handlerElement);
     }
-    startHandlerElement.parentElement?.append(fragment);
+
+    handlerElement.parentElement?.append(fragment);
 
     function pushNewElement(primeElement: HTMLElement) {
       const newElement = primeElement.cloneNode() as HTMLElement;
@@ -74,22 +63,21 @@ export default class HandlersDomController {
   private addListeners = (options: HandlerDomControllerOptions): void => {
     const { trigger, orientation, getEventNames } = options;
     this.handlerElements.forEach((element, id) => {
-      new HandlerListener(element, id, orientation, getEventNames,  trigger);
+      new HandlerListener(element, id, orientation, getEventNames, trigger);
     });
   };
 
   private onChachangeState = (state: RootState, id: number): void => {
-		if(id !== undefined){
-			this.moveHandlerToPosition(id, state.handlerStates[id].position);
-		} else {
-			state.handlerStates.forEach((state, index) => this.moveHandlerToPosition(index, state.position))
-		}
-    
+    if (id !== undefined) {
+      this.moveHandlerToPosition(id, state.handlerStates[id].position);
+    } else {
+      state.handlerStates.forEach((state, index) => this.moveHandlerToPosition(index, state.position));
+    }
   };
 
-	private onDestroy = (): void => {
-		removeElementsFromDom(this.handlerElements, 1)
-	}
+  private onDestroy = (): void => {
+    removeElementsFromDom(this.handlerElements, 1);
+  };
 
   private moveHandlerToPosition = (id: number, newPosition: number): void => {
     if (this.orientation === Orientation.Horizontal) {
@@ -102,7 +90,6 @@ export default class HandlersDomController {
   private getParametrs = (
     orientation: number,
     handler: HTMLElement | undefined,
-    index: number,
     sliderLength: number,
     handlerParametrs: HandlerParametrs
   ): void => {
@@ -112,21 +99,23 @@ export default class HandlersDomController {
     const cs = window.getComputedStyle(handler, null);
     let length: number = 0;
     let translate: number = 0;
+		let top: number =0;
+		let height: number = 0;
     if (orientation === Orientation.Horizontal) {
       translate = Number(cs.left.match(/[-\d][0-9]+/));
       length = Number(cs.width.match(/[-\d][0-9]+/));
+			top = Number(cs.top.match(/[-\d][0-9]+/));
+			height = Number(cs.height.match(/[-\d][0-9]+/));
     } else {
       length = Number(cs.height.match(/[-\d][0-9]+/));
       translate = Number(cs.top.match(/[-\d][0-9]+/));
+			top = Number(cs.left.match(/[-\d][0-9]+/));
+			height = Number(cs.width.match(/[-\d][0-9]+/));
     }
-
-    if (index === 1) {
-      handlerParametrs.endHandlerLength = length;
-      handlerParametrs.handlerMaxTranslate = translate;
-    } else {
-      handlerParametrs.handlerMinTranslate = translate;
-      handlerParametrs.startHandlerLength = length;
-      handlerParametrs.handlerMaxTranslate = translate + sliderLength;
-    }
+    handlerParametrs.handlerMinTranslate = translate;
+    handlerParametrs.handlerLength = length;
+    handlerParametrs.handlerMaxTranslate = translate + sliderLength;
+		handlerParametrs.handlerTop = top;
+		handlerParametrs.handlerBottom = height + top
   };
 }

@@ -1,13 +1,14 @@
 .tooltip{
+	top: -15px;
 	width: auto;
 	height: auto;
 	font-size: small;
 	position: relative;
-	bottom: 50%;
 	user-select: none;
 	text-align: center;
+	color: gray;
 	&_vertical {
-		bottom: 0;
-		left: 100%;
+		top: 25%;
+		// left: 100%;
 	}
 }

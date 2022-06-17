@@ -3,16 +3,29 @@ import { Orientation } from '../../models/Orientation';
 import SliderLisrener from './SliderListener';
 
 export default class SliderDomController {
+  private isInit: boolean = true;
   private sliderElement: HTMLElement;
+  private sliderHeight: number;
+  private getPaddingParametrs: () => PaddingParametrs;
   private orientation: number;
   private callback: (parametrs: SliderParametrs) => void;
 
   constructor(options: SliderDomControllerOptions) {
-    const { viewConnector, subscribeToTouchHandler, callback, trigger, getEventNames } = options;
+    const {
+      viewConnector,
+      subscribeToTouchHandler,
+      subscribeToChangeState,
+      callback,
+      trigger,
+      getEventNames,
+      getPaddingParametrs: paddingParametrs,
+    } = options;
     this.sliderElement = viewConnector.slider;
+    this.getPaddingParametrs = paddingParametrs;
     this.callback = callback;
-		callback(this.getSliderParametrs());
-    new SliderLisrener(this.sliderElement, this.orientation, getEventNames, trigger); 
+    callback(this.getSliderParametrs());
+    new SliderLisrener(this.sliderElement, this.orientation, getEventNames, trigger);
+    subscribeToChangeState(this.onChangeState);
     subscribeToTouchHandler(this.onTouchHandler);
   }
 
@@ -20,28 +33,68 @@ export default class SliderDomController {
     this.callback(this.getSliderParametrs());
   };
 
+  private onChangeState = (): void => {
+    if (this.isInit) {
+      this.setParentPaddings();
+      this.isInit = false;
+    }
+  };
+
   private getSliderParametrs = (): SliderParametrs => {
     const rect = this.sliderElement.getBoundingClientRect();
-		if (rect.width > rect.height) {
-			this.orientation = Orientation.Horizontal
-		} else {
-			this.orientation = Orientation.Vertical
-		}
+    if (rect.width > rect.height) {
+      this.orientation = Orientation.Horizontal;
+    } else {
+      this.orientation = Orientation.Vertical;
+    }
 
     if (this.orientation === Orientation.Horizontal) {
+      this.sliderHeight = rect.height;
       return {
-				orientation: this.orientation,
+        orientation: this.orientation,
         sliderLength: rect.width,
         sliderStartPosition: rect.left,
         sliderEndPosition: rect.left + rect.width,
       };
     } else {
+      this.sliderHeight = rect.width;
       return {
-				orientation: this.orientation,
+        orientation: this.orientation,
         sliderLength: rect.height,
         sliderStartPosition: rect.top,
         sliderEndPosition: rect.top + rect.height,
       };
     }
+  };
+  private setParentPaddings = (): void => {
+    const { handlerMinTrahslate, handlerTop, handlerBottom, scaleSize } = this.getPaddingParametrs();
+		const bindElement = this.sliderElement.parentElement;
+    if (this.orientation === Orientation.Horizontal) {    
+      if (bindElement) {
+				if (handlerBottom + scaleSize +2 > this.sliderHeight) {
+					bindElement.style.paddingBottom = `${Math.abs(handlerBottom + scaleSize - this.sliderHeight + 3)}px`;
+				}     
+        if (handlerTop < 0) {
+          bindElement.style.paddingTop = `${Math.abs(handlerTop)}px`;
+        }
+        if (handlerMinTrahslate < 0) {
+          bindElement.style.paddingLeft = `${Math.abs(handlerMinTrahslate)}px`;
+					bindElement.style.paddingRight = `${Math.abs(handlerMinTrahslate)}px`;
+        }
+      }
+    }else {
+			if (bindElement) {
+				if (handlerTop - scaleSize <0) {
+					bindElement.style.paddingLeft = `${Math.abs(handlerTop - scaleSize)}px`;
+				}     
+        if (handlerBottom > this.sliderHeight) {
+          bindElement.style.paddingRight = `${Math.abs(handlerBottom - this.sliderHeight + 2)}px`;
+        }
+        if (handlerMinTrahslate < 0) {
+          bindElement.style.paddingTop = `${Math.abs(handlerMinTrahslate)}px`;
+					bindElement.style.paddingBottom = `${Math.abs(handlerMinTrahslate)}px`;
+        }
+      }
+		}
   };
 }

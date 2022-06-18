@@ -92,7 +92,7 @@ class Plugin extends Observer {
   private initScale = (viewConnector: ViewConnector): void => {
     if (this.dataController.createScale()) {
       new ScaleCreator(viewConnector, this.dataController.getScaleOptions(), this.addOnDestroySubscriber);
-    }
+    } 
   };
 
   private onTouchHandler = (handlerId: number): void => {

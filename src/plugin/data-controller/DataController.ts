@@ -5,7 +5,7 @@ import { deepMerge } from '../utils/utils';
 export default class DataController {
   private handlerParametrs: HandlerParametrs;
   private sliderParametrs: SliderParametrs;
-	private scaleSize: number;
+  private scaleSize: number = 0;
   private options: SliderOptions = {
     numberOfHandlers: 1,
     minValue: 0,
@@ -17,23 +17,24 @@ export default class DataController {
     scale: false,
     scaleStep: 10,
   };
-	private trigger: (actions: PluginActions, ...args: Array<Object>) => void;
+  private trigger: (actions: PluginActions, ...args: Array<Object>) => void;
 
   constructor(trigger: (actions: PluginActions, ...args: Array<Object>) => void, userOptions?: UserOptions) {
     this.updateOptions(userOptions);
     this.options = this.checkOptions(this.options);
     this.trigger = trigger;
   }
+  //-----------------------------------------------------
 
-	public getBindElelementPaddingParametrs = (): PaddingParametrs =>{
-		const {handlerMinTranslate, handlerTop, handlerBottom} = this.handlerParametrs
-		return {
-			handlerMinTrahslate: handlerMinTranslate,
-			handlerTop: handlerTop,
-			handlerBottom: handlerBottom,
-			scaleSize: this.scaleSize
-		}
-	}
+  public getBindElelementPaddingParametrs = (): PaddingParametrs => {
+    const { handlerMinTranslate, handlerTop, handlerBottom } = this.handlerParametrs;
+    return {
+      handlerMinTrahslate: handlerMinTranslate,
+      handlerTop: handlerTop,
+      handlerBottom: handlerBottom,
+      scaleSize: this.scaleSize,
+    };
+  };
 
   public getScaleOptions = (): ScaleOptions => {
     const { scaleStep, maxValue, minValue, step } = this.options;
@@ -46,7 +47,7 @@ export default class DataController {
       sliderLength: sliderLength,
       handlerBottom: handlerBottom,
       handlerTop: handlerTop,
-			callback: this.setScaleSize
+      callback: this.setScaleSize,
     };
   };
 
@@ -75,12 +76,7 @@ export default class DataController {
   };
 
   public getSliderLength = (): number => {
-    const { sliderLength } = this.sliderParametrs;
-    return sliderLength;
-  };
-
-  public setSliderParametrs = (parametrs: SliderParametrs): void => {
-    this.sliderParametrs = parametrs;
+    return this.sliderParametrs.sliderLength;
   };
 
   public getHandlerLength = (): number => {
@@ -91,9 +87,17 @@ export default class DataController {
     return this.handlerParametrs.handlerMinTranslate;
   };
 
+  //-----------------------------------------------------
+
+  public setSliderParametrs = (parametrs: SliderParametrs): void => {
+    this.sliderParametrs = parametrs;
+  };
+
   public setHandlerParametrs = (parametrs: HandlerParametrs): void => {
     this.handlerParametrs = parametrs;
   };
+
+  //-----------------------------------------------------
 
   public initState = (): RootState => {
     const handlerStates: Array<HandlerState> = [];
@@ -169,7 +173,6 @@ export default class DataController {
       values.push(`${startValue}`);
       handlerStates.push(state);
     }
-
     return {
       handlerStates: handlerStates,
       valuesState: valuesState,
@@ -292,6 +295,8 @@ export default class DataController {
           end: 'mouseup touchend',
         };
   };
+
+  //-----------------------------------------------------
 
   private updateOptions = (newOptions?: UserOptions): void => {
     if (newOptions) {
@@ -434,8 +439,7 @@ export default class DataController {
     return options;
   };
 
-	private setScaleSize = (size: number): void => {
-		this.scaleSize = size;
-	}
-
+  private setScaleSize = (size: number): void => {
+    this.scaleSize = size;
+  };
 }

@@ -10,7 +10,7 @@ const sliderContainer = getElement('.slider');
 const view = getViewConnector(sliderContainer);
 const plugin = createSliderPlugin(view, {
   numberOfHandlers: 4,
-  startValues: [0,30,30,60],
+  startValues: [0,31,30,60],
   step: 1,
 	scaleStep:10,
 	toolTips: true,

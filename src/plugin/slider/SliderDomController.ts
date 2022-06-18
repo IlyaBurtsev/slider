@@ -18,10 +18,10 @@ export default class SliderDomController {
       callback,
       trigger,
       getEventNames,
-      getPaddingParametrs: paddingParametrs,
+      getPaddingParametrs,
     } = options;
     this.sliderElement = viewConnector.slider;
-    this.getPaddingParametrs = paddingParametrs;
+    this.getPaddingParametrs = getPaddingParametrs;
     this.callback = callback;
     callback(this.getSliderParametrs());
     new SliderLisrener(this.sliderElement, this.orientation, getEventNames, trigger);

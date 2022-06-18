@@ -149,9 +149,12 @@ class Plugin extends Observer {
     this.on(PluginActions.onDestroy, handler);
   };
 
-  private changeStateMethodCreator(type: ChangeStateTypes): (newUserPosition: number, handlerId: number) => void {
-    return (newUserPosition: number, handlerId: number): void => {
-      this.state = this.dataController.changeState(this.state, newUserPosition, handlerId, type);
+  private changeStateMethodCreator(type: ChangeStateTypes): (newUserPosition: number, handlerId?: number) => void {
+    return (newUserPosition: number, handlerId?: number): void => {
+			if (handlerId === undefined) {
+				handlerId = -1;
+			}
+      this.state = this.dataController.changeState( type, this.state, newUserPosition, handlerId);
     };
   }
 }

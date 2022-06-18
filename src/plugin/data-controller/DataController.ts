@@ -87,6 +87,14 @@ export default class DataController {
     return this.handlerParametrs.handlerMinTranslate;
   };
 
+	public getEventNames = (): Actions => {
+    return {
+          start: 'mousedown touchstart',
+          move: 'mousemove touchmove',
+          end: 'mouseup touchend',
+        };
+  };
+
   //-----------------------------------------------------
 
   public setSliderParametrs = (parametrs: SliderParametrs): void => {
@@ -230,7 +238,7 @@ export default class DataController {
     }
   };
 
-  public changeState = (state: RootState, newUserposition: number, id: number, type: ChangeStateTypes): RootState => {
+  public changeState = (type: ChangeStateTypes, state: RootState, newUserposition: number, id: number): RootState => {
     let newState: RootState;
     switch (type) {
       case ChangeStateTypes.handlerMovement:
@@ -274,26 +282,6 @@ export default class DataController {
       }
     });
     return states;
-  };
-
-  public getEventNames = (): Actions => {
-    return (window.navigator as any).pointerEnabled
-      ? {
-          start: 'pointerdown',
-          move: 'pointermove',
-          end: 'pointerup',
-        }
-      : (window.navigator as any).msPointerEnabled
-      ? {
-          start: 'MSPointerDown',
-          move: 'MSPointerMove',
-          end: 'MSPointerUp',
-        }
-      : {
-          start: 'mousedown touchstart',
-          move: 'mousemove touchmove',
-          end: 'mouseup touchend',
-        };
   };
 
   //-----------------------------------------------------
@@ -354,7 +342,7 @@ export default class DataController {
       return state;
     }
     let position: number = step * stepsLength + handlerMinTranslate;
-    if (position > handlerState.minTranslate && position < handlerState.maxTranslate) {
+    if (position >= handlerState.minTranslate && position <= handlerState.maxTranslate) {
       if (calcUserPosition < 0) {
         position = -position;
       }

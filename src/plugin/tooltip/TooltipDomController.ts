@@ -4,6 +4,7 @@ export default class TooltipDomController {
   private tooltips: Array<HTMLElement> = [];
   private setValue: (tooltip: HTMLElement, value: string) => void;
   private parametrs: TooltipParametrs;
+  private primeTooltip: HTMLElement;
   constructor(options: TooltipDomControllerOptions) {
     this.init(options);
   }
@@ -23,9 +24,13 @@ export default class TooltipDomController {
     const { tooltip, setValueInTooltip } = viewConnector;
     if (tooltip === undefined) {
       return;
+    } else {
+      this.primeTooltip = tooltip;
     }
 
     this.parametrs = this.getParametrs(tooltip);
+
+    subscribeToDestroy(this.onDestroy);
 
     if (setValueInTooltip === undefined) {
       tooltip.style.display = 'none';
@@ -42,7 +47,6 @@ export default class TooltipDomController {
     subscribeToChangeState(this.onChangeValues);
     subscribeToTouchHandler(this.onTouchHandler);
     subscribeToStopMovingHandler(this.onStopMovingHandler);
-    subscribeToDestroy(this.onDestroy);
 
     function initTooltips(): Array<HTMLElement> {
       const elements: Array<HTMLElement> = [];
@@ -89,6 +93,6 @@ export default class TooltipDomController {
 
   private onDestroy = (): void => {
     const { display } = this.parametrs;
-    this.tooltips[0].style.display = display;
+    this.primeTooltip.style.display = `${display}`;
   };
 }

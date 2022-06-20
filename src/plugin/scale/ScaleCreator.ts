@@ -1,12 +1,16 @@
-import { Orientation } from '../../models/Orientation';
+import ViewConnector from '../../models/interfaces/ViewInterface/ViewConnector';
+import Orientation from '../../models/Orientation';
+import ScaleOptions from '../../models/types/ScaleOptions';
 
 export default class ScaleCreator {
   private markersElements: Array<HTMLElement> = [];
-	private scaleSize: number
+
+  private scaleSize: number;
+
   constructor(viewConnector: ViewConnector, options: ScaleOptions, subscribeToDestroy: (handler: () => void) => void) {
-		const {callback} = options
+    const { callback } = options;
     this.createScale(viewConnector, options);
-		callback(this.scaleSize);
+    callback(this.scaleSize);
     subscribeToDestroy(this.onDestroy);
   }
 
@@ -35,13 +39,13 @@ export default class ScaleCreator {
     const rect = scale.getBoundingClientRect();
     if (orientation === Orientation.Horizontal) {
       scale.style.width = `${sliderLength}px`;
-      scale.style.top = `${handlerBottom + 1}px`;	
-			this.scaleSize = rect.height;		
+      scale.style.top = `${handlerBottom + 1}px`;
+      this.scaleSize = rect.height;
     } else {
       scale.style.height = `${sliderLength}px`;
       scale.style.left = `${handlerTop - rect.width - 1}px`;
       scale.style.top = '0';
-			this.scaleSize = rect.width;
+      this.scaleSize = rect.width;
     }
   };
 

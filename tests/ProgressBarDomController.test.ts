@@ -19,9 +19,9 @@ describe('ProgressBarDomController', () => {
     expect(barElements.length).toBe(3);
   });
 
-	test('Should return single prime progress bar', () => {
-		barDestroySubscriber.runCallback();
-		const handlerElements = barOptions.viewConnector.slider.querySelectorAll('.bar')
+  test('Should return single prime progress bar', () => {
+    barDestroySubscriber.runCallback();
+    const handlerElements = barOptions.viewConnector.slider.querySelectorAll('.bar');
     expect(handlerElements.length).toBe(1);
   });
 });

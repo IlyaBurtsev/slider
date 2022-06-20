@@ -1,10 +1,13 @@
-import HandlerDomControllerOptions from '../../models/interfaces/HandlerDomControllerOptions';
+import HandlerDomControllerOptions from '../../models/types/HandlerDomControllerOptions';
 import HandlerListener from './HandlerListener';
-import { Orientation } from '../../models/Orientation';
+import Orientation from '../../models/Orientation';
 import { removeElementsFromDom } from '../utils/utils';
+import HandlerParametrs from '../../models/types/HandlerParametrs';
+import RootState from '../../models/types/RootState';
 
 export default class HandlersDomController {
   private orientation: number;
+
   private handlerElements: Array<HTMLElement> = [];
 
   constructor(options: HandlerDomControllerOptions, callback: (parametrs: HandlerParametrs) => void) {
@@ -27,13 +30,13 @@ export default class HandlersDomController {
 
   private getHandlersParametrs = (options: HandlerDomControllerOptions): HandlerParametrs => {
     const { viewConnector, orientation, sliderLength } = options;
-    const {handlerElement} = viewConnector;
-    let parametrs: HandlerParametrs = {
+    const { handlerElement } = viewConnector;
+    const parametrs: HandlerParametrs = {
       handlerLength: 0,
       handlerMinTranslate: 0,
       handlerMaxTranslate: 0,
-			handlerTop: 0,
-			handlerBottom: 0
+      handlerTop: 0,
+      handlerBottom: 0,
     };
     this.getParametrs(orientation, handlerElement, sliderLength, parametrs);
 
@@ -43,7 +46,7 @@ export default class HandlersDomController {
   private createElements = (options: HandlerDomControllerOptions): Array<HTMLElement> => {
     const elements: Array<HTMLElement> = [];
     const { numberOfHandlers, viewConnector } = options;
-    const { handlerElement: handlerElement } = viewConnector;
+    const { handlerElement } = viewConnector;
     const fragment = document.createDocumentFragment();
     elements.push(handlerElement);
     for (let i = 1; i < numberOfHandlers; i++) {
@@ -91,7 +94,7 @@ export default class HandlersDomController {
     orientation: number,
     handler: HTMLElement | undefined,
     sliderLength: number,
-    handlerParametrs: HandlerParametrs
+    handlerParametrs: HandlerParametrs,
   ): void => {
     if (handler === undefined) {
       return;
@@ -99,23 +102,23 @@ export default class HandlersDomController {
     const cs = window.getComputedStyle(handler, null);
     let length: number = 0;
     let translate: number = 0;
-		let top: number =0;
-		let height: number = 0;
+    let top: number = 0;
+    let height: number = 0;
     if (orientation === Orientation.Horizontal) {
       translate = Number(cs.left.match(/[-\d][0-9]+/));
       length = Number(cs.width.match(/[-\d][0-9]+/));
-			top = Number(cs.top.match(/[-\d][0-9]+/));
-			height = Number(cs.height.match(/[-\d][0-9]+/));
+      top = Number(cs.top.match(/[-\d][0-9]+/));
+      height = Number(cs.height.match(/[-\d][0-9]+/));
     } else {
       length = Number(cs.height.match(/[-\d][0-9]+/));
       translate = Number(cs.top.match(/[-\d][0-9]+/));
-			top = Number(cs.left.match(/[-\d][0-9]+/));
-			height = Number(cs.width.match(/[-\d][0-9]+/));
+      top = Number(cs.left.match(/[-\d][0-9]+/));
+      height = Number(cs.width.match(/[-\d][0-9]+/));
     }
     handlerParametrs.handlerMinTranslate = translate;
     handlerParametrs.handlerLength = length;
     handlerParametrs.handlerMaxTranslate = translate + sliderLength;
-		handlerParametrs.handlerTop = top;
-		handlerParametrs.handlerBottom = height + top
+    handlerParametrs.handlerTop = top;
+    handlerParametrs.handlerBottom = height + top;
   };
 }

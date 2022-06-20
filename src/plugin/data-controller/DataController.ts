@@ -1,11 +1,24 @@
-import { ChangeStateTypes } from '../../models/ChangeStateTypes';
-import { PluginActions } from '../../models/PluginActions';
+import ChangeStateTypes from '../../models/ChangeStateTypes';
+import SliderOptions from '../../models/interfaces/SliderOptions';
+import UserOptions from '../../models/interfaces/UserOptions';
+import PluginActions from '../../models/PluginActions';
+import PaddingParametrs from '../../models/types/BindElementPaddingParametrs';
+import Actions from '../../models/types/HandlerActions';
+import HandlerParametrs from '../../models/types/HandlerParametrs';
+import HandlerState from '../../models/types/HandlerState';
+import RootState from '../../models/types/RootState';
+import ScaleOptions from '../../models/types/ScaleOptions';
+import SliderParametrs from '../../models/types/SliderParametrs';
+import ValuesState from '../../models/types/ValuesState';
 import { deepMerge } from '../utils/utils';
 
 export default class DataController {
   private handlerParametrs: HandlerParametrs;
+
   private sliderParametrs: SliderParametrs;
+
   private scaleSize: number = 0;
+
   private options: SliderOptions = {
     numberOfHandlers: 1,
     minValue: 0,
@@ -17,6 +30,7 @@ export default class DataController {
     scale: false,
     scaleStep: 10,
   };
+
   private trigger: (actions: PluginActions, ...args: Array<Object>) => void;
 
   constructor(trigger: (actions: PluginActions, ...args: Array<Object>) => void, userOptions?: UserOptions) {
@@ -30,8 +44,8 @@ export default class DataController {
     const { handlerMinTranslate, handlerTop, handlerBottom } = this.handlerParametrs;
     return {
       handlerMinTrahslate: handlerMinTranslate,
-      handlerTop: handlerTop,
-      handlerBottom: handlerBottom,
+      handlerTop,
+      handlerBottom,
       scaleSize: this.scaleSize,
     };
   };
@@ -43,10 +57,10 @@ export default class DataController {
     return {
       orientation: this.sliderParametrs.orientation,
       numberOfSteps: (maxValue - minValue) / step,
-      scaleStep: scaleStep,
-      sliderLength: sliderLength,
-      handlerBottom: handlerBottom,
-      handlerTop: handlerTop,
+      scaleStep,
+      sliderLength,
+      handlerBottom,
+      handlerTop,
       callback: this.setScaleSize,
     };
   };
@@ -87,12 +101,12 @@ export default class DataController {
     return this.handlerParametrs.handlerMinTranslate;
   };
 
-	public getEventNames = (): Actions => {
+  public getEventNames = (): Actions => {
     return {
-          start: 'mousedown touchstart',
-          move: 'mousemove touchmove',
-          end: 'mouseup touchend',
-        };
+      start: 'mousedown touchstart',
+      move: 'mousemove touchmove',
+      end: 'mouseup touchend',
+    };
   };
 
   //-----------------------------------------------------
@@ -116,7 +130,7 @@ export default class DataController {
     const { numberOfHandlers, startValues, minValue, maxValue, step } = this.options;
     const { handlerMinTranslate, handlerMaxTranslate } = this.handlerParametrs;
     const minValueRange = this.getMinValuesRange();
-    let count = this.getCount(step);
+    const count = this.getCount(step);
 
     if (numberOfHandlers > 1) {
       let correctData = true;
@@ -137,7 +151,7 @@ export default class DataController {
         values.splice(0);
         let currentValue: number;
         for (let i = 0; i < numberOfHandlers; i++) {
-          let state: HandlerState = {
+          const state: HandlerState = {
             position: 0,
             minTranslate: 0,
             maxTranslate: 0,
@@ -146,7 +160,7 @@ export default class DataController {
             currentValue = ((maxValue - minValue) * i) / (numberOfHandlers - 1);
             const different = currentValue % step;
             if (different !== 0) {
-              currentValue = currentValue - different;
+              currentValue -= different;
             }
           } else {
             currentValue = minValue;
@@ -158,7 +172,7 @@ export default class DataController {
       }
       this.updateLimits(handlerStates);
     } else {
-      let state: HandlerState = {
+      const state: HandlerState = {
         position: 0,
         minTranslate: handlerMinTranslate,
         maxTranslate: handlerMaxTranslate,
@@ -182,14 +196,14 @@ export default class DataController {
       handlerStates.push(state);
     }
     return {
-      handlerStates: handlerStates,
-      valuesState: valuesState,
+      handlerStates,
+      valuesState,
     };
 
     function setStatePosition(value: number, index: number, that: DataController): boolean {
       let minCurrentValue: number = 0;
 
-      let state: HandlerState = {
+      const state: HandlerState = {
         position: 0,
         minTranslate: 0,
         maxTranslate: 0,
@@ -207,10 +221,8 @@ export default class DataController {
       }
       if (index > 0) {
         minCurrentValue = startValues[index - 1] + minValueRange;
-      } else {
-        if (value < minCurrentValue) {
-          return false;
-        }
+      } else if (value < minCurrentValue) {
+        return false;
       }
       if (value < minCurrentValue) {
         if (value >= minCurrentValue - minValueRange && minCurrentValue + minValueRange <= maxValue) {
@@ -218,9 +230,8 @@ export default class DataController {
           handlerStates.push(state);
           values.push(`${startValues[index - 1]}`);
           return true;
-        } else {
-          return false;
         }
+        return false;
       }
 
       if (value >= minCurrentValue) {
@@ -229,9 +240,8 @@ export default class DataController {
           handlerStates.push(state);
           values.push(`${value}`);
           return true;
-        } else {
-          return false;
         }
+        return false;
       }
 
       return false;
@@ -294,7 +304,7 @@ export default class DataController {
 
   private changeStateWhenChangePosition = (state: RootState, newUserposition: number, id: number): RootState => {
     const { minValue, maxValue } = this.options;
-    const sliderParametrs = this.sliderParametrs;
+    const { sliderParametrs } = this;
     const { sliderStartPosition, sliderLength } = sliderParametrs;
     const stepsLength = this.getStepLength(sliderLength);
     if (id === -1) {
@@ -304,7 +314,7 @@ export default class DataController {
     const { handlerMinTranslate, handlerLength: startHandlerLength } = this.handlerParametrs;
 
     const handlerState = state.handlerStates[id];
-    const values = state.valuesState.values;
+    const { values } = state.valuesState;
 
     const calcUserPosition = newUserposition - sliderStartPosition;
 
@@ -357,11 +367,11 @@ export default class DataController {
       return 0;
     }
     const { sliderStartPosition } = this.sliderParametrs;
-    let calcPosition = targetPosition - sliderStartPosition;
+    const calcPosition = targetPosition - sliderStartPosition;
     let closestHandlerId = 0;
     let minDistance = Math.abs(handlerStates[0].position - calcPosition);
     handlerStates.forEach((state, id) => {
-      let currentDistance = Math.abs(state.position - calcPosition);
+      const currentDistance = Math.abs(state.position - calcPosition);
       if (currentDistance < minDistance) {
         minDistance = currentDistance;
         closestHandlerId = id;
@@ -386,8 +396,8 @@ export default class DataController {
     const { handlerMinTranslate } = this.handlerParametrs;
     const { sliderLength } = this.sliderParametrs;
     const { minValue, maxValue, step } = this.options;
-    let calcPosition = position;
-    let count = this.getCount(step);
+    const calcPosition = position;
+    const count = this.getCount(step);
     const value = ((maxValue - minValue) / sliderLength) * (calcPosition - handlerMinTranslate);
     return value.toFixed(count);
   };
@@ -403,9 +413,8 @@ export default class DataController {
   private getCount(step: number): number | undefined {
     if (step.toString().includes('.')) {
       return step.toString().split('.').pop()?.length;
-    } else {
-      return 0;
     }
+    return 0;
   }
 
   private checkOptions = (options: SliderOptions): SliderOptions => {

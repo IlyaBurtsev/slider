@@ -1,4 +1,9 @@
-import { Orientation } from '../../../src/models/Orientation';
+import SliderOptions from '../../../src/models/interfaces/SliderOptions';
+import Orientation from '../../../src/models/Orientation';
+import HandlerParametrs from '../../../src/models/types/HandlerParametrs';
+import HandlerState from '../../../src/models/types/HandlerState';
+import RootState from '../../../src/models/types/RootState';
+import SliderParametrs from '../../../src/models/types/SliderParametrs';
 
 const correctOptions: SliderOptions = {
   numberOfHandlers: 1,
@@ -17,16 +22,15 @@ const handlerParametrs: HandlerParametrs = {
   handlerLength: 20,
   handlerMinTranslate: -10,
   handlerMaxTranslate: 990,
-	handlerTop: -10,
-	handlerBottom: 40,
+  handlerTop: -10,
+  handlerBottom: 40,
 };
 
 const sliderParametrs: SliderParametrs = {
-	orientation: Orientation.Horizontal,
+  orientation: Orientation.Horizontal,
   sliderLength: 1000,
   sliderStartPosition: 400,
   sliderEndPosition: 1400,
-	
 };
 
 const defaultInitialState: HandlerState = {
@@ -59,12 +63,12 @@ const resultState = (position: number, value: number): RootState => {
     minTranslate: -10,
     maxTranslate: 990,
   };
-	const values = [`${value}`]
+  const values = [`${value}`];
   state.position = position;
   return {
-		handlerStates: [state],
-		valuesState: {values}
-	}
+    handlerStates: [state],
+    valuesState: { values },
+  };
 };
 
 export {

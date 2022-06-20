@@ -1,11 +1,17 @@
-import { PluginActions } from '../../models/PluginActions';
+import PluginActions from '../../models/PluginActions';
+import BrowserEvent from '../../models/types/BrouserEvent';
+import Actions from '../../models/types/HandlerActions';
 import { bindEvents, checkTouch, getTouchPosition, removeEvents } from '../utils/utils';
 
 export default class HandlerListener {
   private eventNames: () => Actions;
+
   private handler: HTMLElement;
+
   private id: number;
+
   private orientation: number;
+
   private trigger: (actions: PluginActions, ...args: Array<Object>) => void;
 
   constructor(
@@ -13,7 +19,7 @@ export default class HandlerListener {
     id: number,
     orientation: number,
     getEventNames: () => Actions,
-    trigger: (actions: PluginActions, ...args: Array<Object>) => void
+    trigger: (actions: PluginActions, ...args: Array<Object>) => void,
   ) {
     this.orientation = orientation;
     this.eventNames = getEventNames;

@@ -1,10 +1,12 @@
 /**
  * @jest-environment jsdom
  */
-import HandlerDomControllerOptions from '../../../src/models/interfaces/HandlerDomControllerOptions';
-import { SliderDomControllerOptions } from '../../../src/models/interfaces/SliderDomControllerOptions';
-import TooltipDomController from '../../../src/plugin/tooltip/TooltipDomController';
+/* eslint-disable no-unused-vars */
+import ViewConnector from '../../../src/models/interfaces/ViewInterface/ViewConnector';
+import Actions from '../../../src/models/types/HandlerActions';
+import TooltipDomControllerOptions from '../../../src/models/types/TooltipDomControllerOptions';
 import { createElement } from '../../../src/plugin/utils/utils';
+
 const paddingParametrs = jest.fn();
 
 const getEventNames = (): Actions => {
@@ -30,27 +32,27 @@ const setValueInTooltip = jest.fn();
 const subscribeToMock = jest.fn();
 
 const view: ViewConnector = {
-  slider: slider,
+  slider,
   handlerElement: handler,
   progressBar: bar,
-  tooltip: tooltip,
+  tooltip,
 };
 
 class Subscriber {
   public handler: Function;
+
   public subscribe = (callback: Function): void => {
     this.handler = callback;
   };
 
   public runCallback = (id?: number): void => {
-		if (this.handler !== undefined) {
-			if (id !== undefined) {
-				this.handler(id);
-			} else {
-				this.handler();
-			}
-		}
-    
+    if (this.handler !== undefined) {
+      if (id !== undefined) {
+        this.handler(id);
+      } else {
+        this.handler();
+      }
+    }
   };
 }
 
@@ -65,11 +67,11 @@ const tooltipSubscriber = {
 const sliderOptions = {
   viewConnector: view,
   getPaddingParametrs: paddingParametrs,
-  getEventNames: getEventNames,
-  trigger: trigger,
+  getEventNames,
+  trigger,
   subscribeToChangeState: subscribeToMock,
   subscribeToTouchHandler: subscribeToMock,
-  callback: callback,
+  callback,
 };
 
 const handlerOptions = {
@@ -77,11 +79,11 @@ const handlerOptions = {
   orientation: 0,
   sliderLength: 1000,
   numberOfHandlers: 1,
-  getEventNames: getEventNames,
-  trigger: trigger,
+  getEventNames,
+  trigger,
   subscribeToChangeState: subscribeToMock,
   subscribeToDestroy: handlerDestroySubscriber.subscribe,
-  callback: callback,
+  callback,
 };
 
 const barOptions = {

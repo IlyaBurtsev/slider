@@ -1,8 +1,8 @@
 import { createElement } from '../../../plugin/utils/utils';
-import { MarkerType } from '../Classes/MarkerType';
+import MarkerType from '../Classes/MarkerType';
 
 const createMarker = (markerType: MarkerType): HTMLElement => {
   return createElement({ className: markerType });
 };
 
-export { createMarker };
+export default createMarker;

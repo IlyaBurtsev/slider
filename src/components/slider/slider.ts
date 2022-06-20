@@ -26,7 +26,7 @@ const createSlider = (bindElement: HTMLElement, isVertical: boolean): Array<HTML
     createTooltipVertical(tooltip);
     createBarVertical(bar);
   }
-  return [slider, handler, bar, tooltip]
+  return [slider, handler, bar, tooltip];
 };
 
-export { createSlider };
+export default createSlider;

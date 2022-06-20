@@ -1,13 +1,20 @@
-import { SliderDomControllerOptions } from '../../models/interfaces/SliderDomControllerOptions';
-import { Orientation } from '../../models/Orientation';
+import SliderDomControllerOptions from '../../models/types/SliderDomControllerOptions';
+import Orientation from '../../models/Orientation';
 import SliderLisrener from './SliderListener';
+import PaddingParametrs from '../../models/types/BindElementPaddingParametrs';
+import SliderParametrs from '../../models/types/SliderParametrs';
 
 export default class SliderDomController {
   private isInit: boolean = true;
+
   private sliderElement: HTMLElement;
+
   private sliderHeight: number;
+
   private getPaddingParametrs: () => PaddingParametrs;
+
   private orientation: number;
+
   private callback: (parametrs: SliderParametrs) => void;
 
   constructor(options: SliderDomControllerOptions) {
@@ -56,45 +63,43 @@ export default class SliderDomController {
         sliderStartPosition: rect.left,
         sliderEndPosition: rect.left + rect.width,
       };
-    } else {
-      this.sliderHeight = rect.width;
-      return {
-        orientation: this.orientation,
-        sliderLength: rect.height,
-        sliderStartPosition: rect.top,
-        sliderEndPosition: rect.top + rect.height,
-      };
     }
+    this.sliderHeight = rect.width;
+    return {
+      orientation: this.orientation,
+      sliderLength: rect.height,
+      sliderStartPosition: rect.top,
+      sliderEndPosition: rect.top + rect.height,
+    };
   };
+
   private setParentPaddings = (): void => {
     const { handlerMinTrahslate, handlerTop, handlerBottom, scaleSize } = this.getPaddingParametrs();
-		const bindElement = this.sliderElement.parentElement;
-    if (this.orientation === Orientation.Horizontal) {    
+    const bindElement = this.sliderElement.parentElement;
+    if (this.orientation === Orientation.Horizontal) {
       if (bindElement) {
-				if (handlerBottom + scaleSize +2 > this.sliderHeight) {
-					bindElement.style.paddingBottom = `${Math.abs(handlerBottom + scaleSize - this.sliderHeight + 3)}px`;
-				}     
+        if (handlerBottom + scaleSize + 2 > this.sliderHeight) {
+          bindElement.style.paddingBottom = `${Math.abs(handlerBottom + scaleSize - this.sliderHeight + 3)}px`;
+        }
         if (handlerTop < 0) {
           bindElement.style.paddingTop = `${Math.abs(handlerTop)}px`;
         }
         if (handlerMinTrahslate < 0) {
           bindElement.style.paddingLeft = `${Math.abs(handlerMinTrahslate)}px`;
-					bindElement.style.paddingRight = `${Math.abs(handlerMinTrahslate)}px`;
+          bindElement.style.paddingRight = `${Math.abs(handlerMinTrahslate)}px`;
         }
       }
-    }else {
-			if (bindElement) {
-				if (handlerTop - scaleSize <0) {
-					bindElement.style.paddingLeft = `${Math.abs(handlerTop - scaleSize)}px`;
-				}     
-        if (handlerBottom > this.sliderHeight) {
-          bindElement.style.paddingRight = `${Math.abs(handlerBottom - this.sliderHeight + 2)}px`;
-        }
-        if (handlerMinTrahslate < 0) {
-          bindElement.style.paddingTop = `${Math.abs(handlerMinTrahslate)}px`;
-					bindElement.style.paddingBottom = `${Math.abs(handlerMinTrahslate)}px`;
-        }
+    } else if (bindElement) {
+      if (handlerTop - scaleSize < 0) {
+        bindElement.style.paddingLeft = `${Math.abs(handlerTop - scaleSize)}px`;
       }
-		}
+      if (handlerBottom > this.sliderHeight) {
+        bindElement.style.paddingRight = `${Math.abs(handlerBottom - this.sliderHeight + 2)}px`;
+      }
+      if (handlerMinTrahslate < 0) {
+        bindElement.style.paddingTop = `${Math.abs(handlerMinTrahslate)}px`;
+        bindElement.style.paddingBottom = `${Math.abs(handlerMinTrahslate)}px`;
+      }
+    }
   };
 }

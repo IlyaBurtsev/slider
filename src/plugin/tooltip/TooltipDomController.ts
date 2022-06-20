@@ -1,10 +1,17 @@
-import { Orientation } from '../../models/Orientation';
+import Orientation from '../../models/Orientation';
+import RootState from '../../models/types/RootState';
+import TooltipDomControllerOptions from '../../models/types/TooltipDomControllerOptions';
+import TooltipParametrs from '../../models/types/TooltipParametrs';
 
 export default class TooltipDomController {
   private tooltips: Array<HTMLElement> = [];
+
   private setValue: (tooltip: HTMLElement, value: string) => void;
+
   private parametrs: TooltipParametrs;
+
   private primeTooltip: HTMLElement;
+
   constructor(options: TooltipDomControllerOptions) {
     this.init(options);
   }
@@ -24,9 +31,8 @@ export default class TooltipDomController {
     const { tooltip, setValueInTooltip } = viewConnector;
     if (tooltip === undefined) {
       return;
-    } else {
-      this.primeTooltip = tooltip;
     }
+    this.primeTooltip = tooltip;
 
     this.parametrs = this.getParametrs(tooltip);
 
@@ -72,9 +78,9 @@ export default class TooltipDomController {
 
   private getParametrs = (tooltip: HTMLElement): TooltipParametrs => {
     const cs = window.getComputedStyle(tooltip, null);
-    let display: string = cs.display;
+    const { display } = cs;
     return {
-      display: display,
+      display,
     };
   };
 

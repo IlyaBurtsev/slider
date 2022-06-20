@@ -1,18 +1,19 @@
-import { Orientation } from '../../models/Orientation';
+import DataObject from '../../models/interfaces/DataObject';
+import UserOptions from '../../models/interfaces/UserOptions';
+import Orientation from '../../models/Orientation';
+import BrowserEvent from '../../models/types/BrouserEvent';
 
 function deepMerge<T extends UserOptions>(target: T, allowAddOptions: boolean, ...objects: Array<UserOptions>): T {
   const keys: (keyof T)[] = Object.keys(target);
   objects
     .filter((o) => o)
     .forEach((obj) => {
-      for (let [key, value] of Object.entries(obj)) {
+      for (const [key, value] of Object.entries(obj)) {
         if (value !== undefined) {
           if (allowAddOptions) {
             target[key as keyof T] = value as T[keyof T];
-          } else {
-            if (keys.includes(key)) {
-              target[key as keyof T] = value as T[keyof T];
-            }
+          } else if (keys.includes(key)) {
+            target[key as keyof T] = value as T[keyof T];
           }
         }
       }
@@ -21,11 +22,11 @@ function deepMerge<T extends UserOptions>(target: T, allowAddOptions: boolean, .
 }
 
 function getElement(el: string, context = document.documentElement): HTMLElement | null {
-  return context['querySelector'](el);
+  return context.querySelector(el);
 }
 
 function getElements(el: string, context = document.documentElement): NodeList {
-  return context['querySelectorAll'](el);
+  return context.querySelectorAll(el);
 }
 
 type createParametrs = {
@@ -38,7 +39,7 @@ type createParametrs = {
 
 function createElement(options: createParametrs): HTMLElement {
   const { tagName = 'div', className, innerHtml, id, attrs } = options;
-  let element = document.createElement(tagName);
+  const element = document.createElement(tagName);
   if (className) element.classList.add(...className.split(' '));
   if (id) element.id = id;
 
@@ -47,7 +48,7 @@ function createElement(options: createParametrs): HTMLElement {
   }
 
   if (attrs) {
-    for (let attr in attrs) {
+    for (const attr in attrs) {
       element.setAttribute(attr, attrs[attr]);
     }
   }
@@ -56,7 +57,7 @@ function createElement(options: createParametrs): HTMLElement {
 }
 
 function toggleClass(el: HTMLElement, ...classes: Array<string>): void {
-  for (let className in classes) {
+  for (const className in classes) {
     if (!el.classList.contains(className)) {
       el.classList.add(className);
     } else {
@@ -67,7 +68,7 @@ function toggleClass(el: HTMLElement, ...classes: Array<string>): void {
 
 function hasClass(el: HTMLElement, ...classes: Array<string>): boolean {
   let result: boolean = false;
-  for (let className in classes) {
+  for (const className in classes) {
     if (el.classList.contains(className)) {
       result = true;
     } else {
@@ -101,10 +102,10 @@ function bindEvents(
   events: Array<string>,
   listener: EventListener,
   element: HTMLElement,
-  supportPassive?: boolean
+  supportPassive?: boolean,
 ): void {
   events.forEach((eventName) =>
-    element.addEventListener(eventName, listener, supportPassive ? { passive: true } : false)
+    element.addEventListener(eventName, listener, supportPassive ? { passive: true } : false),
   );
 }
 
@@ -136,9 +137,8 @@ function getTouchPosition(event: BrowserEvent, targetElement: HTMLElement, orien
   }
   if (orientation === Orientation.Horizontal) {
     return x;
-  } else {
-    return y;
   }
+  return y;
 }
 
 function checkTouch(event: BrowserEvent, targetElement: HTMLElement): boolean | Touch {
@@ -148,12 +148,10 @@ function checkTouch(event: BrowserEvent, targetElement: HTMLElement): boolean | 
     // Do not support more than one touch per handle.
     if (touches.length > 1) {
       return false;
-    } else {
-      return touches[0];
     }
-  } else {
-    return true;
+    return touches[0];
   }
+  return true;
 }
 
 function isTouchOnTarget(event: BrowserEvent, targetElement: HTMLElement, currentTouch: Touch): boolean {
@@ -179,5 +177,5 @@ export {
   removeEvents,
   removeElementsFromDom,
   getTouchPosition,
-	checkTouch
+  checkTouch,
 };

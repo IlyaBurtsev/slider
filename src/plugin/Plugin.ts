@@ -4,13 +4,28 @@ import HandlersDomController from './handler/HandlersDomController';
 import ProgressBarDomController from './progress-bar/ProgressBarDomController';
 import TooltipDomController from './tooltip/TooltipDomController';
 import ScaleCreator from './scale/ScaleCreator';
-import { PluginActions } from '../models/PluginActions';
-import { Observer } from './observer/Observer';
+import PluginActions from '../models/PluginActions';
+import Observer from './observer/Observer';
 import { deepMerge } from './utils/utils';
-import { ChangeStateTypes } from '../models/ChangeStateTypes';
+import ChangeStateTypes from '../models/ChangeStateTypes';
+import ViewConnector from '../models/interfaces/ViewInterface/ViewConnector';
+import UserOptions from '../models/interfaces/UserOptions';
+import RootState from '../models/types/RootState';
+import API from '../models/interfaces/ApplicationProgrammingInterface/API';
 
 class Plugin extends Observer {
   private dataController: DataController;
+
+  private sliderController: SliderDomController;
+
+  private handlerController: HandlersDomController;
+
+  private barController: ProgressBarDomController;
+
+  private tooltipController: TooltipDomController;
+
+  private scaleCreator: ScaleCreator;
+
   private state: RootState;
 
   constructor(viewConnector: ViewConnector, newOptions?: UserOptions) {
@@ -22,9 +37,9 @@ class Plugin extends Observer {
     this.dataController = new DataController(this.newTrigger, newOptions);
 
     this.initSliderBase(viewConnector);
-    const handlersDomContrtoller = this.initHandlers(viewConnector);
+    this.initHandlers(viewConnector);
     this.initProgressBar(viewConnector);
-    this.initTooltips(viewConnector, handlersDomContrtoller);
+    this.initTooltips(viewConnector, this.handlerController);
     this.initScale(viewConnector);
 
     this.state = this.dataController.initState();
@@ -36,8 +51,8 @@ class Plugin extends Observer {
   }
 
   private initSliderBase = (viewConnector: ViewConnector): void => {
-    new SliderDomController({
-      viewConnector: viewConnector,
+    this.sliderController = new SliderDomController({
+      viewConnector,
       getPaddingParametrs: this.dataController.getBindElelementPaddingParametrs,
       subscribeToChangeState: this.getStateSubscriber,
       subscribeToTouchHandler: this.getOnTouchSubscriber,
@@ -47,10 +62,10 @@ class Plugin extends Observer {
     });
   };
 
-  private initHandlers = (viewConnector: ViewConnector): HandlersDomController => {
-    return new HandlersDomController(
+  private initHandlers = (viewConnector: ViewConnector): void => {
+    this.handlerController = new HandlersDomController(
       {
-        viewConnector: viewConnector,
+        viewConnector,
         orientation: this.dataController.getOrientation(),
         sliderLength: this.dataController.getSliderLength(),
         numberOfHandlers: this.dataController.getNumberOfHandlers(),
@@ -59,13 +74,13 @@ class Plugin extends Observer {
         subscribeToChangeState: this.getStateSubscriber,
         subscribeToDestroy: this.addOnDestroySubscriber,
       },
-      this.dataController.setHandlerParametrs
+      this.dataController.setHandlerParametrs,
     );
   };
 
   private initProgressBar = (viewConnector: ViewConnector): void => {
-    new ProgressBarDomController({
-      viewConnector: viewConnector,
+    this.barController = new ProgressBarDomController({
+      viewConnector,
       orientation: this.dataController.getOrientation(),
       numberOfHandlers: this.dataController.getNumberOfHandlers(),
       handlerLength: this.dataController.getHandlerLength(),
@@ -76,9 +91,9 @@ class Plugin extends Observer {
   };
 
   private initTooltips = (viewConnector: ViewConnector, handlersContrtoller: HandlersDomController): void => {
-    new TooltipDomController({
+    this.tooltipController = new TooltipDomController({
       orientation: this.dataController.getOrientation(),
-      viewConnector: viewConnector,
+      viewConnector,
       handlerElements: handlersContrtoller.getHandlerElements(),
       handlerBottom: this.dataController.getHandlerBottom(),
       createTooltips: this.dataController.createTooltips(),
@@ -91,11 +106,15 @@ class Plugin extends Observer {
 
   private initScale = (viewConnector: ViewConnector): void => {
     if (this.dataController.createScale()) {
-      new ScaleCreator(viewConnector, this.dataController.getScaleOptions(), this.addOnDestroySubscriber);
-    } 
+      this.scaleCreator = new ScaleCreator(
+        viewConnector,
+        this.dataController.getScaleOptions(),
+        this.addOnDestroySubscriber,
+      );
+    }
   };
 
-  private onTouchHandler = (handlerId: number): void => {
+  private onTouchHandler = (): void => {
     this.on(PluginActions.onMoveHandler, this.onMoveHandler);
     this.on(PluginActions.onStopMoving, this.onStopMoving);
   };
@@ -106,7 +125,7 @@ class Plugin extends Observer {
 
   private onMoveHandler = this.changeStateMethodCreator(ChangeStateTypes.handlerMovement);
 
-  private onStopMoving = (handlerId: number): void => {
+  private onStopMoving = (): void => {
     this.off(PluginActions.onMoveHandler, this.onMoveHandler);
     this.off(PluginActions.onStopMoving, this.onStopMoving);
     this.dataController.updateLimits(this.state.handlerStates);
@@ -151,10 +170,10 @@ class Plugin extends Observer {
 
   private changeStateMethodCreator(type: ChangeStateTypes): (newUserPosition: number, handlerId?: number) => void {
     return (newUserPosition: number, handlerId?: number): void => {
-			if (handlerId === undefined) {
-				handlerId = -1;
-			}
-      this.state = this.dataController.changeState( type, this.state, newUserPosition, handlerId);
+      if (handlerId === undefined) {
+        handlerId = -1;
+      }
+      this.state = this.dataController.changeState(type, this.state, newUserPosition, handlerId);
     };
   }
 }
@@ -209,7 +228,7 @@ const createSliderPlugin = (viewConnector: ViewConnector, options?: UserOptions)
   };
 
   const api: API = {
-    updateSliderOptions: updateSliderOptions,
+    updateSliderOptions,
     moveHandlerTo: moveHandler,
     subscribeToChangeState: getStateSubscriber,
     subscribeToGetStarted: getOnTouchSubscriber,
@@ -218,4 +237,4 @@ const createSliderPlugin = (viewConnector: ViewConnector, options?: UserOptions)
   return api;
 };
 
-export { createSliderPlugin };
+export default createSliderPlugin;

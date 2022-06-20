@@ -1,3 +1,6 @@
+/* eslint-disable no-unused-vars */
 type TooltipParametrs = {
-	display: string
-}
+  display: string;
+};
+
+export default TooltipParametrs;

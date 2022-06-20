@@ -1,4 +1,6 @@
-import { Orientation } from '../../../src/models/Orientation';
+import UserOptions from '../../../src/models/interfaces/UserOptions';
+import Orientation from '../../../src/models/Orientation';
+import RootState from '../../../src/models/types/RootState';
 
 const correctOptionsDraggableRange: UserOptions = {
   numberOfHandlers: 4,
@@ -34,7 +36,7 @@ const state3Default = {
 
 const resultInitState: RootState = {
   handlerStates: [state0Default, state1Default, state2Default, state3Default],
-  valuesState: { values: ['0', '33', '66', '100']},
+  valuesState: { values: ['0', '33', '66', '100'] },
 };
 
 const resultRangeState = (values: Array<string>, position?: number, id?: number): RootState => {
@@ -65,7 +67,7 @@ const resultRangeState = (values: Array<string>, position?: number, id?: number)
   const handlerStates = [state0, state1, state2, state3];
 
   if (position !== undefined && id !== undefined) {
-    position = position - 10;
+    position -= 10;
     handlerStates[id].position = position;
     if (id > 0) {
       handlerStates[id - 1].maxTranslate = position - 20;
@@ -74,9 +76,7 @@ const resultRangeState = (values: Array<string>, position?: number, id?: number)
       handlerStates[id + 1].minTranslate = position + 20;
     }
   }
-  return { handlerStates: handlerStates, valuesState: { values } };
+  return { handlerStates, valuesState: { values } };
 };
-
-
 
 export { correctOptionsDraggableRange, resultRangeState, resultInitState };

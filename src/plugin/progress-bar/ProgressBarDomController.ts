@@ -1,10 +1,16 @@
-import { Orientation } from '../../models/Orientation';
+import Orientation from '../../models/Orientation';
+import BarDomControllerOptions from '../../models/types/BarDomControllerOptions';
+import HandlerState from '../../models/types/HandlerState';
+import RootState from '../../models/types/RootState';
 import { removeElementsFromDom } from '../utils/utils';
 
 export default class ProgressBarDomController {
   private bars: Array<HTMLElement>;
+
   private orientation: number;
+
   private handlerLength: number;
+
   private numberOfHandlers: number;
 
   constructor(options: BarDomControllerOptions) {
@@ -63,14 +69,12 @@ export default class ProgressBarDomController {
         length = 0;
       }
       this.updateBarView(this.bars[0], 0, length);
+    } else if (id === undefined) {
+      state.handlerStates.forEach((state, index) => {
+        setBarParametrs(index, state, this);
+      });
     } else {
-      if (id === undefined) {
-        state.handlerStates.forEach((state, index) => {
-          setBarParametrs(index, state, this);
-        });
-      } else {
-        setBarParametrs(id, state.handlerStates[id], this);
-      }
+      setBarParametrs(id, state.handlerStates[id], this);
     }
     function setBarParametrs(id: number, handlerState: HandlerState, that: ProgressBarDomController): void {
       const isStartElement = id % 2 === 0;

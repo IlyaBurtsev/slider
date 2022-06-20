@@ -1,28 +1,29 @@
 import './scale.scss';
 import { addClass, createElement } from '../../plugin/utils/utils';
-import { MarkerType } from './Classes/MarkerType';
-import { createMarker } from './__marker/marker';
+import MarkerType from './Classes/MarkerType';
+import createMarker from './__marker/marker';
+import ScaleElements from '../../models/interfaces/ViewInterface/ScaleElements';
 
 const getScale = (sliderPlugin: HTMLElement): ScaleElements => {
   const className = {
     scale: 'scale',
-		scaleVertical: 'scale_vertical'
+    scaleVertical: 'scale_vertical',
   };
 
-	const rect = sliderPlugin.getBoundingClientRect();
+  const rect = sliderPlugin.getBoundingClientRect();
   const scale = createElement({ className: className.scale });
   const markerLarge = createMarker(MarkerType.Large);
   const markerDefault = createMarker(MarkerType.Default);
 
-	if (rect.height > rect.width) {
-		addClass(scale, className.scaleVertical);
-	}
+  if (rect.height > rect.width) {
+    addClass(scale, className.scaleVertical);
+  }
   sliderPlugin.append(scale);
   return {
-    scale: scale,
-    markerLarge: markerLarge,
-    markerDefault: markerDefault,
+    scale,
+    markerLarge,
+    markerDefault,
   };
 };
 
-export { getScale };
+export default getScale;

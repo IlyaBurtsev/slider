@@ -2,7 +2,7 @@
  * @jest-environment jsdom
  */
 
-import { PluginActions } from '../src/models/PluginActions';
+import  PluginActions  from '../src/models/PluginActions';
 import HandlersDomController from '../src/plugin/handler/HandlersDomController';
 import { handlerOptions, handlerDestroySubscriber} from './testData/DomController/Options';
 

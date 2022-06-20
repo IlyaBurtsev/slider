@@ -1,9 +1,12 @@
-export enum PluginActions {
+/* eslint-disable no-unused-vars */
+enum PluginActions {
   onTouchSlider = 'onTouchSlider',
   onTouchHandler = 'onTouchHandler',
   onMoveHandler = 'onMoveHandler',
   onStopMoving = 'onStopMoving',
   onChangeState = 'onChangeState',
-	onChangeValue = 'onCangeValue',
-	onDestroy = 'onDestroy'
+  onChangeValue = 'onCangeValue',
+  onDestroy = 'onDestroy',
 }
+
+export default PluginActions;

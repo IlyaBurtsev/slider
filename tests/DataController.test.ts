@@ -1,4 +1,7 @@
-import { ChangeStateTypes } from '../src/models/ChangeStateTypes';
+import ChangeStateTypes from '../src/models/ChangeStateTypes';
+import HandlerState from '../src/models/types/HandlerState';
+import RootState from '../src/models/types/RootState';
+import ValuesState from '../src/models/types/ValuesState';
 import DataController from '../src/plugin/data-controller/DataController';
 import {
   correctOptions,
@@ -12,8 +15,8 @@ import {
 
 import {
   correctOptionsDraggableRange,
-	resultRangeState,
-	resultInitState
+  resultRangeState,
+  resultInitState,
 } from './testData/DataController/oneMoreHandler';
 
 describe('DataController', () => {
@@ -72,32 +75,32 @@ describe('DataController', () => {
     expect(controller.initState()).toEqual(resultRangeState(['0', '30', '33', '60']));
   });
 
-	test('Should return initial state with default position (four handlers).', () => {
-		correctOptionsDraggableRange.startValues = [0, 31, 30, 60];
+  test('Should return initial state with default position (four handlers).', () => {
+    correctOptionsDraggableRange.startValues = [0, 31, 30, 60];
     const controller = new DataController(trigger, correctOptionsDraggableRange);
     controller.setSliderParametrs(sliderParametrs);
     controller.setHandlerParametrs(handlerParametrs);
     expect(controller.initState()).toEqual(resultInitState);
   });
 
-	test('Should return initial state with default position (four handlers).', () => {
-		correctOptionsDraggableRange.startValues = [0, 30, 30, 101];
+  test('Should return initial state with default position (four handlers).', () => {
+    correctOptionsDraggableRange.startValues = [0, 30, 30, 101];
     const controller = new DataController(trigger, correctOptionsDraggableRange);
     controller.setSliderParametrs(sliderParametrs);
     controller.setHandlerParametrs(handlerParametrs);
     expect(controller.initState()).toEqual(resultInitState);
   });
 
-	test('Should return initial state with default position (four handlers).', () => {
-		correctOptionsDraggableRange.startValues = [103, 30, 50, 100];
+  test('Should return initial state with default position (four handlers).', () => {
+    correctOptionsDraggableRange.startValues = [103, 30, 50, 100];
     const controller = new DataController(trigger, correctOptionsDraggableRange);
     controller.setSliderParametrs(sliderParametrs);
     controller.setHandlerParametrs(handlerParametrs);
     expect(controller.initState()).toEqual(resultInitState);
   });
 
-	test('Should return initial state with default position (four handlers).', () => {
-		correctOptionsDraggableRange.startValues = [-1, 30, 50, 100];
+  test('Should return initial state with default position (four handlers).', () => {
+    correctOptionsDraggableRange.startValues = [-1, 30, 50, 100];
     const controller = new DataController(trigger, correctOptionsDraggableRange);
     controller.setSliderParametrs(sliderParametrs);
     controller.setHandlerParametrs(handlerParametrs);
@@ -128,13 +131,13 @@ describe('DataController', () => {
     expect(controller.initState()).toEqual(resultRangeState(['0', '30', '32', '60'], 320, 2));
   });
 
-	test('Should return correct state when change position (move handler forward)', () => {
+  test('Should return correct state when change position (move handler forward)', () => {
     const controller = new DataController(trigger, correctOptions);
     controller.setSliderParametrs(sliderParametrs);
     controller.setHandlerParametrs(handlerParametrs);
-    let newState: HandlerState = defaultState;
-    let valuesState: ValuesState = { values: [] };
-    let newRootState: RootState = { handlerStates: [newState], valuesState: valuesState };
+    const newState: HandlerState = defaultState;
+    const valuesState: ValuesState = { values: [] };
+    let newRootState: RootState = { handlerStates: [newState], valuesState };
     let handlerPosition: number = -10;
     let value: number = 0;
     for (let userPosition = 0; userPosition < 2000; userPosition++) {
@@ -146,7 +149,7 @@ describe('DataController', () => {
         relatePosition = userPosition - 400;
         if (relatePosition % step === 0) {
           handlerPosition = relatePosition - 10;
-          value++;
+          value += 1;
         }
       }
       if (userPosition >= 1400) {
@@ -162,9 +165,9 @@ describe('DataController', () => {
     const controller = new DataController(trigger, correctOptions);
     controller.setSliderParametrs(sliderParametrs);
     controller.setHandlerParametrs(handlerParametrs);
-    let newState: HandlerState = defaultState;
-    let valuesState: ValuesState = { values: [] };
-    let newRootState: RootState = { handlerStates: [newState], valuesState: valuesState };
+    const newState: HandlerState = defaultState;
+    const valuesState: ValuesState = { values: [] };
+    let newRootState: RootState = { handlerStates: [newState], valuesState };
     let handlerPosition: number = -10;
     let value: number = 100;
     for (let userPosition = 2000; userPosition > 0; userPosition--) {
@@ -175,85 +178,85 @@ describe('DataController', () => {
         relatePosition = userPosition - 400;
         if (relatePosition % step === 0) {
           handlerPosition = relatePosition - 10;
-          value--;
+          value -= 1;
         }
       }
       if (userPosition >= 1400) {
         handlerPosition = 990;
         value = 100;
       }
-      newRootState = controller.changeState(ChangeStateTypes.handlerMovement, newRootState, userPosition, 0 );
+      newRootState = controller.changeState(ChangeStateTypes.handlerMovement, newRootState, userPosition, 0);
       expect(newRootState).toEqual(resultState(handlerPosition, value));
     }
   });
 
   test('Should return correct state when change position (tap on slider )', () => {
-		correctOptionsDraggableRange.startValues = [0, 30, 33, 60];
+    correctOptionsDraggableRange.startValues = [0, 30, 33, 60];
     const controller = new DataController(trigger, correctOptionsDraggableRange);
     controller.setSliderParametrs(sliderParametrs);
     controller.setHandlerParametrs(handlerParametrs);
-    const oldState = resultRangeState(['0', '30', '33', '60'])
-		const newState = controller.changeState(ChangeStateTypes.tapOnSlider, oldState, 850, -1);
+    const oldState = resultRangeState(['0', '30', '33', '60']);
+    const newState = controller.changeState(ChangeStateTypes.tapOnSlider, oldState, 850, -1);
     expect(newState).toEqual(resultRangeState(['0', '30', '45', '60'], 450, 2));
   });
 
-	test('Should return correct state when change position (tap on slider )', () => {
-		correctOptionsDraggableRange.startValues = [0, 30, 33, 60];
+  test('Should return correct state when change position (tap on slider )', () => {
+    correctOptionsDraggableRange.startValues = [0, 30, 33, 60];
     const controller = new DataController(trigger, correctOptionsDraggableRange);
     controller.setSliderParametrs(sliderParametrs);
     controller.setHandlerParametrs(handlerParametrs);
-    const oldState = resultRangeState(['0', '30', '33', '60'])
-		const newState = controller.changeState(ChangeStateTypes.tapOnSlider, oldState, 855, -1);
+    const oldState = resultRangeState(['0', '30', '33', '60']);
+    const newState = controller.changeState(ChangeStateTypes.tapOnSlider, oldState, 855, -1);
     expect(newState).toEqual(resultRangeState(['0', '30', '45', '60'], 450, 2));
   });
 
-	test('Should return correct state when change position (tap on slider )', () => {
-		correctOptionsDraggableRange.startValues = [0, 30, 33, 60];
+  test('Should return correct state when change position (tap on slider )', () => {
+    correctOptionsDraggableRange.startValues = [0, 30, 33, 60];
     const controller = new DataController(trigger, correctOptionsDraggableRange);
     controller.setSliderParametrs(sliderParametrs);
     controller.setHandlerParametrs(handlerParametrs);
-    const oldState = resultRangeState(['0', '30', '33', '60'])
-		const newState = controller.changeState(ChangeStateTypes.tapOnSlider, oldState, 856, -1);
+    const oldState = resultRangeState(['0', '30', '33', '60']);
+    const newState = controller.changeState(ChangeStateTypes.tapOnSlider, oldState, 856, -1);
     expect(newState).toEqual(resultRangeState(['0', '30', '33', '46'], 460, 3));
   });
 
-	test('Should return correct state when change position (tap on slider )', () => {
-		correctOptionsDraggableRange.startValues = [0, 30, 33, 60];
+  test('Should return correct state when change position (tap on slider )', () => {
+    correctOptionsDraggableRange.startValues = [0, 30, 33, 60];
     const controller = new DataController(trigger, correctOptionsDraggableRange);
     controller.setSliderParametrs(sliderParametrs);
     controller.setHandlerParametrs(handlerParametrs);
-    const oldState = resultRangeState(['0', '30', '33', '60'])
-		const newState = controller.changeState(ChangeStateTypes.tapOnSlider, oldState, 860, -1);
+    const oldState = resultRangeState(['0', '30', '33', '60']);
+    const newState = controller.changeState(ChangeStateTypes.tapOnSlider, oldState, 860, -1);
     expect(newState).toEqual(resultRangeState(['0', '30', '33', '46'], 460, 3));
   });
 
-	test('Should return correct state when change value (with API method)', () => {
-		correctOptionsDraggableRange.startValues = [0, 30, 33, 60];
+  test('Should return correct state when change value (with API method)', () => {
+    correctOptionsDraggableRange.startValues = [0, 30, 33, 60];
     const controller = new DataController(trigger, correctOptionsDraggableRange);
     controller.setSliderParametrs(sliderParametrs);
     controller.setHandlerParametrs(handlerParametrs);
-    const oldState = resultRangeState(['0', '30', '33', '60'])
-		const newState = controller.changeState(ChangeStateTypes.externalChangeValue, oldState, 20, 0);
+    const oldState = resultRangeState(['0', '30', '33', '60']);
+    const newState = controller.changeState(ChangeStateTypes.externalChangeValue, oldState, 20, 0);
     expect(newState).toEqual(resultRangeState(['20', '30', '33', '60'], 200, 0));
   });
 
-	test('Should return correct state when change value above limit (with API method)', () => {
-		correctOptionsDraggableRange.startValues = [0, 30, 33, 60];
+  test('Should return correct state when change value above limit (with API method)', () => {
+    correctOptionsDraggableRange.startValues = [0, 30, 33, 60];
     const controller = new DataController(trigger, correctOptionsDraggableRange);
     controller.setSliderParametrs(sliderParametrs);
     controller.setHandlerParametrs(handlerParametrs);
-    const oldState = resultRangeState(['0', '30', '33', '60'])
-		const newState = controller.changeState(ChangeStateTypes.externalChangeValue, oldState, 61, 2);
+    const oldState = resultRangeState(['0', '30', '33', '60']);
+    const newState = controller.changeState(ChangeStateTypes.externalChangeValue, oldState, 61, 2);
     expect(newState).toEqual(resultRangeState(['0', '30', '60', '60'], 580, 2));
   });
 
-	test('Should return correct state when change value below limit (with API method)', () => {
-		correctOptionsDraggableRange.startValues = [0, 30, 33, 60];
+  test('Should return correct state when change value below limit (with API method)', () => {
+    correctOptionsDraggableRange.startValues = [0, 30, 33, 60];
     const controller = new DataController(trigger, correctOptionsDraggableRange);
     controller.setSliderParametrs(sliderParametrs);
     controller.setHandlerParametrs(handlerParametrs);
-    const oldState = resultRangeState(['0', '30', '33', '60'])
-		const newState = controller.changeState(ChangeStateTypes.externalChangeValue, oldState, -1, 1);
+    const oldState = resultRangeState(['0', '30', '33', '60']);
+    const newState = controller.changeState(ChangeStateTypes.externalChangeValue, oldState, -1, 1);
     expect(newState).toEqual(resultRangeState(['0', '0', '33', '60'], 20, 1));
   });
 });

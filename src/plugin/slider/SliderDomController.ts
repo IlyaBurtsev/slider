@@ -1,8 +1,6 @@
-import SliderDomControllerOptions from '../../models/types/SliderDomControllerOptions';
-import Orientation from '../../models/Orientation';
+import Orientation from '../../models/enums/Orientation';
+import { PaddingParametrs, SliderDomControllerOptions, SliderParametrs } from '../../models/types';
 import SliderLisrener from './SliderListener';
-import PaddingParametrs from '../../models/types/BindElementPaddingParametrs';
-import SliderParametrs from '../../models/types/SliderParametrs';
 
 export default class SliderDomController {
   private isInit: boolean = true;
@@ -11,10 +9,13 @@ export default class SliderDomController {
 
   private sliderHeight: number;
 
+  private sliderListener: SliderLisrener;
+
   private getPaddingParametrs: () => PaddingParametrs;
 
   private orientation: number;
 
+  // eslint-disable-next-line no-unused-vars
   private callback: (parametrs: SliderParametrs) => void;
 
   constructor(options: SliderDomControllerOptions) {
@@ -31,7 +32,7 @@ export default class SliderDomController {
     this.getPaddingParametrs = getPaddingParametrs;
     this.callback = callback;
     callback(this.getSliderParametrs());
-    new SliderLisrener(this.sliderElement, this.orientation, getEventNames, trigger);
+    this.sliderListener = new SliderLisrener(this.sliderElement, this.orientation, getEventNames, trigger);
     subscribeToChangeState(this.onChangeState);
     subscribeToTouchHandler(this.onTouchHandler);
   }

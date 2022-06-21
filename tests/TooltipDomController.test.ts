@@ -6,6 +6,7 @@ import TooltipDomController from '../src/plugin/tooltip/TooltipDomController';
 import { toolTipOptions, tooltipSubscriber } from './testData/DomController/Options';
 
 describe('TooltipDomController', () => {
+  // eslint-disable-next-line no-unused-vars
   let tooltip = new TooltipDomController(toolTipOptions);
 
   test('Tooltip property "display" should to be always "none" when no method setValueInTooltip', () => {
@@ -33,8 +34,6 @@ describe('TooltipDomController', () => {
   });
 
   test('Tooltip property "display" should to be default property when touch on handler (in that case "block")', () => {
-    console.log(tooltipSubscriber.toTouchHandler.handler);
-    console.log(tooltipSubscriber.toDestroy.handler);
     tooltipSubscriber.toTouchHandler.runCallback(0);
     const tooltipElement = toolTipOptions.viewConnector.slider.querySelectorAll('.tooltip')[0] as HTMLElement;
     expect(tooltipElement.style.display).toBe('block');

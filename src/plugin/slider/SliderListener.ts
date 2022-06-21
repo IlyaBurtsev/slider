@@ -1,6 +1,5 @@
-import PluginActions from '../../models/PluginActions';
-import BrowserEvent from '../../models/types/BrouserEvent';
-import Actions from '../../models/types/HandlerActions';
+import PluginActions from '../../models/enums/PluginActions';
+import { Actions, BrowserEvent } from '../../models/types';
 import { bindEvents, getTouchPosition } from '../utils/utils';
 
 export default class SliderLisrener {
@@ -8,12 +7,14 @@ export default class SliderLisrener {
 
   private orientation: number;
 
+  // eslint-disable-next-line no-unused-vars
   private trigger: (actions: PluginActions, ...args: Array<Object>) => void;
 
   constructor(
     slider: HTMLElement,
     orientation: number,
     getEventNames: () => Actions,
+    // eslint-disable-next-line no-unused-vars
     trigger: (actions: PluginActions, ...args: Array<Object>) => void,
   ) {
     this.sliderElement = slider;

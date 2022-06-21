@@ -6,6 +6,7 @@ import ProgressBarDomController from '../src/plugin/progress-bar/ProgressBarDomC
 import { barDestroySubscriber, barOptions } from './testData/DomController/Options';
 
 describe('ProgressBarDomController', () => {
+  // eslint-disable-next-line no-unused-vars
   let bar = new ProgressBarDomController(barOptions);
   test('Should return number of bars', () => {
     const barElements = barOptions.viewConnector.slider.querySelectorAll('.bar');

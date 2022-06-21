@@ -1,6 +1,6 @@
-import UserOptions from '../../../src/models/interfaces/UserOptions';
-import Orientation from '../../../src/models/Orientation';
-import RootState from '../../../src/models/types/RootState';
+import Orientation from '../../../src/models/enums/Orientation';
+import { UserOptions } from '../../../src/models/interfaces';
+import { RootState } from '../../../src/models/types';
 
 const correctOptionsDraggableRange: UserOptions = {
   numberOfHandlers: 4,
@@ -67,6 +67,7 @@ const resultRangeState = (values: Array<string>, position?: number, id?: number)
   const handlerStates = [state0, state1, state2, state3];
 
   if (position !== undefined && id !== undefined) {
+    // eslint-disable-next-line no-param-reassign
     position -= 10;
     handlerStates[id].position = position;
     if (id > 0) {

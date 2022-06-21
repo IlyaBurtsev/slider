@@ -1,6 +1,6 @@
-import ViewConnector from '../models/interfaces/ViewInterface/ViewConnector';
-import { getScale } from './scale/scale';
-import { createSlider } from './slider/slider';
+import { ViewConnector } from '../models/ViewConnector';
+import getScale from './scale/scale';
+import createSlider from './slider/slider';
 import { setValueInTooltip } from './tooltip/tooltip';
 
 function getViewConnector(bindElement: HTMLElement | null): ViewConnector {

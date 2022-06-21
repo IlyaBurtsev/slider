@@ -1,6 +1,11 @@
 /* eslint-disable no-unused-vars */
-import DataObject from '../DataObject';
-import ScaleElements from './ScaleElements';
+import { DataObject } from './interfaces';
+
+interface ScaleElements {
+  scale: HTMLElement;
+  markerLarge: HTMLElement;
+  markerDefault: HTMLElement;
+}
 
 interface ViewConnector extends DataObject<HTMLElement | Function | ScaleElements | undefined> {
   slider: HTMLElement;
@@ -11,4 +16,4 @@ interface ViewConnector extends DataObject<HTMLElement | Function | ScaleElement
   scaleElements?: ScaleElements;
 }
 
-export default ViewConnector;
+export { ViewConnector, ScaleElements };

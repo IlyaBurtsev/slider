@@ -17,6 +17,7 @@ const createTooltipVertical = (tooltip: HTMLElement): void => {
 };
 
 const setValueInTooltip = (tooltip: HTMLElement, value: string): void => {
+  // eslint-disable-next-line no-param-reassign
   tooltip.innerHTML = value;
 };
 

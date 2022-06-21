@@ -1,6 +1,6 @@
 /* eslint-disable no-unused-vars */
-import RootState from '../../types/RootState';
-import UserOptions from '../UserOptions';
+import { UserOptions } from './interfaces';
+import { RootState } from './types';
 
 interface API {
   updateSliderOptions: (options: UserOptions) => void;

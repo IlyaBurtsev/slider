@@ -1,9 +1,6 @@
-import SliderOptions from '../../../src/models/interfaces/SliderOptions';
-import Orientation from '../../../src/models/Orientation';
-import HandlerParametrs from '../../../src/models/types/HandlerParametrs';
-import HandlerState from '../../../src/models/types/HandlerState';
-import RootState from '../../../src/models/types/RootState';
-import SliderParametrs from '../../../src/models/types/SliderParametrs';
+import Orientation from '../../../src/models/enums/Orientation';
+import { SliderOptions } from '../../../src/models/interfaces';
+import { HandlerParametrs, HandlerState, RootState, SliderParametrs } from '../../../src/models/types';
 
 const correctOptions: SliderOptions = {
   numberOfHandlers: 1,

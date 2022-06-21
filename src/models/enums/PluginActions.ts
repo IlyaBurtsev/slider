@@ -1,4 +1,5 @@
 /* eslint-disable no-unused-vars */
+// eslint-disable-next-line no-shadow
 enum PluginActions {
   onTouchSlider = 'onTouchSlider',
   onTouchHandler = 'onTouchHandler',

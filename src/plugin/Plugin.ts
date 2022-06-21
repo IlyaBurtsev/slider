@@ -4,14 +4,15 @@ import HandlersDomController from './handler/HandlersDomController';
 import ProgressBarDomController from './progress-bar/ProgressBarDomController';
 import TooltipDomController from './tooltip/TooltipDomController';
 import ScaleCreator from './scale/ScaleCreator';
-import PluginActions from '../models/PluginActions';
+import PluginActions from '../models/enums/PluginActions';
 import Observer from './observer/Observer';
 import { deepMerge } from './utils/utils';
-import ChangeStateTypes from '../models/ChangeStateTypes';
-import ViewConnector from '../models/interfaces/ViewInterface/ViewConnector';
-import UserOptions from '../models/interfaces/UserOptions';
-import RootState from '../models/types/RootState';
-import API from '../models/interfaces/ApplicationProgrammingInterface/API';
+import ChangeStateTypes from '../models/enums/ChangeStateTypes';
+
+import API from '../models/API';
+import { RootState } from '../models/types';
+import { ViewConnector } from '../models/ViewConnector';
+import { UserOptions } from '../models/interfaces';
 
 class Plugin extends Observer {
   private dataController: DataController;
@@ -140,6 +141,7 @@ class Plugin extends Observer {
     this.trigger(actions, ...args);
   };
 
+  // eslint-disable-next-line no-unused-vars
   private getStateSubscriber = (handler: (state?: RootState, id?: number) => void, subscribe = true): void => {
     if (subscribe) {
       this.on(PluginActions.onChangeState, handler);
@@ -148,6 +150,7 @@ class Plugin extends Observer {
     }
   };
 
+  // eslint-disable-next-line no-unused-vars
   private getOnTouchSubscriber = (handler: (id?: number) => void, subscribe = true): void => {
     if (subscribe) {
       this.on(PluginActions.onTouchHandler, handler);
@@ -156,6 +159,7 @@ class Plugin extends Observer {
     }
   };
 
+  // eslint-disable-next-line no-unused-vars
   private getOnStopMovingSubscriber = (handler: (id?: number) => void, subscribe = true): void => {
     if (subscribe) {
       this.on(PluginActions.onStopMoving, handler);
@@ -168,12 +172,16 @@ class Plugin extends Observer {
     this.on(PluginActions.onDestroy, handler);
   };
 
+  // eslint-disable-next-line no-unused-vars
   private changeStateMethodCreator(type: ChangeStateTypes): (newUserPosition: number, handlerId?: number) => void {
     return (newUserPosition: number, handlerId?: number): void => {
+      let id: number;
       if (handlerId === undefined) {
-        handlerId = -1;
+        id = -1;
+      } else {
+        id = handlerId;
       }
-      this.state = this.dataController.changeState(type, this.state, newUserPosition, handlerId);
+      this.state = this.dataController.changeState(type, this.state, newUserPosition, id);
     };
   }
 }
@@ -185,6 +193,7 @@ const createSliderPlugin = (viewConnector: ViewConnector, options?: UserOptions)
 
   let sliderPlugin = new Plugin(view, options);
 
+  // eslint-disable-next-line no-unused-vars
   const getOnTouchSubscriber = (handler: (id?: number) => void, subscribe = true): void => {
     if (subscribe) {
       sliderPlugin.on(PluginActions.onTouchHandler, handler);
@@ -194,6 +203,7 @@ const createSliderPlugin = (viewConnector: ViewConnector, options?: UserOptions)
     }
   };
 
+  // eslint-disable-next-line no-unused-vars
   const getOnStopMovingSubscriber = (handler: (id?: number) => void, subscribe = true): void => {
     if (subscribe) {
       sliderPlugin.on(PluginActions.onStopMoving, handler);
@@ -203,6 +213,7 @@ const createSliderPlugin = (viewConnector: ViewConnector, options?: UserOptions)
     }
   };
 
+  // eslint-disable-next-line no-unused-vars
   const getStateSubscriber = (handler: (state?: RootState, id?: number) => void, subscribe = true): void => {
     if (subscribe) {
       sliderPlugin.on(PluginActions.onChangeState, handler);
@@ -212,11 +223,11 @@ const createSliderPlugin = (viewConnector: ViewConnector, options?: UserOptions)
     }
   };
 
-  const updateSliderOptions = (options: UserOptions): void => {
+  const updateSliderOptions = (newUserOptions: UserOptions): void => {
     if (userOptions !== undefined) {
-      userOptions = deepMerge(userOptions, true, options);
+      userOptions = deepMerge(userOptions, true, newUserOptions);
     } else {
-      userOptions = options;
+      userOptions = newUserOptions;
     }
     sliderPlugin.trigger(PluginActions.onDestroy);
     sliderPlugin = new Plugin(view, userOptions);

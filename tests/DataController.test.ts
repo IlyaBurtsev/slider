@@ -1,7 +1,5 @@
-import ChangeStateTypes from '../src/models/ChangeStateTypes';
-import HandlerState from '../src/models/types/HandlerState';
-import RootState from '../src/models/types/RootState';
-import ValuesState from '../src/models/types/ValuesState';
+import ChangeStateTypes from '../src/models/enums/ChangeStateTypes';
+import { HandlerState, RootState, ValuesState } from '../src/models/types';
 import DataController from '../src/plugin/data-controller/DataController';
 import {
   correctOptions,
@@ -140,7 +138,7 @@ describe('DataController', () => {
     let newRootState: RootState = { handlerStates: [newState], valuesState };
     let handlerPosition: number = -10;
     let value: number = 0;
-    for (let userPosition = 0; userPosition < 2000; userPosition++) {
+    for (let userPosition = 0; userPosition < 2000; userPosition += 1) {
       let relatePosition: number = 0;
 
       const step =
@@ -170,7 +168,7 @@ describe('DataController', () => {
     let newRootState: RootState = { handlerStates: [newState], valuesState };
     let handlerPosition: number = -10;
     let value: number = 100;
-    for (let userPosition = 2000; userPosition > 0; userPosition--) {
+    for (let userPosition = 2000; userPosition > 0; userPosition -= 1) {
       let relatePosition: number = 0;
       const step =
         (sliderParametrs.sliderLength / (correctOptions.maxValue - correctOptions.minValue)) * correctOptions.step;

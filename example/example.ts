@@ -5,7 +5,7 @@ import { getElement } from '../src/plugin/utils/utils';
 
 import getViewConnector from '../src/components/connector';
 import createSliderPlugin from '../src/plugin/Plugin';
-import RootState from '../src/models/types/RootState';
+import { RootState } from '../src/models/types';
 
 const sliderContainer = getElement('.slider');
 const view = getViewConnector(sliderContainer);
@@ -20,12 +20,12 @@ const plugin = createSliderPlugin(view, {
 });
 
 plugin.updateSliderOptions({
-  numberOfHandlers: 3,
+  numberOfHandlers: 4,
   step: 10,
   startValues: 20,
-  // toolTips: false,
-  progressBar: false,
-  scale: false,
+  // toolTips: true,
+  // progressBar: true,
+  // scale: false,
   scaleStep: 2,
 });
 const startSubscriber = (id: number): void => {

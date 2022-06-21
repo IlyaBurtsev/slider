@@ -1,16 +1,17 @@
-import ChangeStateTypes from '../../models/ChangeStateTypes';
-import SliderOptions from '../../models/interfaces/SliderOptions';
-import UserOptions from '../../models/interfaces/UserOptions';
-import PluginActions from '../../models/PluginActions';
-import PaddingParametrs from '../../models/types/BindElementPaddingParametrs';
-import Actions from '../../models/types/HandlerActions';
-import HandlerParametrs from '../../models/types/HandlerParametrs';
-import HandlerState from '../../models/types/HandlerState';
-import RootState from '../../models/types/RootState';
-import ScaleOptions from '../../models/types/ScaleOptions';
-import SliderParametrs from '../../models/types/SliderParametrs';
-import ValuesState from '../../models/types/ValuesState';
+import ChangeStateTypes from '../../models/enums/ChangeStateTypes';
+import PluginActions from '../../models/enums/PluginActions';
+import { SliderOptions, UserOptions } from '../../models/interfaces';
 import { deepMerge } from '../utils/utils';
+import {
+  Actions,
+  HandlerParametrs,
+  HandlerState,
+  PaddingParametrs,
+  RootState,
+  ScaleOptions,
+  SliderParametrs,
+  ValuesState,
+} from '../../models/types';
 
 export default class DataController {
   private handlerParametrs: HandlerParametrs;
@@ -31,11 +32,19 @@ export default class DataController {
     scaleStep: 10,
   };
 
+  private actions: Actions = {
+    start: 'mousedown touchstart',
+    move: 'mousemove touchmove',
+    end: 'mouseup touchend',
+  };
+
+  // eslint-disable-next-line no-unused-vars
   private trigger: (actions: PluginActions, ...args: Array<Object>) => void;
 
+  // eslint-disable-next-line no-unused-vars
   constructor(trigger: (actions: PluginActions, ...args: Array<Object>) => void, userOptions?: UserOptions) {
     this.updateOptions(userOptions);
-    this.options = this.checkOptions(this.options);
+    this.checkOptions();
     this.trigger = trigger;
   }
   //-----------------------------------------------------
@@ -102,11 +111,7 @@ export default class DataController {
   };
 
   public getEventNames = (): Actions => {
-    return {
-      start: 'mousedown touchstart',
-      move: 'mousemove touchmove',
-      end: 'mouseup touchend',
-    };
+    return this.actions;
   };
 
   //-----------------------------------------------------
@@ -130,75 +135,7 @@ export default class DataController {
     const { numberOfHandlers, startValues, minValue, maxValue, step } = this.options;
     const { handlerMinTranslate, handlerMaxTranslate } = this.handlerParametrs;
     const minValueRange = this.getMinValuesRange();
-    const count = this.getCount(step);
-
-    if (numberOfHandlers > 1) {
-      let correctData = true;
-      if (Array.isArray(startValues)) {
-        if (startValues.length !== numberOfHandlers) {
-          correctData = false;
-        }
-        startValues.forEach((value, index) => {
-          if (correctData) {
-            correctData = setStatePosition(value, index, this);
-          }
-        });
-      } else {
-        correctData = false;
-      }
-      if (!correctData) {
-        handlerStates.splice(0);
-        values.splice(0);
-        let currentValue: number;
-        for (let i = 0; i < numberOfHandlers; i++) {
-          const state: HandlerState = {
-            position: 0,
-            minTranslate: 0,
-            maxTranslate: 0,
-          };
-          if (i !== 0) {
-            currentValue = ((maxValue - minValue) * i) / (numberOfHandlers - 1);
-            const different = currentValue % step;
-            if (different !== 0) {
-              currentValue -= different;
-            }
-          } else {
-            currentValue = minValue;
-          }
-          state.position = this.convertValueToPosition(currentValue, handlerMinTranslate);
-          values.push(`${currentValue.toFixed(count)}`);
-          handlerStates.push(state);
-        }
-      }
-      this.updateLimits(handlerStates);
-    } else {
-      const state: HandlerState = {
-        position: 0,
-        minTranslate: handlerMinTranslate,
-        maxTranslate: handlerMaxTranslate,
-      };
-      let startValue: number = minValue;
-      if (Array.isArray(startValues)) {
-        if (startValues.length === 1) {
-          startValue = startValues[0];
-        }
-      } else {
-        startValue = startValues;
-      }
-      if (startValue >= minValue && startValue <= maxValue) {
-        state.position = this.convertValueToPosition(startValue, handlerMinTranslate);
-      } else {
-        state.position = handlerMinTranslate;
-        startValue = minValue;
-      }
-
-      values.push(`${startValue}`);
-      handlerStates.push(state);
-    }
-    return {
-      handlerStates,
-      valuesState,
-    };
+    const count = this.getCount();
 
     function setStatePosition(value: number, index: number, that: DataController): boolean {
       let minCurrentValue: number = 0;
@@ -246,22 +183,94 @@ export default class DataController {
 
       return false;
     }
+
+    if (numberOfHandlers > 1) {
+      let correctData = true;
+      if (Array.isArray(startValues)) {
+        if (startValues.length !== numberOfHandlers) {
+          correctData = false;
+        }
+        startValues.forEach((value, index) => {
+          if (correctData) {
+            correctData = setStatePosition(value, index, this);
+          }
+        });
+      } else {
+        correctData = false;
+      }
+      if (!correctData) {
+        handlerStates.splice(0);
+        values.splice(0);
+        let currentValue: number;
+        for (let i = 0; i < numberOfHandlers; i += 1) {
+          const state: HandlerState = {
+            position: 0,
+            minTranslate: 0,
+            maxTranslate: 0,
+          };
+          if (i !== 0) {
+            currentValue = ((maxValue - minValue) * i) / (numberOfHandlers - 1);
+            const different = currentValue % step;
+            if (different !== 0) {
+              currentValue -= different;
+            }
+          } else {
+            currentValue = minValue;
+          }
+          state.position = this.convertValueToPosition(currentValue, handlerMinTranslate);
+          values.push(`${currentValue.toFixed(count)}`);
+          handlerStates.push(state);
+        }
+      }
+      this.updateLimits(handlerStates);
+    } else {
+      const state: HandlerState = {
+        position: 0,
+        minTranslate: handlerMinTranslate,
+        maxTranslate: handlerMaxTranslate,
+      };
+      let startValue: number = minValue;
+      if (Array.isArray(startValues)) {
+        if (startValues.length === 1) {
+          [startValue] = startValues;
+        }
+      } else {
+        startValue = startValues;
+      }
+      if (startValue >= minValue && startValue <= maxValue) {
+        state.position = this.convertValueToPosition(startValue, handlerMinTranslate);
+      } else {
+        state.position = handlerMinTranslate;
+        startValue = minValue;
+      }
+
+      values.push(`${startValue}`);
+      handlerStates.push(state);
+    }
+    return {
+      handlerStates,
+      valuesState,
+    };
   };
 
   public changeState = (type: ChangeStateTypes, state: RootState, newUserposition: number, id: number): RootState => {
     let newState: RootState;
     switch (type) {
-      case ChangeStateTypes.handlerMovement:
+      case ChangeStateTypes.handlerMovement: {
         newState = this.changeStateWhenChangePosition(state, newUserposition, id);
         this.trigger(PluginActions.onChangeState, newState, id);
         return newState;
-      case ChangeStateTypes.tapOnSlider:
+      }
+
+      case ChangeStateTypes.tapOnSlider: {
         const handlerId = this.getClosestHandlerId(newUserposition, state.handlerStates);
         newState = this.changeStateWhenChangePosition(state, newUserposition, handlerId);
         this.updateLimits(state.handlerStates);
         this.trigger(PluginActions.onChangeState, newState, handlerId);
         return newState;
-      case ChangeStateTypes.externalChangeValue:
+      }
+
+      case ChangeStateTypes.externalChangeValue: {
         if (id >= state.handlerStates.length) {
           return state;
         }
@@ -273,6 +282,8 @@ export default class DataController {
         this.updateLimits(state.handlerStates);
         this.trigger(PluginActions.onChangeState, newState, id);
         return newState;
+      }
+
       default:
         return state;
     }
@@ -282,12 +293,16 @@ export default class DataController {
     const { handlerMinTranslate, handlerMaxTranslate, handlerLength: startHandlerLength } = this.handlerParametrs;
     states.forEach((state, index) => {
       if (index - 1 >= 0) {
+        // eslint-disable-next-line no-param-reassign
         state.minTranslate = states[index - 1].position + startHandlerLength;
+        // eslint-disable-next-line no-param-reassign
         states[index - 1].maxTranslate = state.position - startHandlerLength;
       } else {
+        // eslint-disable-next-line no-param-reassign
         state.minTranslate = handlerMinTranslate;
       }
       if (index === states.length - 1) {
+        // eslint-disable-next-line no-param-reassign
         state.maxTranslate = handlerMaxTranslate;
       }
     });
@@ -311,16 +326,12 @@ export default class DataController {
       return state;
     }
 
-    const { handlerMinTranslate, handlerLength: startHandlerLength } = this.handlerParametrs;
+    const { handlerMinTranslate } = this.handlerParametrs;
 
     const handlerState = state.handlerStates[id];
     const { values } = state.valuesState;
 
     const calcUserPosition = newUserposition - sliderStartPosition;
-
-    if (isNaN(calcUserPosition)) {
-      return state;
-    }
 
     if (calcUserPosition + handlerMinTranslate <= handlerState.minTranslate) {
       handlerState.position = handlerState.minTranslate;
@@ -395,9 +406,9 @@ export default class DataController {
   private convertPositionToValue = (position: number): string => {
     const { handlerMinTranslate } = this.handlerParametrs;
     const { sliderLength } = this.sliderParametrs;
-    const { minValue, maxValue, step } = this.options;
+    const { minValue, maxValue } = this.options;
     const calcPosition = position;
-    const count = this.getCount(step);
+    const count = this.getCount();
     const value = ((maxValue - minValue) / sliderLength) * (calcPosition - handlerMinTranslate);
     return value.toFixed(count);
   };
@@ -410,30 +421,30 @@ export default class DataController {
     return ((maxValue - minValue) * startHandlerLength) / sliderLength;
   };
 
-  private getCount(step: number): number | undefined {
+  private getCount(): number | undefined {
+    const { step } = this.options;
     if (step.toString().includes('.')) {
       return step.toString().split('.').pop()?.length;
     }
     return 0;
   }
 
-  private checkOptions = (options: SliderOptions): SliderOptions => {
-    let { numberOfHandlers, minValue, maxValue, step } = options;
+  private checkOptions = (): void => {
+    let { numberOfHandlers } = this.options;
+    const { minValue, maxValue, step } = this.options;
 
     if (numberOfHandlers > 1 && numberOfHandlers % 2 !== 0) {
       numberOfHandlers = 1;
-      options.numberOfHandlers = 1;
+      this.options.numberOfHandlers = 1;
     }
     if (minValue >= maxValue) {
-      options.minValue = 0;
-      options.maxValue = 100;
+      this.options.minValue = 0;
+      this.options.maxValue = 100;
     }
 
     if ((maxValue - minValue) / numberOfHandlers <= step) {
-      options.step = step / 10;
+      this.options.step = step / 10;
     }
-
-    return options;
   };
 
   private setScaleSize = (size: number): void => {

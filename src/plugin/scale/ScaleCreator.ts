@@ -1,12 +1,13 @@
-import ViewConnector from '../../models/interfaces/ViewInterface/ViewConnector';
-import Orientation from '../../models/Orientation';
-import ScaleOptions from '../../models/types/ScaleOptions';
+import Orientation from '../../models/enums/Orientation';
+import { ScaleOptions } from '../../models/types';
+import { ViewConnector } from '../../models/ViewConnector';
 
 export default class ScaleCreator {
   private markersElements: Array<HTMLElement> = [];
 
   private scaleSize: number;
 
+  // eslint-disable-next-line no-unused-vars
   constructor(viewConnector: ViewConnector, options: ScaleOptions, subscribeToDestroy: (handler: () => void) => void) {
     const { callback } = options;
     this.createScale(viewConnector, options);
@@ -16,7 +17,7 @@ export default class ScaleCreator {
 
   private createScale = (viewConnector: ViewConnector, options: ScaleOptions): void => {
     const { numberOfSteps, scaleStep, sliderLength, handlerBottom, handlerTop, orientation } = options;
-    const { scaleElements, slider } = viewConnector;
+    const { scaleElements } = viewConnector;
     if (scaleElements === undefined) {
       return;
     }
@@ -24,7 +25,7 @@ export default class ScaleCreator {
     const { markerLarge, markerDefault, scale } = scaleElements;
 
     const fragment = document.createDocumentFragment();
-    for (let i = 0; i <= numberOfSteps; i++) {
+    for (let i = 0; i <= numberOfSteps; i += 1) {
       if (i % scaleStep === 0) {
         const newMarker = markerLarge.cloneNode(true) as HTMLElement;
         fragment.append(newMarker);

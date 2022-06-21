@@ -2,9 +2,8 @@
  * @jest-environment jsdom
  */
 /* eslint-disable no-unused-vars */
-import ViewConnector from '../../../src/models/interfaces/ViewInterface/ViewConnector';
-import Actions from '../../../src/models/types/HandlerActions';
-import TooltipDomControllerOptions from '../../../src/models/types/TooltipDomControllerOptions';
+import { Actions, TooltipDomControllerOptions } from '../../../src/models/types';
+import { ViewConnector } from '../../../src/models/ViewConnector';
 import { createElement } from '../../../src/plugin/utils/utils';
 
 const paddingParametrs = jest.fn();
@@ -41,6 +40,7 @@ const view: ViewConnector = {
 class Subscriber {
   public handler: Function;
 
+  // eslint-disable-next-line no-shadow
   public subscribe = (callback: Function): void => {
     this.handler = callback;
   };

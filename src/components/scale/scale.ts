@@ -2,7 +2,7 @@ import './scale.scss';
 import { addClass, createElement } from '../../plugin/utils/utils';
 import MarkerType from './Classes/MarkerType';
 import createMarker from './__marker/marker';
-import ScaleElements from '../../models/interfaces/ViewInterface/ScaleElements';
+import { ScaleElements } from '../../models/ViewConnector';
 
 const getScale = (sliderPlugin: HTMLElement): ScaleElements => {
   const className = {

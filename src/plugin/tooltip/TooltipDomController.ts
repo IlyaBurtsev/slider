@@ -1,11 +1,10 @@
-import Orientation from '../../models/Orientation';
-import RootState from '../../models/types/RootState';
-import TooltipDomControllerOptions from '../../models/types/TooltipDomControllerOptions';
-import TooltipParametrs from '../../models/types/TooltipParametrs';
+import Orientation from '../../models/enums/Orientation';
+import { RootState, TooltipDomControllerOptions, TooltipParametrs } from '../../models/types';
 
 export default class TooltipDomController {
   private tooltips: Array<HTMLElement> = [];
 
+  // eslint-disable-next-line no-unused-vars
   private setValue: (tooltip: HTMLElement, value: string) => void;
 
   private parametrs: TooltipParametrs;
@@ -34,7 +33,7 @@ export default class TooltipDomController {
     }
     this.primeTooltip = tooltip;
 
-    this.parametrs = this.getParametrs(tooltip);
+    this.parametrs = this.getParametrs();
 
     subscribeToDestroy(this.onDestroy);
 
@@ -48,11 +47,6 @@ export default class TooltipDomController {
     }
 
     this.setValue = setValueInTooltip;
-
-    this.tooltips = initTooltips();
-    subscribeToChangeState(this.onChangeValues);
-    subscribeToTouchHandler(this.onTouchHandler);
-    subscribeToStopMovingHandler(this.onStopMovingHandler);
 
     function initTooltips(): Array<HTMLElement> {
       const elements: Array<HTMLElement> = [];
@@ -74,10 +68,15 @@ export default class TooltipDomController {
       }
       return elements;
     }
+
+    this.tooltips = initTooltips();
+    subscribeToChangeState(this.onChangeValues);
+    subscribeToTouchHandler(this.onTouchHandler);
+    subscribeToStopMovingHandler(this.onStopMovingHandler);
   }
 
-  private getParametrs = (tooltip: HTMLElement): TooltipParametrs => {
-    const cs = window.getComputedStyle(tooltip, null);
+  private getParametrs = (): TooltipParametrs => {
+    const cs = window.getComputedStyle(this.primeTooltip, null);
     const { display } = cs;
     return {
       display,

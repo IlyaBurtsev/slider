@@ -188,7 +188,7 @@ class Plugin extends Observer {
 
 const createSliderPlugin = (viewConnector: ViewConnector, options?: UserOptions): API => {
   const view = viewConnector;
-  const handlers: Map<PluginActions, Function> = new Map();
+  const subscribers: Map<PluginActions, Function> = new Map();
   let userOptions: UserOptions | undefined = options;
 
   let sliderPlugin = new Plugin(view, options);
@@ -197,7 +197,7 @@ const createSliderPlugin = (viewConnector: ViewConnector, options?: UserOptions)
   const getOnTouchSubscriber = (handler: (id?: number) => void, subscribe = true): void => {
     if (subscribe) {
       sliderPlugin.on(PluginActions.onTouchHandler, handler);
-      handlers.set(PluginActions.onTouchHandler, handler);
+      subscribers.set(PluginActions.onTouchHandler, handler);
     } else {
       sliderPlugin.off(PluginActions.onTouchHandler, handler);
     }
@@ -207,7 +207,7 @@ const createSliderPlugin = (viewConnector: ViewConnector, options?: UserOptions)
   const getOnStopMovingSubscriber = (handler: (id?: number) => void, subscribe = true): void => {
     if (subscribe) {
       sliderPlugin.on(PluginActions.onStopMoving, handler);
-      handlers.set(PluginActions.onStopMoving, handler);
+      subscribers.set(PluginActions.onStopMoving, handler);
     } else {
       sliderPlugin.off(PluginActions.onStopMoving, handler);
     }
@@ -217,7 +217,7 @@ const createSliderPlugin = (viewConnector: ViewConnector, options?: UserOptions)
   const getStateSubscriber = (handler: (state?: RootState, id?: number) => void, subscribe = true): void => {
     if (subscribe) {
       sliderPlugin.on(PluginActions.onChangeState, handler);
-      handlers.set(PluginActions.onChangeState, handler);
+      subscribers.set(PluginActions.onChangeState, handler);
     } else {
       sliderPlugin.off(PluginActions.onChangeState, handler);
     }
@@ -231,7 +231,7 @@ const createSliderPlugin = (viewConnector: ViewConnector, options?: UserOptions)
     }
     sliderPlugin.trigger(PluginActions.onDestroy);
     sliderPlugin = new Plugin(view, userOptions);
-    handlers.forEach((hanler, actions) => sliderPlugin.on(actions, hanler));
+    subscribers.forEach((hanler, actions) => sliderPlugin.on(actions, hanler));
   };
 
   const moveHandler = (value: number, handlerIndex: number): void => {

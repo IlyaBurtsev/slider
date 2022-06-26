@@ -5,6 +5,8 @@ import { HandlerDomControllerOptions, HandlerParametrs, RootState } from '../../
 
 export default class HandlersDomController {
   private orientation: number;
+	
+  private handlerMinTranslate: number;
 
   private handlerListeners: Array<HandlerListener> = [];
 
@@ -39,6 +41,7 @@ export default class HandlersDomController {
         top = Number(cs.left.match(/[-\d][0-9]+/));
         height = Number(cs.width.match(/[-\d][0-9]+/));
       }
+      this.handlerMinTranslate = translate;
       handlerParametrs.handlerMinTranslate = translate;
       handlerParametrs.handlerLength = length;
       handlerParametrs.handlerMaxTranslate = translate + sliderLength;
@@ -96,9 +99,11 @@ export default class HandlersDomController {
 
   private onChachangeState = (state: RootState, id: number): void => {
     if (id !== undefined) {
-      this.moveHandlerToPosition(id, state.handlerStates[id].position);
+      this.moveHandlerToPosition(id, state.handlerStates[id].position - this.handlerMinTranslate);
     } else {
-      state.handlerStates.forEach((handlerState, index) => this.moveHandlerToPosition(index, handlerState.position));
+      state.handlerStates.forEach((handlerState, index) =>
+        this.moveHandlerToPosition(index, handlerState.position - this.handlerMinTranslate),
+      );
     }
   };
 
@@ -108,9 +113,9 @@ export default class HandlersDomController {
 
   private moveHandlerToPosition = (id: number, newPosition: number): void => {
     if (this.orientation === Orientation.Horizontal) {
-      this.handlerElements[id].style.left = `${newPosition}px`;
+      this.handlerElements[id].style.transform = `translateX(${newPosition}px)`;
     } else {
-      this.handlerElements[id].style.top = `${newPosition}px`;
+      this.handlerElements[id].style.transform = `translateY(${newPosition}px)`;
     }
   };
 }

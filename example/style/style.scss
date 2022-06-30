@@ -1,0 +1,37 @@
+$dark-75: rgba(31, 32, 65, 0.75);
+
+html {
+  font-size: 62.5%;
+}
+input,
+textarea,
+select,
+button {
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  font-family: 'Montserrat';
+  font-style: normal;
+  font-weight: normal;
+  font-size: 1.4rem;
+  line-height: 2.4rem;
+  color: $dark-75;
+}
+
+a {
+  outline: none;
+  text-decoration: none;
+  color: $dark-75;
+}
+a:hover {
+  opacity: 0.5;
+}
+a:active {
+  opacity: 1;
+}
+p {
+  margin-top: 0;
+  margin-bottom: 1rem;
+}

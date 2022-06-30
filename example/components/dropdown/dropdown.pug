@@ -1,0 +1,7 @@
+include ./__dropdown-default-item/dropdown-default-item.pug
+include ../input-field/input-field.pug
+mixin dropdown()
+	.dropdown__container.js-dropdown__container
+		+input-field()
+		.dropdown__expand-container
+			+dropdown-default-item(itemName, value)

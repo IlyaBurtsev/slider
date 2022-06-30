@@ -3,11 +3,16 @@
 	height: 400px;
 	width: 1000px;
 	height: 10px;
-	margin-left: 400px;
+	margin-left: 1000px;
+	margin-right: 40px;
+	margin-bottom: 40px;
 }
-.content {
-	margin-left: 200px;
-	&_first {
-		margin-top: 200px;
-	}
+.dropdown {
+	margin-left: 1000px;
+}
+
+.container {
+	margin-top: 40px;
+	display: flex;
+	gap: 40px;
 }

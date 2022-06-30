@@ -217,6 +217,9 @@ export default class DataController {
           } else {
             currentValue = minValue;
           }
+					if (i === numberOfHandlers-1){
+						currentValue = maxValue
+					}
           state.position = this.convertValueToPosition(currentValue, handlerMinTranslate);
           values.push(`${currentValue.toFixed(count)}`);
           handlerStates.push(state);
@@ -258,7 +261,7 @@ export default class DataController {
     switch (type) {
       case ChangeStateTypes.handlerMovement: {
         newState = this.changeStateWhenChangePosition(state, newUserposition, id);
-        this.trigger(PluginActions.onChangeState, newState, id);
+        this.trigger(PluginActions.onChangeState, newState, id, type);
         return newState;
       }
 
@@ -266,7 +269,7 @@ export default class DataController {
         const handlerId = this.getClosestHandlerId(newUserposition, state.handlerStates);
         newState = this.changeStateWhenChangePosition(state, newUserposition, handlerId);
         this.updateLimits(state.handlerStates);
-        this.trigger(PluginActions.onChangeState, newState, handlerId);
+        this.trigger(PluginActions.onChangeState, newState, handlerId, type);
         return newState;
       }
 
@@ -278,9 +281,9 @@ export default class DataController {
         const { sliderStartPosition } = this.sliderParametrs;
         const newPosition =
           this.convertValueToPosition(newUserposition, handlerMinTranslate) + sliderStartPosition - handlerMinTranslate;
-        newState = this.changeStateWhenChangePosition(state, newPosition, id);
+        newState = this.changeStateWhenChangePosition(state, newPosition, id);		
         this.updateLimits(state.handlerStates);
-        this.trigger(PluginActions.onChangeState, newState, id);
+        this.trigger(PluginActions.onChangeState, newState, id, type);
         return newState;
       }
 
@@ -331,7 +334,7 @@ export default class DataController {
     const handlerState = state.handlerStates[id];
     const { values } = state.valuesState;
 
-    const calcUserPosition = newUserposition - sliderStartPosition;
+    const calcUserPosition = Number((newUserposition - sliderStartPosition).toFixed(5));
 
     if (calcUserPosition + handlerMinTranslate <= handlerState.minTranslate) {
       handlerState.position = handlerState.minTranslate;
@@ -353,12 +356,13 @@ export default class DataController {
     }
 
     let step: number = 0;
+
     if (handlerState.position <= calcUserPosition + handlerMinTranslate) {
       step = Math.floor(Math.abs(calcUserPosition) / stepsLength);
     } else {
       step = Math.ceil(Math.abs(calcUserPosition) / stepsLength);
     }
-
+	
     if (step === 0) {
       return state;
     }

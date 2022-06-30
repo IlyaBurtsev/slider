@@ -34,6 +34,10 @@ class Plugin extends Observer {
     this.init(viewConnector, newOptions);
   }
 
+  public getState = (): RootState => {
+    return this.state;
+  };
+
   private init(viewConnector: ViewConnector, newOptions?: UserOptions): void {
     this.dataController = new DataController(this.newTrigger, newOptions);
 
@@ -142,7 +146,10 @@ class Plugin extends Observer {
   };
 
   // eslint-disable-next-line no-unused-vars
-  private getStateSubscriber = (handler: (state?: RootState, id?: number) => void, subscribe = true): void => {
+  private getStateSubscriber = (
+    handler: (state?: RootState, id?: number, type?: string) => void,
+    subscribe = true,
+  ): void => {
     if (subscribe) {
       this.on(PluginActions.onChangeState, handler);
     } else {
@@ -190,6 +197,7 @@ const createSliderPlugin = (viewConnector: ViewConnector, options?: UserOptions)
   const view = viewConnector;
   const subscribers: Map<PluginActions, Function> = new Map();
   let userOptions: UserOptions | undefined = options;
+  let subscriber: Function;
 
   let sliderPlugin = new Plugin(view, options);
 
@@ -214,7 +222,10 @@ const createSliderPlugin = (viewConnector: ViewConnector, options?: UserOptions)
   };
 
   // eslint-disable-next-line no-unused-vars
-  const getStateSubscriber = (handler: (state?: RootState, id?: number) => void, subscribe = true): void => {
+  const getStateSubscriber = (
+    handler: (state?: RootState, id?: number, type?: string) => void,
+    subscribe = true,
+  ): void => {
     if (subscribe) {
       sliderPlugin.on(PluginActions.onChangeState, handler);
       subscribers.set(PluginActions.onChangeState, handler);
@@ -231,6 +242,9 @@ const createSliderPlugin = (viewConnector: ViewConnector, options?: UserOptions)
     }
     sliderPlugin.trigger(PluginActions.onDestroy);
     sliderPlugin = new Plugin(view, userOptions);
+    if (subscriber !== undefined) {
+      subscriber(newUserOptions);
+    }
     subscribers.forEach((hanler, actions) => sliderPlugin.on(actions, hanler));
   };
 
@@ -238,12 +252,21 @@ const createSliderPlugin = (viewConnector: ViewConnector, options?: UserOptions)
     sliderPlugin.trigger(PluginActions.onChangeValue, value, handlerIndex);
   };
 
+  const onChangeOptions = (handler: (options: UserOptions) => void, subscribe = true): void => {
+    subscriber = handler;
+  };
+	const getHandlerValue = (id: number): number => {
+		return Number(sliderPlugin.getState().valuesState.values[id])
+	}
+
   const api: API = {
     updateSliderOptions,
     moveHandlerTo: moveHandler,
     subscribeToChangeState: getStateSubscriber,
     subscribeToGetStarted: getOnTouchSubscriber,
     subscribeToTheEndOfTheMovement: getOnStopMovingSubscriber,
+    onChangeOptions: onChangeOptions,
+		getHandlerValue: getHandlerValue
   };
   return api;
 };

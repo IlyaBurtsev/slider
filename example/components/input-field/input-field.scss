@@ -1,0 +1,45 @@
+$dark-75: rgba(31, 32, 65, 0.75);
+$dark-50: rgba(31, 32, 65, 0.5);
+$dark-25: rgba(31, 32, 65, 0.25);
+.input-field {
+  &__container {
+    max-width: 32rem;
+		min-width: 15rem;
+		height: 4.4rem;
+    display: flex;
+    position: relative;
+		&::after {
+      content: 'expand_more';
+      width: 4.2rem;
+      font-family: 'MaterialIcons';
+      font-size: 2.5rem;
+      color: $dark-75;
+      position: absolute;
+      line-height: 4.5rem;
+      text-align: center;
+      right: 0;
+    }	
+  }
+  &__input {
+		width: 100%;
+    padding-left: 1.4rem;
+    color: $dark-75;
+    border: 0.1rem solid $dark-25;
+    box-sizing: border-box;
+    border-radius: 0.4rem;
+		border-bottom-left-radius: 0;
+    border-bottom-right-radius: 0;
+    align-items: center;
+    &:hover,
+    &:focus,
+    &:focus-visible {
+      border-color: $dark-50;
+      color: $dark-75;
+    }
+  }
+}
+.dropdown__container_open {
+	.input-field{
+		border-color: $dark-50;
+	}
+}

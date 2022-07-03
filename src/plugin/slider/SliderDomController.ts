@@ -49,18 +49,18 @@ export default class SliderDomController {
   };
 
   private getSliderParametrs = (): SliderParametrs => {
+		
     const rect = this.sliderElement.getBoundingClientRect();
     if (rect.width > rect.height) {
       this.orientation = Orientation.Horizontal;
     } else {
       this.orientation = Orientation.Vertical;
     }
-
     if (this.orientation === Orientation.Horizontal) {
       this.sliderHeight = rect.height;
       return {
         orientation: this.orientation,
-        sliderLength: rect.width,
+        sliderLength: this.sliderElement.clientWidth,
         sliderStartPosition: rect.left,
         sliderEndPosition: rect.left + rect.width,
       };
@@ -68,7 +68,7 @@ export default class SliderDomController {
     this.sliderHeight = rect.width;
     return {
       orientation: this.orientation,
-      sliderLength: rect.height,
+      sliderLength: this.sliderElement.clientHeight,
       sliderStartPosition: rect.top,
       sliderEndPosition: rect.top + rect.height,
     };

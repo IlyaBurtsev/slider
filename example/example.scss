@@ -1,18 +1,19 @@
 .slider {
-	width: 20px;
-	height: 400px;
-	width: 1000px;
+	width: 400px;
 	height: 10px;
-	margin-left: 1000px;
+	margin-left: 10px;
 	margin-right: 40px;
 	margin-bottom: 40px;
 }
 .dropdown {
-	margin-left: 1000px;
+	margin-left: 10px;
+	width: 900px;
 }
 
 .container {
+	width: 1900px;
 	margin-top: 40px;
+	margin-left: 10px;
 	display: flex;
 	gap: 40px;
 }

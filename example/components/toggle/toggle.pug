@@ -1,0 +1,12 @@
+include ../../component-templates/input-template/input-template.pug
+
+
+
+mixin toggle(options={})
+
+	- const {type=TOGGLE.DEFAULT, label='', checked=false} = options 
+
+	case type 
+		when TOGGLE.DEFAULT
+			+input-tamplate({blockName: 'toggle', inputType: 'checkbox', 
+			customElementName: 'label', customElementValue: label, checked: checked, useJS: [JS_CLASS.INPUT]})

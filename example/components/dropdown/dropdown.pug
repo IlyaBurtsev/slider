@@ -1,7 +1,12 @@
 include ./__dropdown-default-item/dropdown-default-item.pug
+include ./__dropdown-toggle-item/dropdown-toggle-item.pug
+include ../../component-templates/global-constants/constants.pug
 include ../input-field/input-field.pug
 mixin dropdown()
 	.dropdown__container.js-dropdown__container
 		+input-field()
 		.dropdown__expand-container
-			+dropdown-default-item(itemName, value)
+			+dropdown-default-item()
+			+dropdown-toggle-item({title : 'Add scale'})
+			+dropdown-toggle-item({title : 'Add tooltip'})
+			+dropdown-toggle-item({title : 'Add progress bar'})

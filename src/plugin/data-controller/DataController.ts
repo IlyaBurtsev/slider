@@ -356,11 +356,12 @@ export default class DataController {
     }
 
     let step: number = 0;
+		let rowStep: number = Number((Math.abs(calcUserPosition)/stepsLength).toFixed(8));
 
     if (handlerState.position <= calcUserPosition + handlerMinTranslate) {
-      step = Math.floor(Math.abs(calcUserPosition) / stepsLength);
+      step = Math.floor(rowStep);
     } else {
-      step = Math.ceil(Math.abs(calcUserPosition) / stepsLength);
+      step = Math.ceil(rowStep);
     }
 	
     if (step === 0) {

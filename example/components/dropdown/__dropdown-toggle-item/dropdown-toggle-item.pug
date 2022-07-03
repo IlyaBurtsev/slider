@@ -1,0 +1,6 @@
+include ../../toggle/toggle.pug
+mixin dropdown-toggle-item(options={})
+	-const {title=''} = options
+	.dropdown-toggle-item__container.js-dropdown-toggle-item__container 
+		H3.dropdown-toggle-item__title= title  
+		+toggle()

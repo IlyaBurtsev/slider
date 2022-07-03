@@ -1,0 +1,47 @@
+
+mixin input-tamplate(options={})
+
+	-
+		const {blockName='', modificatorName='', customElementName='', customElementValue='', commonModificators=[], 
+		inputType, inputValue,  placeholder, inputName, checked, autofocus, disabled, useJS=[] } = options
+
+		let containerClassName = blockName + '__container'
+		let inputClassName = blockName + '__input'
+		let customClassName = customElementName ? blockName+'__' + customElementName : ''
+	
+		let modificatorsContainerClassName=''
+		let jsContainerClasses=''
+		let jsInputClasses=''
+
+	if ((commonModificators.length)&&modificatorName)
+		each modificator in commonModificators	
+			- modificatorsContainerClassName=containerClassName+'_'+modificatorName+'_'+modificator+' '
+			- modificatorsInputClassName=inputClassName+'_'+modificatorName+'_'+modificator+' '
+	else 
+		if (commonModificators.length)
+			each modificator in commonModificators
+				- modificatorsContainerClassName=containerClassName+'_'+ modificator+' '
+				- modificatorsInputClassName=inputClassName+'_'+ modificator+' '
+	if (useJS.length)
+		each jsClass in useJS
+			case jsClass
+				when JS_CLASS.CONTAINER 
+					- jsContainerClasses= modificatorName ? 'js-' + containerClassName + '_' + modificatorName : 'js-' + containerClassName
+				when JS_CLASS.INPUT
+					- jsInputClasses= modificatorName ? 'js-' + inputClassName + '_' + modificatorName : 'js-' + inputClassName
+	-
+		containerClassName += modificatorName ? ' '+containerClassName+'_'+ modificatorName : ''
+		inputClassName += modificatorName ? ' '+inputClassName+'_'+modificatorName : ''
+		customClassName +=(modificatorName&&customElementName) ? ' ' + customClassName + '_' + modificatorName : ''	
+		containerClassName += ' ' + jsContainerClasses
+		containerClassName += ' '+modificatorsContainerClassName
+		inputClassName += ' ' + jsInputClasses
+		inputClassName += ' '+modificatorsInputClassName
+
+	label(class=containerClassName)
+		input(class=inputClassName, type=inputType, value=inputValue, placeholder=placeholder,
+			name=inputName, checked=checked, autofocus=autofocus, disabled=disabled)
+		if (customClassName)
+			div(class=customClassName)=customElementValue
+		
+

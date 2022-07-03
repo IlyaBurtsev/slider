@@ -1,9 +1,11 @@
 import './dropdown.scss';
 import './__dropdown-default-item/dropdown-default-item';
+import './__dropdown-toggle-item/dropdown-toggle-item';
 import '../input-field/input-field';
 import initInput from '../input-field/input-field';
 import { initDefaultItem, switchToActive, switchToDisable } from './__dropdown-default-item/dropdown-default-item';
 import ViewConnector from 'dropdown/src/models/ViewConnector';
+import { getToggle } from '../toggle/toggle';
 let setValueTo: (value: string, parentElement: HTMLElement) => void;
 const initDropdown = (bindElement: HTMLElement): ViewConnector => {
   const className = {
@@ -18,8 +20,8 @@ const initDropdown = (bindElement: HTMLElement): ViewConnector => {
   }
   const setValueToInput = initInput(container);
   const defaultItem = initDefaultItem(container);
-	const {setValue} = defaultItem
-	setValueTo = setValue
+  const { setValue } = defaultItem;
+  setValueTo = setValue;
   const openDropdown = (): void => {
     container.classList.add(className.dropdownOpen);
   };
@@ -43,7 +45,7 @@ const switchButtonToActive = (dropdown: HTMLElement, id: number, add: boolean): 
 
 const setValueToItem = (value: number, dropdown: HTMLElement, id: number): void => {
   const item: HTMLElement = dropdown.lastElementChild?.children[id] as HTMLElement;
-  setValueTo(`${value}`, item)
+  setValueTo(`${value}`, item);
 };
 
 const switchButtonToDisable = (dropdown: HTMLElement, id: number, add: boolean): void => {
@@ -51,4 +53,10 @@ const switchButtonToDisable = (dropdown: HTMLElement, id: number, add: boolean):
   switchToDisable(item, add);
 };
 
-export { initDropdown, switchButtonToActive, switchButtonToDisable, setValueToItem };
+const getToggleElement = (dropdown: HTMLElement, id: number): HTMLInputElement => {
+  const item: HTMLElement = dropdown.lastElementChild?.children[id] as HTMLElement;
+  return getToggle(item);
+};
+
+
+export { initDropdown, switchButtonToActive, switchButtonToDisable, setValueToItem, getToggleElement };

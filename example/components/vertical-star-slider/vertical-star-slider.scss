@@ -1,0 +1,23 @@
+.vertical-star-slider {
+	&__container{
+		width: 6px;
+		height: 400px;
+		display: flex;
+		position: relative;
+	}
+	&__handler {
+		width: 20px;
+		height: 20px;
+		position: absolute;
+		top: 7px;
+		left: -10px;
+		z-index: 3;
+		&:hover {
+			cursor: pointer;
+		}
+	}
+	&__tooltip {
+		position: relative;
+		top: 10px;
+	}
+}

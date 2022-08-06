@@ -18,6 +18,7 @@ import getViewConnector from '../src/components/connector';
 import createSliderPlugin from '../src/plugin/Plugin';
 
 import {
+  getClosedButton,
   getToggleElement,
   initDropdown,
   setValueToItem,
@@ -73,12 +74,17 @@ const stepValue = 1;
 
 const dropdownPlugin = createDropdownPlugin(dropdownView, {
   itemNames: ['set number of handlers', `set value for ${1} handler`, stepName],
-  titlePlaceholder: 'title',
+  titlePlaceholder: 'Configuration Panel',
   startValues: [1, 0, 1],
   minValueItem: 0,
   incrementStep: 1,
   externalCheckState: checkState,
+  autoClose: false,
 });
+
+const closedButton = getClosedButton(dropdown);
+
+closedButton.addEventListener('click', dropdownPlugin.closedDropdown);
 
 const onChangeState = (state: DropdownState, payload: Payload): void => {
   const { itemStates } = state;

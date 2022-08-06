@@ -1,0 +1,27 @@
+@import '../../../style/colors.scss';
+
+.button {
+  &__container_purple-text_custom-parametr {
+    height: 3.4rem;
+  }
+  &__input_purple-text {
+    background: linear-gradient(white 0 0) padding-box,
+      $primory_gradient border-box;
+    border: 0.2rem solid transparent;
+    color: $primory-color;
+    &:hover,
+    &:disabled {
+      background: linear-gradient(white 0 0) padding-box,
+        linear-gradient(
+            180deg,
+            rgba(188, 156, 255, 0.5) 0%,
+            rgba(139, 164, 249, 0.5) 100%
+          )
+          border-box;
+    }
+		&:active {
+			background: linear-gradient(white 0 0) padding-box,
+      $primory_gradient border-box;
+		}
+  }
+}

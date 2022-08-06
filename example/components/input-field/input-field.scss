@@ -40,6 +40,10 @@ $dark-25: rgba(31, 32, 65, 0.25);
 }
 .dropdown__container_open {
 	.input-field{
-		border-color: $dark-50;
+		&__input {
+			border-color: $dark-50;
+			color: $dark-75;
+		}
+
 	}
 }

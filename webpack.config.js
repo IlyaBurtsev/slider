@@ -42,6 +42,9 @@ module.exports = (env, argv = {}) => {
     entry: `${pagesDir}/example.ts`,
 		resolve: {
 			extensions: ['.js', '.ts', '.scss'],
+			alias: {
+        '@theme': path.resolve(__dirname, 'style'),
+      },
 		},
     module: {
       rules: [

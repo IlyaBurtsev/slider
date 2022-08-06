@@ -1,0 +1,23 @@
+@import '../../../style/colors.scss';
+
+.button {
+  &__container_link {
+    width: auto;
+    height: auto;
+		min-width: unset;
+    display: inline-block;
+  }
+  &__input_link {
+    width: unset;
+    height: unset;
+    border: unset;
+    color: $primory-color;
+		&:disabled,
+    &:hover {
+      color: $dark-50;
+    }
+		&:active {
+      color: $primory-color;
+    }
+  }
+}

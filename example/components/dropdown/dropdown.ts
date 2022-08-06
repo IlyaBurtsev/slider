@@ -2,17 +2,21 @@ import './dropdown.scss';
 import './__dropdown-default-item/dropdown-default-item';
 import './__dropdown-toggle-item/dropdown-toggle-item';
 import '../input-field/input-field';
+import '../button/button';
 import initInput from '../input-field/input-field';
 import { initDefaultItem, switchToActive, switchToDisable } from './__dropdown-default-item/dropdown-default-item';
 import ViewConnector from 'dropdown/src/models/ViewConnector';
 import { getToggle } from '../toggle/toggle';
 let setValueTo: (value: string, parentElement: HTMLElement) => void;
+
+const className = {
+	dropdownContainer: 'js-dropdown__container',
+	closedButton: 'js-button__container_link',
+	dropdownOpen: 'dropdown__container_open',
+	buttonActive: 'dropdown-item__button_active',
+};
+
 const initDropdown = (bindElement: HTMLElement): ViewConnector => {
-  const className = {
-    dropdownContainer: 'js-dropdown__container',
-    dropdownOpen: 'dropdown__container_open',
-    buttonActive: 'dropdown-item__button_active',
-  };
 
   const container = <HTMLElement>bindElement.querySelector(`.${className.dropdownContainer}`);
   if (container === null) {
@@ -26,7 +30,7 @@ const initDropdown = (bindElement: HTMLElement): ViewConnector => {
     container.classList.add(className.dropdownOpen);
   };
   const closeDropdown = (): void => {
-    // container.classList.remove(className.dropdownOpen);
+    container.classList.remove(className.dropdownOpen);
   };
 
   return {
@@ -58,5 +62,8 @@ const getToggleElement = (dropdown: HTMLElement, id: number): HTMLInputElement =
   return getToggle(item);
 };
 
+const getClosedButton = (dropdown: HTMLElement):HTMLInputElement => {
+	return <HTMLInputElement>dropdown.querySelector(`.${className.closedButton}`);
+}
 
-export { initDropdown, switchButtonToActive, switchButtonToDisable, setValueToItem, getToggleElement };
+export { initDropdown, switchButtonToActive, switchButtonToDisable, setValueToItem, getToggleElement, getClosedButton };

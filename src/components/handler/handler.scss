@@ -1,14 +1,17 @@
 .handler {
-	width: 100%;
-	height: 100%;
-	background-color: darkgreen;
-	position: absolute;
-	border-radius: 50%;
-	top: calc(-100%/3);
-	left: -50%;
-	z-index: 3;
-	&_vertical {
-		top: -50%;
-		left:calc(-100%/3);
-	}
+  width: 100%;
+  height: 100%;
+  background-color: darkgreen;
+  position: absolute;
+  border-radius: 50%;
+  top: calc(-100% / 3);
+  left: -50%;
+  z-index: 3;
+  &_vertical {
+    top: -50%;
+    left: calc(-100% / 3);
+  }
+  &:hover {
+    cursor: pointer;
+  }
 }

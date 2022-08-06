@@ -5,42 +5,45 @@ $dark-25: rgba(31, 32, 65, 0.25);
 $dark-5: rgba(31, 32, 65, 0.05);
 $primory-color: #bc9cff;
 $secondary-color: #6fcf97;
-$primory_gradient: linear-gradient(180deg, #BC9CFF 0%, #8BA4F9 100%);
-$secondary_gradient: linear-gradient(180deg, #6FCF97 0%, #66D2EA 100%);
+$primory_gradient: linear-gradient(180deg, #bc9cff 0%, #8ba4f9 100%);
+$secondary_gradient: linear-gradient(180deg, #6fcf97 0%, #66d2ea 100%);
 
 .toggle {
   &__container {
-    max-width: 26rem; 
+    max-width: 26rem;
   }
-	&__input {
-		opacity: 0;
-		position: absolute;
-		width: 2rem;
-		height: 2rem;
-		align-self: baseline;
-	}
-	&__label {
-		color: $dark-75;
-		display: flex;
-		line-height: 1.8rem;
-		&::before {
-			content: "";
-			width: 4rem;
-			height: 2rem;
-			align-self: baseline;
-			border: 0.1rem solid $dark-25;
-			border-radius: 1rem;
-			box-sizing: border-box;
-			// margin-right: 1rem;
-			background: center left 0.4rem no-repeat url("./circle-no-active.svg");
-			flex-shrink: 0;
-		}
-	}
+  &__input {
+    opacity: 0;
+    position: absolute;
+    width: 2rem;
+    height: 2rem;
+    align-self: baseline;
+  }
+  &__label {
+    color: $dark-75;
+    display: flex;
+    line-height: 1.8rem;
+    &::before {
+      content: '';
+      width: 4rem;
+      height: 2rem;
+      align-self: baseline;
+      border: 0.1rem solid $dark-25;
+      border-radius: 1rem;
+      box-sizing: border-box;
+      // margin-right: 1rem;
+      background: center left 0.4rem no-repeat url('./circle-no-active.svg');
+      flex-shrink: 0;
+    }
+    &:hover {
+      cursor: pointer;
+    }
+  }
 }
 .toggle__input:checked + .toggle__label {
-	&::before {
-		content: "";
-		background: center right 0.4rem no-repeat url("./circle.svg");
-		border-color: $primory-color;
-	}
+  &::before {
+    content: '';
+    background: center right 0.4rem no-repeat url('./circle.svg');
+    border-color: $primory-color;
+  }
 }

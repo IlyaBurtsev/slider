@@ -1,0 +1,28 @@
+@import '../../../style/colors.scss';
+
+.button {
+  &__container_pay {
+    position: relative;
+    &::after {
+      content: "arrow_forward";
+      font-family: "MaterialIcons";
+      font-size: 2.5rem;
+      line-height: 4.3rem;
+      color: white;
+      position: absolute;
+      padding-right: 1rem;
+      right: 0;
+    }
+  }
+  &__input_pay {
+    background: $primory_gradient;
+    color: white;
+		&:disabled,
+    &:hover {
+      opacity: 0.5;
+    }
+		&:active {
+      opacity: 1;
+    }
+  }
+}

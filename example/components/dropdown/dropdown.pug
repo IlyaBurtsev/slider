@@ -2,6 +2,7 @@ include ./__dropdown-default-item/dropdown-default-item.pug
 include ./__dropdown-toggle-item/dropdown-toggle-item.pug
 include ../../component-templates/global-constants/constants.pug
 include ../input-field/input-field.pug
+include ../button/button.pug
 mixin dropdown()
 	.dropdown__container.js-dropdown__container
 		+input-field()
@@ -10,3 +11,5 @@ mixin dropdown()
 			+dropdown-toggle-item({title : 'Add scale'})
 			+dropdown-toggle-item({title : 'Add tooltip'})
 			+dropdown-toggle-item({title : 'Add progress bar'})
+			.dropdown__button-container 
+				+button({type: BUTTON.LINK, label: 'close panel'})

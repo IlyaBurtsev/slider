@@ -53,15 +53,15 @@ export default class TooltipDomController {
       if (tooltip !== undefined) {
         tooltip.style.display = 'none';
         if (tooltip.parentElement === handlerElements[0]) {
-          if (orientation === Orientation.Vertical) {
-            tooltip.style.left = `${handlerBottom + 5}px`;
-          }
           elements.push(tooltip);
           handlerElements.forEach((handler, index) => {
             if (index > 0) {
-              const newTooltip = tooltip.cloneNode(true) as HTMLElement;
-              handler.append(newTooltip);
-              elements.push(newTooltip);
+							const newTooltip = <HTMLElement>handler.querySelector(`.${tooltip.className}`)
+							if (newTooltip !== null) {
+								newTooltip.style.display = 'none';
+								elements.push(newTooltip);
+							}
+              
             }
           });
         }

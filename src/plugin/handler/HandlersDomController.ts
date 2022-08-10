@@ -69,7 +69,7 @@ export default class HandlersDomController {
       const fragment = document.createDocumentFragment();
 
       function pushNewElement(primeElement: HTMLElement) {
-        const newElement = primeElement.cloneNode() as HTMLElement;
+        const newElement = primeElement.cloneNode(true) as HTMLElement;
         elements.push(newElement);
         fragment.append(newElement);
       }
@@ -80,7 +80,6 @@ export default class HandlersDomController {
       }
 
       handlerElement.parentElement?.append(fragment);
-
       return elements;
     };
     this.orientation = orientation;

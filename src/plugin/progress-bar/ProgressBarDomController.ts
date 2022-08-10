@@ -31,11 +31,11 @@ export default class ProgressBarDomController {
     this.numberOfHandlers = numberOfHandlers;
     function initBars(): Array<HTMLElement> {
       if (progressBar !== undefined) {
-				if (orientation === Orientation.Horizontal){
-					progressBar.style.width = '0';
-				} else {
-					progressBar.style.height = '0';
-				}    
+        if (orientation === Orientation.Horizontal) {
+          progressBar.style.width = '0';
+        } else {
+          progressBar.style.height = '0';
+        }
         const elements: Array<HTMLElement> = [progressBar];
         if (numberOfHandlers > 1) {
           const fragment = document.createDocumentFragment();
@@ -70,12 +70,11 @@ export default class ProgressBarDomController {
       const { minTranslate, position, maxTranslate } = handlerState;
       barId = Math.floor(index / 2);
       if (isStartElement) {
-        startPosition = position;
-        length = maxTranslate + that.handlerLength * 1.5 - position;
+        startPosition = position + that.handlerLength / 2;
+        length = maxTranslate + that.handlerLength - position;
       } else {
-        length = position - minTranslate + that.handlerLength * 1.5;
+        length = position - minTranslate + that.handlerLength;
       }
-
       that.updateBarView(that.bars[barId], startPosition, length);
     }
     if (this.numberOfHandlers === 1) {
@@ -95,12 +94,11 @@ export default class ProgressBarDomController {
 
   private onDestroy = (): void => {
     removeElementsFromDom(this.bars, 1);
-		if (this.orientation === Orientation.Horizontal) {
-			this.bars[0].style.width = '0';
-		}else {
-			this.bars[0].style.height = '0';
-		}
-   
+    if (this.orientation === Orientation.Horizontal) {
+      this.bars[0].style.width = '0';
+    } else {
+      this.bars[0].style.height = '0';
+    }
   };
 
   private updateBarView = (bar: HTMLElement, startPosition?: number, length?: number): void => {

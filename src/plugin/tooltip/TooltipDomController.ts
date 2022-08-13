@@ -56,7 +56,8 @@ export default class TooltipDomController {
           elements.push(tooltip);
           handlerElements.forEach((handler, index) => {
             if (index > 0) {
-							const newTooltip = <HTMLElement>handler.querySelector(`.${tooltip.className}`)
+							const tooltipClassName = tooltip.className.split(' ')[0];
+							const newTooltip = <HTMLElement>handler.querySelector(`.${tooltipClassName}`)
 							if (newTooltip !== null) {
 								newTooltip.style.display = 'none';
 								elements.push(newTooltip);

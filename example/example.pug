@@ -1,16 +1,24 @@
 include ./components/dropdown/dropdown.pug
 include ./components/vertical-star-slider/vertical-star-slider.pug
+include ./components/input-field/input-field.pug
+
 html(lang="en")
 	head
 		meta(charset="UTF-8")
 		meta(http-equiv="X-UA-Compatible", content="IE=edge")
 		meta(name="viewport", content="width=device-width, initial-scale=1.0")
-		title Document
+		title Example
 	body 
-		.vertical-slider
-			+vertical-star-slider()
-			+dropdown()
-		.container
-			.slider.js-slider
-			.dropdown
+		.vertical-sliders 	
+			.vertical-sliders__quick-start
+				.vertical-sliders__simple-slider.js-vertical-sliders__simple-slider
+				.vertical-sliders__input-container
+					+input-field()
+					+input-field()
+			.vertical-sliders__star-slider.js-vertical-sliders__star-slider
+				+vertical-star-slider()
+				+dropdown()
+		.horizontal-sliders.js-horizontal-sliders
+			.horizontal-sliders__simple-slider-container
+				.horizontal-sliders__simple-slider.js-horizontal-sliders__simple-slider
 				+dropdown()

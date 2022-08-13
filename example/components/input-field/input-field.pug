@@ -9,7 +9,7 @@ mixin input-field(options={})
 	case type 
 		when INPUT_FIELD.TEXT
 			+input-tamplate({blockName: 'input-field', inputType: inputType, placeholder: placeholder, 
-			dataSelected: dataSelected, inputValue: inputText, autofocus: autofocus, })
+			dataSelected: dataSelected, inputValue: inputText, autofocus: autofocus,  useJS : [JS_CLASS.INPUT] })
 		when INPUT_FIELD.SUBSCRIBE
 			+input-tamplate({blockName: 'input-field', modificatorName: 'subscription', inputType: inputType, 
 			placeholder: 'Email', inputValue: inputText, customElementName: 'submit-button', customElementValue: 'arrow_forward'})

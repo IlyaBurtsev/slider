@@ -5,9 +5,9 @@ import './style/fonts.scss';
 import './components/dropdown/dropdown.ts';
 import './components/vertical-star-slider/vertical-star-slider.ts';
 
-import { getElement } from '../src/plugin/utils/utils';
+import initVerticalStarSlider from './components/vertical-star-slider/vertical-star-slider';
+import { initInput } from './components/input-field/input-field';
 
-import DropdownConnector from 'dropdown/src/models/ViewConnector';
 import createDropdownPlugin from 'dropdown/src/plugin/Plugin';
 import { Payload, RootState as DropdownState } from 'dropdown/src/models/types';
 import dropdownChangeTypes from 'dropdown/src/models/enums/ChangeStateTypes';
@@ -17,21 +17,67 @@ import { UserOptions } from '../src/models/interfaces';
 import ChangeStateTypes from '../src/models/enums/ChangeStateTypes';
 import getViewConnector from '../src/components/connector';
 import createSliderPlugin from '../src/plugin/Plugin';
-
-import initVerticalStarSlider from './components/vertical-star-slider/vertical-star-slider';
-
-import {
-  getClosedButton,
-  getToggleElement,
-  initDropdown,
-  setValueToItem,
-  switchButtonToActive,
-  switchButtonToDisable,
-} from './components/dropdown/dropdown';
 import { ViewConnector as SliderConnector } from '../src/models/ViewConnector';
 import getScale from '../src/components/scale/scale';
 
-const initSliderWithPanel = (sliderView: SliderConnector, dropdownView: DropdownConnector) => {
+import { initDropdown, DropdownComponent } from './components/dropdown/dropdown';
+
+//--------------------------------------------------------------------
+
+const quickStart = <HTMLElement>document.querySelector('.js-vertical-sliders__simple-slider');
+const quickStartView = getViewConnector(quickStart);
+const quickStartSlider = createSliderPlugin(quickStartView, {
+  numberOfHandlers: 2,
+  progressBar: true,
+  toolTips: true,
+  scale: true,
+});
+
+const firstInputComponent = initInput(quickStart.nextElementSibling as HTMLElement);
+const secondInputComponent = initInput(quickStart.nextElementSibling?.lastElementChild as HTMLElement);
+
+const onChangeFirstInput = (): void => {
+  quickStartSlider.moveHandlerTo(Number(firstInputComponent.getValue()), 0);
+};
+const onChangeSecondInput = (): void => {
+  quickStartSlider.moveHandlerTo(Number(secondInputComponent.getValue()), 1);
+};
+firstInputComponent.getInput().onchange = onChangeFirstInput;
+secondInputComponent.getInput().onchange = onChangeSecondInput;
+
+const onChangeSliderState = (state: RootState): void => {
+  const [firstValue, secondValue] = state.valuesState.values;
+  firstInputComponent.setValue(firstValue);
+  secondInputComponent.setValue(secondValue);
+};
+
+quickStartSlider.subscribeToChangeState(onChangeSliderState);
+
+//--------------------------------------------------------------------
+
+const starSlider = <HTMLElement>document.querySelector('.js-vertical-sliders__star-slider');
+const starSliderView: SliderConnector = initVerticalStarSlider(starSlider);
+starSliderView.scaleElements = getScale(starSliderView.slider);
+
+const dropdownForStarSlider = <HTMLElement>document.querySelector('.js-vertical-sliders__star-slider');
+const dropdownViewForStarSlider = initDropdown(dropdownForStarSlider);
+const expandContainer = dropdownViewForStarSlider.view.dropdown.lastElementChild as HTMLElement;
+expandContainer.style.zIndex = '5';
+
+initSliderWithPanel(starSliderView, dropdownViewForStarSlider);
+
+//--------------------------------------------------------------------
+
+const sliderContainer = <HTMLElement>document.querySelector('.js-horizontal-sliders__simple-slider');
+const sliderView = getViewConnector(sliderContainer);
+const dropdownContainer = <HTMLElement>document.querySelector('.js-horizontal-sliders');
+const dropdownView = initDropdown(dropdownContainer);
+
+initSliderWithPanel(sliderView, dropdownView);
+
+//--------------------------------------------------------------------
+
+function initSliderWithPanel(sliderView: SliderConnector, dropdownComponent: DropdownComponent): void {
   let number = 1;
   let minValue = 10;
   let maxValue = 40;
@@ -43,6 +89,14 @@ const initSliderWithPanel = (sliderView: SliderConnector, dropdownView: Dropdown
     step: 1,
     scaleStep: 10,
   });
+  const {
+    view: dropdownView,
+    switchButtonToActive,
+    switchButtonToDisable,
+    setValueToItem,
+    getToggleElement,
+    getClosedButton,
+  } = dropdownComponent;
 
   const { dropdown } = dropdownView;
 
@@ -80,7 +134,7 @@ const initSliderWithPanel = (sliderView: SliderConnector, dropdownView: Dropdown
         switchButtonToActive(dropdown, id, true);
       }
     }
-		if (id === itemStates[0].value + 3 && type === dropdownChangeTypes.subButtonClicked) {
+    if (id === itemStates[0].value + 3 && type === dropdownChangeTypes.subButtonClicked) {
       if (value <= itemStates[id - 1].value) {
         value += itemStates[id].incrementStep;
         switchButtonToDisable(dropdown, id, false);
@@ -92,7 +146,6 @@ const initSliderWithPanel = (sliderView: SliderConnector, dropdownView: Dropdown
     return state;
   };
 
-  const stepName = 'set slider step';
   const params = ['set slider step', 'set min value', 'set max value'];
   const stepValue = 1;
 
@@ -248,19 +301,4 @@ const initSliderWithPanel = (sliderView: SliderConnector, dropdownView: Dropdown
   };
   sliderPlugin.updateSliderOptions({ progressBar: toggleProgressbarElement.checked });
   toggleProgressbarElement.addEventListener('click', onToggleBar);
-};
-
-const verticalSlideContainer = <HTMLElement>document.querySelector('.vertical-slider');
-const sliderVerticalView: SliderConnector = initVerticalStarSlider(verticalSlideContainer);
-sliderVerticalView.scaleElements = getScale(sliderVerticalView.slider);
-
-const dropdownContainerVertical = <HTMLElement>document.querySelector('.vertical-slider');
-const dropdownViewVertical: DropdownConnector = initDropdown(dropdownContainerVertical);
-initSliderWithPanel(sliderVerticalView, dropdownViewVertical);
-
-const sliderContainer = getElement('.slider');
-const sliderView = getViewConnector(sliderContainer);
-const dropdownContainer = <HTMLElement>document.querySelector('.dropdown');
-const dropdownView: DropdownConnector = initDropdown(dropdownContainer);
-
-initSliderWithPanel(sliderView, dropdownView);
+}

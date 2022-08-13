@@ -5,10 +5,18 @@ import './__dropdown-title/dropdown-title';
 import '../button/button';
 import './__dropdown-input-item/dropdown-input-item';
 import initDropdownTitle from './__dropdown-title/dropdown-title';
-import { initDefaultItem, switchToActive, switchToDisable } from './__dropdown-default-item/dropdown-default-item';
+import initDefaultItem from './__dropdown-default-item/dropdown-default-item';
 import ViewConnector from 'dropdown/src/models/ViewConnector';
 import { getToggle } from '../toggle/toggle';
-let setValueTo: (value: string, parentElement: HTMLElement) => void;
+
+type DropdownComponent = {
+  view: ViewConnector;
+  switchButtonToActive: (dropdown: HTMLElement, id: number, add: boolean) => void;
+  switchButtonToDisable: (dropdown: HTMLElement, id: number, add: boolean) => void;
+  setValueToItem: (value: number, dropdown: HTMLElement, id: number) => void;
+  getToggleElement: (dropdown: HTMLElement, id: number) => HTMLInputElement;
+  getClosedButton: (dropdown: HTMLElement) => HTMLInputElement;
+};
 
 const className = {
   dropdownContainer: 'js-dropdown__container',
@@ -17,53 +25,61 @@ const className = {
   buttonActive: 'dropdown-item__button_active',
 };
 
-const initDropdown = (bindElement: HTMLElement): ViewConnector => {
+const initDropdown = (bindElement: HTMLElement): DropdownComponent => {
   const container = <HTMLElement>bindElement.querySelector(`.${className.dropdownContainer}`);
   if (container === null) {
     throw new Error('Dropdown container is null!');
   }
   const setValueToInput = initDropdownTitle(container);
-  const defaultItem = initDefaultItem(container);
-  const { setValue } = defaultItem;
-  setValueTo = setValue;
+  const defaultItemComponent = initDefaultItem(container);
+  const { item, switchToActive, switchToDisable } = defaultItemComponent;
+  const { setValue } = item;
   const openDropdown = (): void => {
     container.classList.add(className.dropdownOpen);
   };
   const closeDropdown = (): void => {
     container.classList.remove(className.dropdownOpen);
   };
+  const switchButtonToActive = (dropdown: HTMLElement, id: number, add: boolean): void => {
+    const item: HTMLElement = dropdown.lastElementChild?.children[id] as HTMLElement;
+    switchToActive(item, add);
+  };
 
-  return {
+  const setValueToItem = (value: number, dropdown: HTMLElement, id: number): void => {
+    const item: HTMLElement = dropdown.lastElementChild?.children[id] as HTMLElement;
+    setValue(`${value}`, item);
+  };
+
+  const switchButtonToDisable = (dropdown: HTMLElement, id: number, add: boolean): void => {
+    const item: HTMLElement = dropdown.lastElementChild?.children[id] as HTMLElement;
+    switchToDisable(item, add);
+  };
+
+  const getToggleElement = (dropdown: HTMLElement, id: number): HTMLInputElement => {
+    const item: HTMLElement = dropdown.lastElementChild?.children[id] as HTMLElement;
+    return getToggle(item);
+  };
+
+  const getClosedButton = (dropdown: HTMLElement): HTMLInputElement => {
+    return <HTMLInputElement>dropdown.querySelector(`.${className.closedButton}`);
+  };
+
+  const view = {
     dropdown: container,
     setValueToInput: setValueToInput,
     openDropdown: openDropdown,
     closedDropdown: closeDropdown,
-    item: defaultItem,
+    item: item,
+  };
+
+  return {
+    view,
+		switchButtonToActive,
+		switchButtonToDisable,
+		setValueToItem,
+		getToggleElement,
+		getClosedButton
   };
 };
 
-const switchButtonToActive = (dropdown: HTMLElement, id: number, add: boolean): void => {
-  const item: HTMLElement = dropdown.lastElementChild?.children[id] as HTMLElement;
-  switchToActive(item, add);
-};
-
-const setValueToItem = (value: number, dropdown: HTMLElement, id: number): void => {
-  const item: HTMLElement = dropdown.lastElementChild?.children[id] as HTMLElement;
-  setValueTo(`${value}`, item);
-};
-
-const switchButtonToDisable = (dropdown: HTMLElement, id: number, add: boolean): void => {
-  const item: HTMLElement = dropdown.lastElementChild?.children[id] as HTMLElement;
-  switchToDisable(item, add);
-};
-
-const getToggleElement = (dropdown: HTMLElement, id: number): HTMLInputElement => {
-  const item: HTMLElement = dropdown.lastElementChild?.children[id] as HTMLElement;
-  return getToggle(item);
-};
-
-const getClosedButton = (dropdown: HTMLElement): HTMLInputElement => {
-  return <HTMLInputElement>dropdown.querySelector(`.${className.closedButton}`);
-};
-
-export { initDropdown, switchButtonToActive, switchButtonToDisable, setValueToItem, getToggleElement, getClosedButton };
+export {initDropdown, DropdownComponent} ;

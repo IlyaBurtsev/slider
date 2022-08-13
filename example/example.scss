@@ -1,25 +1,40 @@
-.slider {
-	width: 400px;
-	height: 10px;
-	margin-left: 10px;
-	margin-right: 40px;
-	margin-bottom: 40px;
-}
-.vertical-slider{
-	display: flex;
-	margin-top: 30px;
-	margin-left: 30px;
-	gap: 40px;
-}
-.dropdown {
-	margin-left: 10px;
-	width: 900px;
+.vertical-sliders {
+  display: flex;
+  margin-top: 30px;
+  margin-left: 30px;
+  gap: 100px;
+	&__quick-start{
+		display: flex;
+		gap: 40px;
+	}
+  &__simple-slider {
+    width: 15px;
+    height: 400px;
+  }
+	&__input-container{
+		width: 150px;
+		display: flex;
+		flex-direction: column;
+		gap: 40px;
+	}
+  &__star-slider {
+    display: flex;
+    gap: 40px;
+  }
 }
 
-.container {
-	width: 1900px;
-	margin-top: 40px;
-	margin-left: 10px;
-	display: flex;
-	gap: 40px;
+.horizontal-sliders {
+  display: flex;
+  flex-direction: column;
+  margin-top: 30px;
+  margin-left: 30px;
+  gap: 100px;
+  &__simple-slider-container {
+    display: flex;
+    gap: 40px;
+  }
+  &__simple-slider {
+    width: 400px;
+    height: 10px;
+  }
 }

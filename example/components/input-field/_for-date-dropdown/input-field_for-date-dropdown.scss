@@ -1,0 +1,31 @@
+@import '../../../style/colors.scss';
+
+.input-field {
+  &__container_for-date-dropdown {
+    &::after {
+      content: 'expand_more';
+      width: 4.2rem;
+      font-family: 'MaterialIcons';
+      font-size: 2.5rem;
+      color: $dark-75;
+      position: absolute;
+      line-height: 4.5rem;
+      text-align: center;
+      right: 0;
+    }
+  }
+  &__input_for-date-dropdown {
+		cursor: pointer;
+		color: $dark-75;
+    &::placeholder {
+      color: $dark-75;
+    }
+		&:hover,
+    &:focus,
+    &:focus-visible {
+      border-color: $dark-25;
+      color: $dark-75;
+    }
+  }
+}
+

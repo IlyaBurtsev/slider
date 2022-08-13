@@ -9,7 +9,7 @@ interface API {
   subscribeToGetStarted: (handler: (id?: number) => void, subscribe?: boolean) => void;
   subscribeToTheEndOfTheMovement: (handler: (id?: number) => void, subscribe?: boolean) => void;
 	onChangeOptions: (handler: (options: UserOptions) => void, subscribe?: boolean) => void;
-	getHandlerValue: (id: number) => number
+	getHandlerValue: (id: number) => number;
 }
 
 export default API;

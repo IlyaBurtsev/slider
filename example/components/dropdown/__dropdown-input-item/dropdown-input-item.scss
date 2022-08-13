@@ -1,6 +1,6 @@
-.dropdown-toggle-item {
+.dropdown-input-item {
   &__container {
-    height: 3rem;
+    height: 5rem;
     display: flex;
     align-items: center;
     justify-content: space-between;
@@ -8,4 +8,7 @@
     padding-left: 1.4rem;
     padding-right: 0.6rem;
   }
+	&__title {
+		width: 60%;
+	}
 }

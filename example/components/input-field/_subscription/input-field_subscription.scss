@@ -1,0 +1,21 @@
+@import '../../../style/colors.scss';
+
+.input-field {
+  &__container_subscription {
+    max-width: 26.7rem;
+  }
+  &__submit-button_subscription {
+    width: 4.2rem;
+    font-family: "MaterialIcons";
+		cursor: pointer;
+    font-size: 2.5rem;
+    position: absolute;
+    line-height: 4.5rem;
+    text-align: center;
+    right: 0;
+    background: $primory_gradient;
+    color: transparent;
+    -webkit-background-clip: text;
+    background-clip: text;
+  }
+}

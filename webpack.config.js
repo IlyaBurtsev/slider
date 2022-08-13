@@ -50,7 +50,10 @@ module.exports = (env, argv = {}) => {
       rules: [
 				{
           test: /\.ts$/,
-          use: 'ts-loader',
+          loader: 'ts-loader',
+					options: {
+						allowTsInNodeModules: true
+					}
         },
         {
           test: /\.css$/,

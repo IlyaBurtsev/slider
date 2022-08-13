@@ -1,0 +1,6 @@
+include ../../input-field/input-field.pug
+mixin dropdown-input-item(options={})
+	-const {title=''} = options
+	.dropdown-input-item__container.js-dropdown-input-item__container 
+		.dropdown-input-item__title= title  
+		+input-field()

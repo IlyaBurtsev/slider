@@ -1,28 +1,28 @@
 import './dropdown.scss';
 import './__dropdown-default-item/dropdown-default-item';
 import './__dropdown-toggle-item/dropdown-toggle-item';
-import '../input-field/input-field';
+import './__dropdown-title/dropdown-title';
 import '../button/button';
-import initInput from '../input-field/input-field';
+import './__dropdown-input-item/dropdown-input-item';
+import initDropdownTitle from './__dropdown-title/dropdown-title';
 import { initDefaultItem, switchToActive, switchToDisable } from './__dropdown-default-item/dropdown-default-item';
 import ViewConnector from 'dropdown/src/models/ViewConnector';
 import { getToggle } from '../toggle/toggle';
 let setValueTo: (value: string, parentElement: HTMLElement) => void;
 
 const className = {
-	dropdownContainer: 'js-dropdown__container',
-	closedButton: 'js-button__container_link',
-	dropdownOpen: 'dropdown__container_open',
-	buttonActive: 'dropdown-item__button_active',
+  dropdownContainer: 'js-dropdown__container',
+  closedButton: 'js-button__container_link',
+  dropdownOpen: 'dropdown__container_open',
+  buttonActive: 'dropdown-item__button_active',
 };
 
 const initDropdown = (bindElement: HTMLElement): ViewConnector => {
-
   const container = <HTMLElement>bindElement.querySelector(`.${className.dropdownContainer}`);
   if (container === null) {
     throw new Error('Dropdown container is null!');
   }
-  const setValueToInput = initInput(container);
+  const setValueToInput = initDropdownTitle(container);
   const defaultItem = initDefaultItem(container);
   const { setValue } = defaultItem;
   setValueTo = setValue;
@@ -62,8 +62,8 @@ const getToggleElement = (dropdown: HTMLElement, id: number): HTMLInputElement =
   return getToggle(item);
 };
 
-const getClosedButton = (dropdown: HTMLElement):HTMLInputElement => {
-	return <HTMLInputElement>dropdown.querySelector(`.${className.closedButton}`);
-}
+const getClosedButton = (dropdown: HTMLElement): HTMLInputElement => {
+  return <HTMLInputElement>dropdown.querySelector(`.${className.closedButton}`);
+};
 
 export { initDropdown, switchButtonToActive, switchButtonToDisable, setValueToItem, getToggleElement, getClosedButton };

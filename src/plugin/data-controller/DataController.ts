@@ -209,7 +209,7 @@ export default class DataController {
             maxTranslate: 0,
           };
           if (i !== 0) {
-            currentValue = ((maxValue - minValue) * i) / (numberOfHandlers - 1);
+            currentValue = ((maxValue - minValue) * i) / (numberOfHandlers - 1) + minValue;
             const different = currentValue % step;
             if (different !== 0) {
               currentValue -= different;
@@ -405,7 +405,7 @@ export default class DataController {
   private convertValueToPosition = (value: number, minTranslate: number): number => {
     const { sliderLength } = this.sliderParametrs;
     const { minValue, maxValue } = this.options;
-    return (sliderLength / (maxValue - minValue)) * value + minTranslate;
+    return (sliderLength/ (maxValue-minValue)) * (value-minValue) + minTranslate;
   };
 
   private convertPositionToValue = (position: number): string => {
@@ -414,7 +414,7 @@ export default class DataController {
     const { minValue, maxValue } = this.options;
     const calcPosition = position;
     const count = this.getCount();
-    const value = ((maxValue - minValue) / sliderLength) * (calcPosition - handlerMinTranslate);
+    const value = ((maxValue - minValue) / sliderLength) * (calcPosition - handlerMinTranslate) + minValue;
     return value.toFixed(count);
   };
 

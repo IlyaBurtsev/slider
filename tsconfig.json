@@ -6,7 +6,8 @@
     "noImplicitAny": true,
     "noImplicitReturns": true,
     "strictNullChecks": true,
-    "outDir": "dist"
+    "outDir": "dist",
+		"moduleResolution":"node",
   },
-  "exclude": ["node_modules"]
+  "exclude": ["node_modules"],
 }

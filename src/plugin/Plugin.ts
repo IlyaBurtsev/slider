@@ -10,7 +10,7 @@ import { deepMerge } from './utils/utils';
 import ChangeStateTypes from '../models/enums/ChangeStateTypes';
 
 import API from '../models/API';
-import { RootState } from '../models/types';
+import { HandlerState, RootState } from '../models/types';
 import { ViewConnector } from '../models/ViewConnector';
 import { UserOptions } from '../models/interfaces';
 
@@ -235,6 +235,7 @@ const createSliderPlugin = (viewConnector: ViewConnector, options?: UserOptions)
   };
 
   const updateSliderOptions = (newUserOptions: UserOptions): void => {
+	
     if (userOptions !== undefined) {
       userOptions = deepMerge(userOptions, true, newUserOptions);
     } else {
@@ -266,7 +267,7 @@ const createSliderPlugin = (viewConnector: ViewConnector, options?: UserOptions)
     subscribeToGetStarted: getOnTouchSubscriber,
     subscribeToTheEndOfTheMovement: getOnStopMovingSubscriber,
     onChangeOptions: onChangeOptions,
-		getHandlerValue: getHandlerValue
+		getHandlerValue: getHandlerValue,
   };
   return api;
 };

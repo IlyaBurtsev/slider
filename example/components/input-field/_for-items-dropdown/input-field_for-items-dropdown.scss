@@ -1,0 +1,33 @@
+@import '../../../style/colors.scss';
+
+.input-field {
+	&__container_for-items-dropdown {
+    &::after {
+      content: 'expand_more';
+      width: 4.2rem;
+      font-family: 'MaterialIcons';
+      font-size: 2.5rem;
+      color: $dark-75;
+      position: absolute;
+      line-height: 4.5rem;
+      text-align: center;
+      right: 0;
+    }	
+  }
+  &__input_for-items-dropdown {
+		cursor: pointer;
+    border-bottom-left-radius: 0;
+    border-bottom-right-radius: 0;
+		color: $dark-75;
+		&::placeholder{
+			color: $dark-75;
+		}
+  }	
+}
+.dropdown__container_item-quantity_open {
+	.input-field__input_for-items-dropdown{
+		border-color: $dark-50;
+	}
+}
+
+

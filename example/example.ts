@@ -9,8 +9,8 @@ import { getElement } from '../src/plugin/utils/utils';
 
 import DropdownConnector from 'dropdown/src/models/ViewConnector';
 import createDropdownPlugin from 'dropdown/src/plugin/Plugin';
-import { Payload, RootState as DropdownState } from '../../dropdown/src/models/types';
-import dropdownChangeTypes from '../../dropdown/src/models/enums/ChangeStateTypes';
+import { Payload, RootState as DropdownState } from 'dropdown/src/models/types';
+import dropdownChangeTypes from 'dropdown/src/models/enums/ChangeStateTypes';
 
 import { RootState } from '../src/models/types';
 import { UserOptions } from '../src/models/interfaces';
@@ -33,9 +33,13 @@ import getScale from '../src/components/scale/scale';
 
 const initSliderWithPanel = (sliderView: SliderConnector, dropdownView: DropdownConnector) => {
   let number = 1;
+  let minValue = 10;
+  let maxValue = 40;
 
   const sliderPlugin = createSliderPlugin(sliderView, {
     numberOfHandlers: number,
+    minValue: minValue,
+    maxValue: maxValue,
     step: 1,
     scaleStep: 10,
   });
@@ -45,7 +49,8 @@ const initSliderWithPanel = (sliderView: SliderConnector, dropdownView: Dropdown
   const checkState = (state: DropdownState, id: number, type: string): DropdownState => {
     const { itemStates } = state;
     const currentItem = itemStates[id];
-    const { minValue, maxValue, value } = currentItem;
+    const { minValue, maxValue } = currentItem;
+    let { value } = currentItem;
 
     if (value === minValue) {
       switchButtonToDisable(dropdown, id, false);
@@ -67,28 +72,50 @@ const initSliderWithPanel = (sliderView: SliderConnector, dropdownView: Dropdown
         switchButtonToActive(dropdown, id + 1, false);
       }
     }
+    if (id === itemStates[0].value + 2 && type === dropdownChangeTypes.addButtonClicked) {
+      if (value >= itemStates[id + 1].value) {
+        value -= itemStates[id].incrementStep;
+        switchButtonToDisable(dropdown, id, true);
+      } else {
+        switchButtonToActive(dropdown, id, true);
+      }
+    }
+		if (id === itemStates[0].value + 3 && type === dropdownChangeTypes.subButtonClicked) {
+      if (value <= itemStates[id - 1].value) {
+        value += itemStates[id].incrementStep;
+        switchButtonToDisable(dropdown, id, false);
+      } else {
+        switchButtonToActive(dropdown, id, false);
+      }
+    }
     currentItem.value = Number(value.toFixed(1));
     return state;
   };
 
   const stepName = 'set slider step';
+  const params = ['set slider step', 'set min value', 'set max value'];
   const stepValue = 1;
 
   const dropdownPlugin = createDropdownPlugin(dropdownView, {
-    itemNames: ['set number of handlers', `set value for ${1} handler`, stepName],
+    itemNames: ['set number of handlers', `set value for ${1} handler`, ...params],
     titlePlaceholder: 'Configuration Panel',
-    startValues: [1, 0, 1],
+    startValues: [1, 0, 1, minValue, maxValue],
     minValueItem: 0,
+    maxValueItem: 10000000,
     incrementStep: 1,
     externalCheckState: checkState,
     autoClose: false,
   });
 
+  dropdownPlugin.changeItemParametrs({ incrementStep: 10 }, 3);
+  dropdownPlugin.changeItemParametrs({ incrementStep: 10 }, 4);
+  dropdownPlugin.changeItemParametrs({ minValue: minValue, maxValue: maxValue }, 1);
+
   const closedButton = getClosedButton(dropdown);
 
   closedButton.addEventListener('click', dropdownPlugin.closedDropdown);
 
-  const onChangeState = (state: DropdownState, payload: Payload): void => {
+  const onDropdownChangeState = (state: DropdownState, payload: Payload): void => {
     const { itemStates } = state;
     const { id, changeType } = payload;
     if (id === undefined) {
@@ -96,11 +123,17 @@ const initSliderWithPanel = (sliderView: SliderConnector, dropdownView: Dropdown
     }
     if (id === 0) {
       if (changeType === dropdownChangeTypes.addButtonClicked || changeType === dropdownChangeTypes.subButtonClicked) {
-        sliderPlugin.updateSliderOptions({ numberOfHandlers: itemStates[0].value });
+        const count = itemStates[0].value;
+        sliderPlugin.updateSliderOptions({ numberOfHandlers: count });
+        dropdownPlugin.changeItemParametrs({ incrementStep: 10 }, count + 2);
+        dropdownPlugin.changeItemParametrs({ incrementStep: 10 }, count + 3);
+        dropdownPlugin.changeItemParametrs({ minValue: minValue }, 1);
+        dropdownPlugin.changeItemParametrs({ maxValue: maxValue }, count);
       }
     }
     if (id > 0 && id <= itemStates[0].value) {
-      sliderPlugin.moveHandlerTo(itemStates[id].value, id - 1);
+      const { value } = itemStates[id];
+      sliderPlugin.moveHandlerTo(value, id - 1);
       if (sliderPlugin.getHandlerValue(id - 1) === sliderPlugin.getHandlerValue(id)) {
         switchButtonToDisable(dropdown, id, true);
         setValueToItem(sliderPlugin.getHandlerValue(id), dropdown, id);
@@ -113,6 +146,16 @@ const initSliderWithPanel = (sliderView: SliderConnector, dropdownView: Dropdown
     if (id === itemStates[0].value + 1) {
       setSliderStep(itemStates[id].value, id);
       setIncrementStep(id, itemStates[id].value);
+    }
+    if (id === itemStates[0].value + 2) {
+      minValue = itemStates[id].value;
+      sliderPlugin.updateSliderOptions({ minValue: minValue });
+      dropdownPlugin.changeItemParametrs({ minValue: minValue }, 1);
+    }
+    if (id === itemStates[0].value + 3) {
+      maxValue = itemStates[id].value;
+      sliderPlugin.updateSliderOptions({ maxValue: maxValue });
+      dropdownPlugin.changeItemParametrs({ maxValue: maxValue }, itemStates[0].value);
     }
   };
 
@@ -128,8 +171,8 @@ const initSliderWithPanel = (sliderView: SliderConnector, dropdownView: Dropdown
         values.push(sliderPlugin.getHandlerValue(i - 1));
       }
     }
-    names.push(stepName);
-    values.push(stepValue);
+    names.push(...params);
+    values.push(stepValue, minValue, maxValue);
     dropdownPlugin.updateDropdownOptions({ itemNames: names, startValues: values });
     if (number >= 2) {
       dropdownPlugin.changeItemParametrs({ incrementStep: 2, minValue: 1 }, 0);
@@ -156,7 +199,7 @@ const initSliderWithPanel = (sliderView: SliderConnector, dropdownView: Dropdown
     }
   };
 
-  const onUpdateOptions = (options: UserOptions): void => {
+  const onSliderUpdateOptions = (options: UserOptions): void => {
     const { numberOfHandlers } = options;
     if (numberOfHandlers !== undefined) {
       number = numberOfHandlers;
@@ -178,10 +221,10 @@ const initSliderWithPanel = (sliderView: SliderConnector, dropdownView: Dropdown
   };
 
   sliderPlugin.subscribeToChangeState(onSliderChangeState);
-  dropdownPlugin.subscribeToChangeState(onChangeState);
-  sliderPlugin.onChangeOptions(onUpdateOptions);
+  dropdownPlugin.subscribeToChangeState(onDropdownChangeState);
+  sliderPlugin.onChangeOptions(onSliderUpdateOptions);
 
-  const toggleScaleElement = getToggleElement(dropdown, number + 2);
+  const toggleScaleElement = getToggleElement(dropdown, number + 4);
   sliderPlugin.updateSliderOptions({ scale: toggleScaleElement.checked });
   const onTogglescale = (e: MouseEvent): void => {
     const toggle: HTMLInputElement = e.target as HTMLInputElement;
@@ -190,7 +233,7 @@ const initSliderWithPanel = (sliderView: SliderConnector, dropdownView: Dropdown
   sliderPlugin.updateSliderOptions({ scale: toggleScaleElement.checked });
   toggleScaleElement.addEventListener('click', onTogglescale);
 
-  const toggleTooltipElement = getToggleElement(dropdown, number + 3);
+  const toggleTooltipElement = getToggleElement(dropdown, number + 5);
   const onToggleTooltip = (e: MouseEvent): void => {
     const toggle: HTMLInputElement = e.target as HTMLInputElement;
     sliderPlugin.updateSliderOptions({ toolTips: toggle.checked });
@@ -198,7 +241,7 @@ const initSliderWithPanel = (sliderView: SliderConnector, dropdownView: Dropdown
   sliderPlugin.updateSliderOptions({ toolTips: toggleTooltipElement.checked });
   toggleTooltipElement.addEventListener('click', onToggleTooltip);
 
-  const toggleProgressbarElement = getToggleElement(dropdown, number + 4);
+  const toggleProgressbarElement = getToggleElement(dropdown, number + 6);
   const onToggleBar = (e: MouseEvent): void => {
     const toggle: HTMLInputElement = e.target as HTMLInputElement;
     sliderPlugin.updateSliderOptions({ progressBar: toggle.checked });
@@ -206,7 +249,6 @@ const initSliderWithPanel = (sliderView: SliderConnector, dropdownView: Dropdown
   sliderPlugin.updateSliderOptions({ progressBar: toggleProgressbarElement.checked });
   toggleProgressbarElement.addEventListener('click', onToggleBar);
 };
-
 
 const verticalSlideContainer = <HTMLElement>document.querySelector('.vertical-slider');
 const sliderVerticalView: SliderConnector = initVerticalStarSlider(verticalSlideContainer);

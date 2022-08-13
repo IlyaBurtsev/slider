@@ -1,14 +1,7 @@
-import './input-field.scss';
+import './input-field.scss'
+import './_subscription/input-field_subscription.scss'
+import './_for-date-dropdown/input-field_for-date-dropdown.scss'
+import './_for-items-dropdown/input-field_for-items-dropdown.scss'
 
-const initInput = (bindElement: HTMLElement): ((value: string) => void) => {
-  const className = {
-    input: 'js-input-field__input',
-  };
-  const input = <HTMLInputElement>bindElement.querySelector(`.${className.input}`);
-  const setValue = (value: string): void => {
-    input.innerHTML = value;
-  };
-  return setValue;
-};
 
-export default initInput
+

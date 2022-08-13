@@ -7,8 +7,8 @@ interface DataObject<T> {
 
 interface UserOptions extends DataObject<UserOptionsType> {
   numberOfHandlers?: number;
-  startValue?: number;
-  endValue?: number;
+  minValue?: number;
+  maxValue?: number;
   startValues?: Array<number> | number;
   step?: number;
   progressBar?: boolean;

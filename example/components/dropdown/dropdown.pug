@@ -1,11 +1,13 @@
 include ./__dropdown-default-item/dropdown-default-item.pug
 include ./__dropdown-toggle-item/dropdown-toggle-item.pug
+include ./__dropdown-input-item/dropdown-input-item.pug
+include ./__dropdown-title/dropdown-title.pug
 include ../../component-templates/global-constants/constants.pug
-include ../input-field/input-field.pug
 include ../button/button.pug
+
 mixin dropdown()
 	.dropdown__container.js-dropdown__container
-		+input-field()
+		+dropdown-title()
 		.dropdown__expand-container
 			+dropdown-default-item()
 			+dropdown-toggle-item({title : 'Add scale'})

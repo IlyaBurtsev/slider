@@ -1,9 +1,24 @@
-mixin input-field()
-	.input-field__container
-		.input-field__input
-			H3.title.js-input-field__input
-		
+include ../../component-templates/input-template/input-template.pug
 
+
+
+mixin input-field(options={})
+
+	- const {type=INPUT_FIELD.TEXT, inputType='text', placeholder,  dataSelected, inputText, autofocus} = options 
+	
+	case type 
+		when INPUT_FIELD.TEXT
+			+input-tamplate({blockName: 'input-field', inputType: inputType, placeholder: placeholder, 
+			dataSelected: dataSelected, inputValue: inputText, autofocus: autofocus, })
+		when INPUT_FIELD.SUBSCRIBE
+			+input-tamplate({blockName: 'input-field', modificatorName: 'subscription', inputType: inputType, 
+			placeholder: 'Email', inputValue: inputText, customElementName: 'submit-button', customElementValue: 'arrow_forward'})
+		when INPUT_FIELD.FOR_DATE_DROPDOWN 
+			+input-tamplate({blockName: 'input-field', modificatorName: 'for-date-dropdown', inputType: inputType, 
+			placeholder: placeholder, inputValue: inputText, useJS : [JS_CLASS.INPUT]})
+		when INPUT_FIELD.FOR_ITEMS_DROPDOWN 
+			+input-tamplate({blockName: 'input-field', modificatorName: 'for-items-dropdown', inputType: inputType, 
+			placeholder: placeholder, inputValue: inputText, useJS : [JS_CLASS.INPUT]})
 
 	
 

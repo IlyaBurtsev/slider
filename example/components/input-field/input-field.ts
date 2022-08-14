@@ -27,4 +27,4 @@ const initInput = (bindElement: HTMLElement): InputComponent => {
   };
 };
 
-export { InputComponent as InputType, initInput };
+export { InputComponent, initInput };

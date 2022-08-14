@@ -1,11 +1,10 @@
-import './toggle.scss'
-
-const className ={
-	input:'js-toggle__input'
-}
+import './toggle.scss';
 
 const getToggle = (bindElement: HTMLElement): HTMLInputElement => {
-	return <HTMLInputElement>bindElement.querySelector(`.${className.input}`)
-}
+  const className = {
+    input: 'js-toggle__input',
+  };
+  return <HTMLInputElement>bindElement.querySelector(`.${className.input}`);
+};
 
-export {getToggle}
+export { getToggle };

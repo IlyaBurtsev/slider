@@ -18,14 +18,15 @@ type DropdownComponent = {
   getClosedButton: (dropdown: HTMLElement) => HTMLInputElement;
 };
 
-const className = {
-  dropdownContainer: 'js-dropdown__container',
-  closedButton: 'js-button__container_link',
-  dropdownOpen: 'dropdown__container_open',
-  buttonActive: 'dropdown-item__button_active',
-};
-
 const initDropdown = (bindElement: HTMLElement): DropdownComponent => {
+
+  const className = {
+    dropdownContainer: 'js-dropdown__container',
+    closedButton: 'js-button__container_link',
+    dropdownOpen: 'dropdown__container_open',
+    buttonActive: 'dropdown-item__button_active',
+  };
+
   const container = <HTMLElement>bindElement.querySelector(`.${className.dropdownContainer}`);
   if (container === null) {
     throw new Error('Dropdown container is null!');
@@ -37,7 +38,7 @@ const initDropdown = (bindElement: HTMLElement): DropdownComponent => {
   const openDropdown = (): void => {
     container.classList.add(className.dropdownOpen);
   };
-  const closeDropdown = (): void => {
+  const closedDropdown = (): void => {
     container.classList.remove(className.dropdownOpen);
   };
   const switchButtonToActive = (dropdown: HTMLElement, id: number, add: boolean): void => {
@@ -66,20 +67,20 @@ const initDropdown = (bindElement: HTMLElement): DropdownComponent => {
 
   const view = {
     dropdown: container,
-    setValueToInput: setValueToInput,
-    openDropdown: openDropdown,
-    closedDropdown: closeDropdown,
-    item: item,
+    setValueToInput,
+    openDropdown,
+    closedDropdown,
+    item,
   };
 
   return {
     view,
-		switchButtonToActive,
-		switchButtonToDisable,
-		setValueToItem,
-		getToggleElement,
-		getClosedButton
+    switchButtonToActive,
+    switchButtonToDisable,
+    setValueToItem,
+    getToggleElement,
+    getClosedButton,
   };
 };
 
-export {initDropdown, DropdownComponent} ;
+export { initDropdown, DropdownComponent };

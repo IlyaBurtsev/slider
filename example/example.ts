@@ -56,24 +56,24 @@ quickStartSlider.subscribeToChangeState(onChangeSliderState);
 //--------------------------------------------------------------------
 
 const starSlider = <HTMLElement>document.querySelector('.js-vertical-sliders__star-slider');
-const starSliderView: SliderConnector = initVerticalStarSlider(starSlider);
+const starSliderView = initVerticalStarSlider(starSlider);
 starSliderView.scaleElements = getScale(starSliderView.slider);
 
 const dropdownForStarSlider = <HTMLElement>document.querySelector('.js-vertical-sliders__star-slider');
-const dropdownViewForStarSlider = initDropdown(dropdownForStarSlider);
-const expandContainer = dropdownViewForStarSlider.view.dropdown.lastElementChild as HTMLElement;
+const dropdownComponentForStarSlider = initDropdown(dropdownForStarSlider);
+const expandContainer = dropdownComponentForStarSlider.view.dropdown.lastElementChild as HTMLElement;
 expandContainer.style.zIndex = '5';
 
-initSliderWithPanel(starSliderView, dropdownViewForStarSlider);
+initSliderWithPanel(starSliderView, dropdownComponentForStarSlider);
 
 //--------------------------------------------------------------------
 
 const sliderContainer = <HTMLElement>document.querySelector('.js-horizontal-sliders__simple-slider');
 const sliderView = getViewConnector(sliderContainer);
 const dropdownContainer = <HTMLElement>document.querySelector('.js-horizontal-sliders');
-const dropdownView = initDropdown(dropdownContainer);
+const dropdownComponent = initDropdown(dropdownContainer);
 
-initSliderWithPanel(sliderView, dropdownView);
+initSliderWithPanel(sliderView, dropdownComponent);
 
 //--------------------------------------------------------------------
 

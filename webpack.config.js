@@ -7,19 +7,33 @@ module.exports = (env, argv = {}) => {
   const { mode = 'development' } = argv;
   const isProduction = mode === 'production';
   const isDevelopment = mode === 'development';
-  const pagesDir = path.resolve(__dirname, 'example');
+  const pagesDir = path.resolve(__dirname);
 
   const getStyleLoaders = () => {
-    return [
-      isProduction ? MiniCssExtractPlugin.loader : 'style-loader',
-      'css-loader',
-    ];
+    return [isProduction ? MiniCssExtractPlugin.loader : 'style-loader', 'css-loader'];
   };
   const getPlugins = () => {
     const plugins = [
       new webpack.ProgressPlugin(),
       new HtmlWebpackPlugin({
-        template: `${pagesDir}/example.pug`,
+        template: `${pagesDir}/example/example.pug`,
+        minify: isProduction
+          ? {
+              html5: true,
+              collapseWhitespace: true,
+              minifyCSS: true,
+              minifyJS: true,
+              minifyURLs: false,
+              removeAttributeQuotes: false,
+              removeComments: true,
+              removeEmptyAttributes: true,
+              removeOptionalTags: true,
+              removeRedundantAttributes: false,
+              removeScriptTypeAttributes: true,
+              removeStyleLinkTypeAttributese: true,
+              useShortDoctype: true,
+            }
+          : false,
       }),
     ];
     if (isProduction) {
@@ -27,33 +41,43 @@ module.exports = (env, argv = {}) => {
         new MiniCssExtractPlugin({
           filename: '[name].css?version=[contenthash]',
           chunkFilename: '[id].css?version=[contenthash]',
-        })
+        }),
       );
     }
     return plugins;
   };
   return {
+		target: 'web',
     mode: isProduction ? 'production' : 'development',
     output: {
-      filename: '[name].js?version=[hash]',
-      assetModuleFilename: 'assets/[name][ext]',
-      clean: true,
+			path: path.resolve(__dirname, 'dist'),
+			filename: isDevelopment ? 'js/[name].js' : `Plugin.js`,
+			publicPath: '/',
+			chunkFilename: 'js/[name].js',
+			library: isDevelopment ? undefined : 'RangeSlider',
+			libraryTarget: isDevelopment ? undefined : 'umd',
+			libraryExport: isDevelopment ? undefined : 'default',
+			globalObject: 'this',
+			clean: true,
     },
-    entry: `${pagesDir}/example.ts`,
-		resolve: {
-			extensions: ['.js', '.ts', '.scss'],
-			alias: {
+    entry: {
+			index:  isDevelopment ? `${pagesDir}/example/example.js` : `${pagesDir}/src/plugin/Plugin.ts`,
+		},
+    resolve: {
+			modules: [`${__dirname}/src/js`, `${__dirname}/src`, `${__dirname}/dist`, 'node_modules'],
+      extensions: ['.js', '.ts', '.scss'],
+      alias: {
         '@theme': path.resolve(__dirname, 'style'),
       },
-		},
+    },
     module: {
       rules: [
-				{
+        {
           test: /\.ts$/,
           loader: 'ts-loader',
-					options: {
-						allowTsInNodeModules: true
-					}
+          options: {
+            allowTsInNodeModules: true,
+          },
         },
         {
           test: /\.css$/,

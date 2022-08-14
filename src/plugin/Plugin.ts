@@ -8,11 +8,12 @@ import PluginActions from '../models/enums/PluginActions';
 import Observer from './observer/Observer';
 import { deepMerge } from './utils/utils';
 import ChangeStateTypes from '../models/enums/ChangeStateTypes';
-
 import API from '../models/API';
 import { HandlerState, RootState } from '../models/types';
 import { ViewConnector } from '../models/ViewConnector';
 import { UserOptions } from '../models/interfaces';
+import getScale from '../components/scale/scale';
+import getViewConnector from '../components/connector';
 
 class Plugin extends Observer {
   private dataController: DataController;
@@ -235,7 +236,6 @@ const createSliderPlugin = (viewConnector: ViewConnector, options?: UserOptions)
   };
 
   const updateSliderOptions = (newUserOptions: UserOptions): void => {
-	
     if (userOptions !== undefined) {
       userOptions = deepMerge(userOptions, true, newUserOptions);
     } else {
@@ -256,9 +256,9 @@ const createSliderPlugin = (viewConnector: ViewConnector, options?: UserOptions)
   const onChangeOptions = (handler: (options: UserOptions) => void, subscribe = true): void => {
     subscriber = handler;
   };
-	const getHandlerValue = (id: number): number => {
-		return Number(sliderPlugin.getState().valuesState.values[id])
-	}
+  const getHandlerValue = (id: number): number => {
+    return Number(sliderPlugin.getState().valuesState.values[id]);
+  };
 
   const api: API = {
     updateSliderOptions,
@@ -267,9 +267,15 @@ const createSliderPlugin = (viewConnector: ViewConnector, options?: UserOptions)
     subscribeToGetStarted: getOnTouchSubscriber,
     subscribeToTheEndOfTheMovement: getOnStopMovingSubscriber,
     onChangeOptions: onChangeOptions,
-		getHandlerValue: getHandlerValue,
+    getHandlerValue: getHandlerValue,
   };
   return api;
 };
 
-export default createSliderPlugin;
+const plugin = {
+  createSliderPlugin,
+  getViewConnector,
+  getScale,
+};
+
+export default plugin;

@@ -7,7 +7,7 @@ function getViewConnector(bindElement: HTMLElement | null): ViewConnector {
   if (bindElement === null) {
     throw new Error('Slider container is null!');
   }
-
+	console.log(bindElement)
   const rect = bindElement.getBoundingClientRect();
   let isVertical = false;
   if (rect.height > rect.width) {

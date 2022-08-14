@@ -1,19 +1,19 @@
-import DataController from './data-controller/DataController';
-import SliderDomController from './slider/SliderDomController';
-import HandlersDomController from './handler/HandlersDomController';
-import ProgressBarDomController from './progress-bar/ProgressBarDomController';
-import TooltipDomController from './tooltip/TooltipDomController';
-import ScaleCreator from './scale/ScaleCreator';
-import PluginActions from '../models/enums/PluginActions';
-import Observer from './observer/Observer';
-import { deepMerge } from './utils/utils';
-import ChangeStateTypes from '../models/enums/ChangeStateTypes';
-import API from '../models/API';
-import { HandlerState, RootState } from '../models/types';
-import { ViewConnector } from '../models/ViewConnector';
-import { UserOptions } from '../models/interfaces';
-import getScale from '../components/scale/scale';
-import getViewConnector from '../components/connector';
+import DataController from './plugin/data-controller/DataController';
+import SliderDomController from './plugin/slider/SliderDomController';
+import HandlersDomController from './plugin/handler/HandlersDomController';
+import ProgressBarDomController from './plugin/progress-bar/ProgressBarDomController';
+import TooltipDomController from './plugin/tooltip/TooltipDomController';
+import ScaleCreator from './plugin/scale/ScaleCreator';
+import PluginActions from './models/enums/PluginActions';
+import Observer from './plugin/observer/Observer';
+import { deepMerge } from './plugin/utils/utils';
+import ChangeStateTypes from './models/enums/ChangeStateTypes';
+import API from './models/API';
+import { HandlerState, RootState } from './models/types';
+import { ViewConnector } from './models/ViewConnector';
+import { UserOptions } from './models/interfaces';
+import getScale from './components/scale/scale';
+import getViewConnector from './components/connector';
 
 class Plugin extends Observer {
   private dataController: DataController;
@@ -272,10 +272,10 @@ const createSliderPlugin = (viewConnector: ViewConnector, options?: UserOptions)
   return api;
 };
 
-const plugin = {
+const pluginCreator = {
   createSliderPlugin,
   getViewConnector,
   getScale,
 };
 
-export default plugin;
+export default pluginCreator;

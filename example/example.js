@@ -1,16 +1,16 @@
 import './example.scss';
-import '../src/components/slider/slider.ts';
 import './style/style.scss';
 import './style/fonts.scss';
+import '../dist/index.css'
 import initVerticalStarSlider from './components/vertical-star-slider/vertical-star-slider.ts';
 import { initInput } from './components/input-field/input-field';
-import plugin from '../dist/Plugin.js';
+import pluginCreator from '../dist/Plugin.js';
 
 const starSlider = document.querySelector('.js-vertical-sliders__star-slider');
 const starSliderView = initVerticalStarSlider(starSlider);
-console.log(plugin);
+starSliderView.scaleElements = pluginCreator.getScale(starSliderView.slider)
 
-const starS = plugin.createSliderPlugin(starSliderView, {
+const starS = pluginCreator.createSliderPlugin(starSliderView, {
   numberOfHandlers: 2,
   progressBar: true,
   toolTips: true,
@@ -18,8 +18,8 @@ const starS = plugin.createSliderPlugin(starSliderView, {
 });
 
 const quickStart = document.querySelector('.js-vertical-sliders__simple-slider');
-const quickStartView = plugin.getViewConnector(quickStart);
-const quickStartSlider = plugin.createSliderPlugin(quickStartView, {
+const quickStartView = pluginCreator.getViewConnector(quickStart);
+const quickStartSlider = pluginCreator.createSliderPlugin(quickStartView, {
   numberOfHandlers: 2,
   progressBar: true,
   toolTips: true,

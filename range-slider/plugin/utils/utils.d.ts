@@ -1,0 +1,22 @@
+import { DataObject, UserOptions } from '../../models/interfaces';
+import { BrowserEvent } from '../../models/types';
+declare function deepMerge<T extends UserOptions>(target: T, allowAddOptions: boolean, ...objects: Array<UserOptions>): T;
+declare function getElement(el: string, context?: HTMLElement): HTMLElement | null;
+declare function getElements(el: string, context?: HTMLElement): NodeList;
+declare type createParametrs = {
+    tagName?: string;
+    className?: string;
+    innerHtml?: string;
+    id?: string;
+    attrs?: DataObject<string>;
+};
+declare function createElement(options: createParametrs): HTMLElement;
+declare function hasClass(el: HTMLElement, ...classes: Array<string>): boolean;
+declare function addClass(el: Array<HTMLElement> | HTMLElement, ...classNames: Array<string>): void;
+declare function removeClass(el: Array<HTMLElement> | HTMLElement, ...classNames: Array<string>): void;
+declare function bindEvents(events: Array<string>, listener: EventListener, element: HTMLElement, supportPassive?: boolean): void;
+declare function removeEvents(events: Array<string>, listener: EventListener, element: HTMLElement): void;
+declare function removeElementsFromDom(elements: Array<HTMLElement>, startIndex: number): void;
+declare function checkTouch(event: BrowserEvent, targetElement: HTMLElement): boolean | Touch;
+declare function getTouchPosition(event: BrowserEvent, targetElement: HTMLElement, orientation: number): number | boolean;
+export { deepMerge, getElement, getElements, createElement, addClass, hasClass, removeClass, bindEvents, removeEvents, removeElementsFromDom, getTouchPosition, checkTouch, };

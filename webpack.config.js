@@ -39,7 +39,7 @@ module.exports = (env, argv = {}) => {
     if (isProduction) {
       plugins.push(
         new MiniCssExtractPlugin({
-          filename: '[name].css?version=[contenthash]',
+          filename: 'range-slider.css',
           chunkFilename: '[id].css?version=[contenthash]',
         }),
       );
@@ -47,11 +47,10 @@ module.exports = (env, argv = {}) => {
     return plugins;
   };
   return {
-		target: 'web',
     mode: isProduction ? 'production' : 'development',
     output: {
-			path: path.resolve(__dirname, 'dist'),
-			filename: isDevelopment ? 'js/[name].js' : `Plugin.js`,
+			path: path.resolve(__dirname, 'range-slider'),
+			filename: isDevelopment ? 'js/[name].js' : `range-slider.js`,
 			publicPath: '/',
 			chunkFilename: 'js/[name].js',
 			library: isDevelopment ? undefined : 'RangeSlider',
@@ -61,10 +60,9 @@ module.exports = (env, argv = {}) => {
 			clean: true,
     },
     entry: {
-			index:  isDevelopment ? `${pagesDir}/example/example.js` : `${pagesDir}/src/plugin/Plugin.ts`,
+			index:  isDevelopment ? `${pagesDir}/example/example.ts` : `${pagesDir}/src/range-slider.ts`,
 		},
     resolve: {
-			modules: [`${__dirname}/src/js`, `${__dirname}/src`, `${__dirname}/dist`, 'node_modules'],
       extensions: ['.js', '.ts', '.scss'],
       alias: {
         '@theme': path.resolve(__dirname, 'style'),
@@ -77,6 +75,7 @@ module.exports = (env, argv = {}) => {
           loader: 'ts-loader',
           options: {
             allowTsInNodeModules: true,
+						configFile: isDevelopment? "tsconfig.json" : "tsconfig.build.json",
           },
         },
         {

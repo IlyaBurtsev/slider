@@ -42,7 +42,8 @@ const onChangeSecondInput = (): void => {
 };
 firstInputComponent.getInput().onchange = onChangeFirstInput;
 secondInputComponent.getInput().onchange = onChangeSecondInput;
-
+firstInputComponent.setValue(`${quickStartSlider.getHandlerValue(0)}`);
+secondInputComponent.setValue(`${quickStartSlider.getHandlerValue(1)}`);
 const onChangeSliderState = (state: RootState): void => {
   const [firstValue, secondValue] = state.valuesState.values;
   firstInputComponent.setValue(firstValue);

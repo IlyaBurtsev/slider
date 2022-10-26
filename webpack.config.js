@@ -60,7 +60,7 @@ module.exports = (env, argv = {}) => {
 			clean: true,
     },
     entry: {
-			index:  isDevelopment ? `${pagesDir}/example/example.js` : `${pagesDir}/src/range-slider.ts`,
+			index:  isDevelopment ? `${pagesDir}/example/example.ts` : `${pagesDir}/src/range-slider.ts`,
 		},
     resolve: {
       extensions: ['.js', '.ts', '.scss'],

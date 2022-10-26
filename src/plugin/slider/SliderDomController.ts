@@ -43,13 +43,11 @@ export default class SliderDomController {
 
   private onChangeState = (): void => {
     if (this.isInit) {
-      this.setParentPaddings();
       this.isInit = false;
     }
   };
 
   private getSliderParametrs = (): SliderParametrs => {
-		
     const rect = this.sliderElement.getBoundingClientRect();
     if (rect.width > rect.height) {
       this.orientation = Orientation.Horizontal;
@@ -72,35 +70,5 @@ export default class SliderDomController {
       sliderStartPosition: rect.top,
       sliderEndPosition: rect.top + rect.height,
     };
-  };
-
-  private setParentPaddings = (): void => {
-    const { handlerMinTrahslate, handlerTop, handlerBottom, scaleSize } = this.getPaddingParametrs();
-    const bindElement = this.sliderElement.parentElement;
-    if (this.orientation === Orientation.Horizontal) {
-      if (bindElement) {
-        if (handlerBottom + scaleSize + 2 > this.sliderHeight) {
-          bindElement.style.paddingBottom = `${Math.abs(handlerBottom + scaleSize - this.sliderHeight + 3)}px`;
-        }
-        if (handlerTop < 0) {
-          bindElement.style.paddingTop = `${Math.abs(handlerTop)}px`;
-        }
-        if (handlerMinTrahslate < 0) {
-          bindElement.style.paddingLeft = `${Math.abs(handlerMinTrahslate)}px`;
-          bindElement.style.paddingRight = `${Math.abs(handlerMinTrahslate)}px`;
-        }
-      }
-    } else if (bindElement) {
-      if (handlerTop - scaleSize < 0) {
-        bindElement.style.paddingLeft = `${Math.abs(handlerTop - scaleSize)}px`;
-      }
-      if (handlerBottom > this.sliderHeight) {
-        bindElement.style.paddingRight = `${Math.abs(handlerBottom - this.sliderHeight + 2)}px`;
-      }
-      if (handlerMinTrahslate < 0) {
-        bindElement.style.paddingTop = `${Math.abs(handlerMinTrahslate)}px`;
-        bindElement.style.paddingBottom = `${Math.abs(handlerMinTrahslate)}px`;
-      }
-    }
   };
 }

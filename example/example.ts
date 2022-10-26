@@ -2,31 +2,29 @@ import './example.scss';
 import '../src/components/slider/slider';
 import './style/style.scss';
 import './style/fonts.scss';
-import '../range-slider/range-slider.css'
+import '../range-slider/range-slider.css';
 import './components/dropdown/dropdown.ts';
 import './components/vertical-star-slider/vertical-star-slider.ts';
 
 import initVerticalStarSlider from './components/vertical-star-slider/vertical-star-slider';
 import { initInput } from './components/input-field/input-field';
-
-import createDropdownPlugin from 'dropdown/src/plugin/Plugin';
-import { Payload, RootState as DropdownState } from 'dropdown/src/models/types';
-import dropdownChangeTypes from 'dropdown/src/models/enums/ChangeStateTypes';
+import { initDropdown, DropdownComponent } from './components/dropdown/dropdown';
 
 import { RootState } from '../src/models/types';
 import { UserOptions } from '../src/models/interfaces';
-import ChangeStateTypes from '../src/models/enums/ChangeStateTypes';
 import getViewConnector from '../src/components/connector';
-import pluginCreator from '../range-slider/range-slider'
+import sliderCreator from '../src/range-slider';
 import { ViewConnector as SliderConnector } from '../src/models/ViewConnector';
-import getScale from '../src/components/scale/scale';
-import { initDropdown, DropdownComponent } from './components/dropdown/dropdown';
+
+import dropdownCreator from 'dropdown/dropdown/dropdown';
+import { Payload, RootState as DropdownState } from 'dropdown/dropdown/models/types';
 
 //--------------------------------------------------------------------
 
+const { createSliderPlugin, ChangeStateTypes, getScale } = sliderCreator;
 const quickStart = <HTMLElement>document.querySelector('.js-vertical-sliders__simple-slider');
 const quickStartView = getViewConnector(quickStart);
-const quickStartSlider = pluginCreator.createSliderPlugin(quickStartView, {
+const quickStartSlider = createSliderPlugin(quickStartView, {
   numberOfHandlers: 2,
   progressBar: true,
   toolTips: true,
@@ -55,6 +53,7 @@ quickStartSlider.subscribeToChangeState(onChangeSliderState);
 
 //--------------------------------------------------------------------
 
+const { createDropdownPlugin, ChangeStateTypes: dropdownChangeTypes } = dropdownCreator;
 const starSlider = <HTMLElement>document.querySelector('.js-vertical-sliders__star-slider');
 const starSliderView = initVerticalStarSlider(starSlider);
 starSliderView.scaleElements = getScale(starSliderView.slider);
@@ -69,7 +68,7 @@ initSliderWithPanel(starSliderView, dropdownComponentForStarSlider);
 //--------------------------------------------------------------------
 
 const sliderContainer = <HTMLElement>document.querySelector('.js-horizontal-sliders__simple-slider');
-const sliderView =pluginCreator.getViewConnector(sliderContainer);
+const sliderView = getViewConnector(sliderContainer);
 const dropdownContainer = <HTMLElement>document.querySelector('.js-horizontal-sliders');
 const dropdownComponent = initDropdown(dropdownContainer);
 
@@ -82,7 +81,7 @@ function initSliderWithPanel(sliderView: SliderConnector, dropdownComponent: Dro
   let minValue = 10;
   let maxValue = 40;
 
-  const sliderPlugin = pluginCreator.createSliderPlugin(sliderView, {
+  const sliderPlugin = createSliderPlugin(sliderView, {
     numberOfHandlers: number,
     minValue: minValue,
     maxValue: maxValue,
@@ -159,10 +158,10 @@ function initSliderWithPanel(sliderView: SliderConnector, dropdownComponent: Dro
     externalCheckState: checkState,
     autoClose: false,
   });
-
   dropdownPlugin.changeItemParametrs({ incrementStep: 10 }, 3);
   dropdownPlugin.changeItemParametrs({ incrementStep: 10 }, 4);
   dropdownPlugin.changeItemParametrs({ minValue: minValue, maxValue: maxValue }, 1);
+  dropdownPlugin.changeItemParametrs({ maxValue: 8 }, 0);
 
   const closedButton = getClosedButton(dropdown);
 
@@ -181,6 +180,7 @@ function initSliderWithPanel(sliderView: SliderConnector, dropdownComponent: Dro
         dropdownPlugin.changeItemParametrs({ incrementStep: 10 }, count + 2);
         dropdownPlugin.changeItemParametrs({ incrementStep: 10 }, count + 3);
         dropdownPlugin.changeItemParametrs({ minValue: minValue }, 1);
+        dropdownPlugin.changeItemParametrs({ maxValue: 8 }, 0);
         dropdownPlugin.changeItemParametrs({ maxValue: maxValue }, count);
       }
     }

@@ -60,7 +60,7 @@ module.exports = (env, argv = {}) => {
 			clean: true,
     },
     entry: {
-			index:  isDevelopment ? `${pagesDir}/example/example.ts` : `${pagesDir}/src/range-slider.ts`,
+			index:  isDevelopment ? `${pagesDir}/example/example.js` : `${pagesDir}/src/range-slider.ts`,
 		},
     resolve: {
       extensions: ['.js', '.ts', '.scss'],
@@ -74,7 +74,6 @@ module.exports = (env, argv = {}) => {
           test: /\.ts$/,
           loader: 'ts-loader',
           options: {
-            allowTsInNodeModules: true,
 						configFile: isDevelopment? "tsconfig.json" : "tsconfig.build.json",
           },
         },

@@ -1,0 +1,21 @@
+.horizontal-star-wars-slider {
+  &__container {
+    width: 400px;
+    height: 10px;
+    display: flex;
+    position: relative;
+    user-select: none;
+  }
+  &__handler {
+		width: 20px;
+		height: 60px;
+    position: absolute;
+    top: -15px;
+    left: -12px;
+    z-index: 3;
+    user-select: none;
+    &:hover {
+      cursor: pointer;
+    }
+  }
+}

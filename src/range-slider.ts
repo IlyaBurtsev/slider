@@ -272,10 +272,11 @@ const createSliderPlugin = (viewConnector: ViewConnector, options?: UserOptions)
   return api;
 };
 
-const pluginCreator = {
+const sliderCreator = {
   createSliderPlugin,
+  ChangeStateTypes,
   getViewConnector,
   getScale,
 };
 
-export default pluginCreator;
+export default sliderCreator;

@@ -16,14 +16,17 @@ export default class ScaleCreator {
   }
 
   private createScale = (viewConnector: ViewConnector, options: ScaleOptions): void => {
-    const { numberOfSteps, scaleStep, sliderLength, handlerBottom, handlerTop, orientation } = options;
+    const { scaleStep, sliderLength, handlerBottom, handlerTop, orientation } = options;
+    let { numberOfSteps } = options;
     const { scaleElements } = viewConnector;
     if (scaleElements === undefined) {
       return;
     }
 
     const { markerLarge, markerDefault, scale } = scaleElements;
-
+    if (sliderLength / numberOfSteps <= 3.5) {
+      numberOfSteps = numberOfSteps / 10;
+    }
     const fragment = document.createDocumentFragment();
     for (let i = 0; i <= numberOfSteps; i += 1) {
       if (i % scaleStep === 0) {

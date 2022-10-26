@@ -6,7 +6,7 @@ import '../button/button';
 import './__dropdown-input-item/dropdown-input-item';
 import initDropdownTitle from './__dropdown-title/dropdown-title';
 import initDefaultItem from './__dropdown-default-item/dropdown-default-item';
-import ViewConnector from 'dropdown/src/models/ViewConnector';
+import ViewConnector from 'dropdown/dropdown/models/ViewConnector';
 import { getToggle } from '../toggle/toggle';
 
 type DropdownComponent = {
